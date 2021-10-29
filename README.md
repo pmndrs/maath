@@ -2,7 +2,6 @@
 
 <a href="https://github.com/pmndrs/maath"><img src="https://github.com/pmndrs/maath/blob/main/hero.svg?raw=true" /></a>
 <br />
-# Maath
 
 A collection of useful math helpers, random generators, bits and bobs. 
 
