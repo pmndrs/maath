@@ -44,7 +44,7 @@ export function determinant3(...terms: number[]) {
 export function determinant4(...terms: number[]) {
   const [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o] = terms;
 
-  // TOOD
+  // TODO
 }
 
 const m = new Matrix3();
