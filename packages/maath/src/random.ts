@@ -1,6 +1,8 @@
 const TAU = Math.PI * 2;
 
+import { Vector3 } from "three";
 import type { TypedArray } from "./types";
+import { remap } from "./utils";
 
 // TODO Fix center offset
 // random on surface of sphere https://twitter.com/fermatslibrary/status/1430932503578226688
