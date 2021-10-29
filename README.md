@@ -20,3 +20,16 @@ Do you want to add something? No rules, but keep these in mind:
 - keep copy-paste simple. Try not to add too many inter-dependencies so the functions are copy-paste friendly
 - loose typing. Try to add typing, but don't go crazy with generics and complexity
 
+### Functions
+
+#### Distributions
+
+Functions that give distributions of points in a space. Notice how we use IN and ON in the function names to determine wether the points are in the volume or on the surface.
+
+- **randomInCircle**: random points in a circle of given radius
+- **randomOnCircle**: random points on the circumference of a circle of given radius
+
+- **randomInSphere**: random uniform points in a sphere of given radius
+- **randomOnSphere**: random uniform points on the surface of a sphere of given radius
+
+- **fibonacciOnSphere**: a Fibonacci lattice mapped on the surface of a sphere of given radius
