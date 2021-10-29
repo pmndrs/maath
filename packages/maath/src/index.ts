@@ -92,6 +92,15 @@ export function collinear(points: MyVector2[]) {
 const mv1 = new Vector2()
 const mv2 = new Vector2()
 
+/**
+ 
+     ╱      ╲     
+    ╱        ╲    
+   ▕          ▏   
+                  
+ right      left  
+
+ */
 export function doThreePointsMakeARight(points: MyVector2[]) {
   const [p1, p2, p3] = points
 
