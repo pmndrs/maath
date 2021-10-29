@@ -3,11 +3,11 @@
 <a href="https://github.com/pmndrs/maath"><img src="https://github.com/pmndrs/maath/blob/main/hero.svg?raw=true" /></a>
 <br />
 
-A collection of useful math helpers, random generators, bits and bobs. 
-
 ```bash
 yarn add maath
 ```
+
+This is a collection of useful math helpers, random generators, bits and bobs. 
 
 The library is mostly meant to be used with [three.js](https://github.com/mrdoob/three.js/), so if you are using it outside of a three project, make sure you check the source and - if you don't need the dep - just copy paste!
 
