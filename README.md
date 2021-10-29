@@ -10,6 +10,10 @@ yarn add maath
 
 The library is mostly meant to be used with [three.js](https://github.com/mrdoob/three.js/), so if you are using it outside of a three project, make sure you check the source and - if you don't need the dep - just copy paste!
 
+### But why?
+
+Yes, there are a lot of these libraries. The more the merrier! We are all here to learn, and maintaining a dedicated library for our creative endeavors at [Poimandres](https://github.com/pmndrs) just made sense!
+
 ### Contributing
 
 Do you want to add something? No rules, but keep these in mind:
