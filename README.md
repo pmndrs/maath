@@ -1,6 +1,6 @@
 [![Discord Shield](https://img.shields.io/discord/740090768164651008?style=flat&colorA=000000&colorB=000000&label=&logo=discord&logoColor=ffffff)](https://discord.gg/poimandres)
 
-<a href="https://github.com/pmndrs/maath"><img src="https://github.com/pmndrs/maath/blob/main/hero.svg?raw=true" /></a>
+<a href="https://github.com/pmndrs/maath"><img src="https://github.com/pmndrs/maath/blob/main/hero.png?raw=true" /></a>
 <br />
 
 A collection of useful math helpers, random generators, bits and bobs. 
