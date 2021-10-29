@@ -1,12 +1,10 @@
-const TAU = Math.PI * 2;
-
-import { Vector3 } from "three";
 import type { TypedArray } from "./types";
-import { remap } from "./utils";
+
+const TAU = Math.PI * 2;
 
 // TODO Fix center offset
 // random on surface of sphere https://twitter.com/fermatslibrary/status/1430932503578226688
-export function randomOnSphere(
+export function onSphere(
   buffer: TypedArray,
   { radius = 1, center = [0, 0, 0] }
 ) {
@@ -27,7 +25,7 @@ export function randomOnSphere(
 
 // TODO Fix center offset
 // from "Another Method" https://datagenetics.com/blog/january32020/index.html
-export function randomInSphere(
+export function inSphere(
   buffer: TypedArray,
   { radius = 1, center = [0, 0, 0] }
 ) {
@@ -53,7 +51,7 @@ export function randomInSphere(
 }
 
 // random circle https://stackoverflow.com/a/50746409
-export function randomInCircle(
+export function inCircle(
   buffer: TypedArray,
   { radius = 1, center = [0, 0] }
 ) {
@@ -68,7 +66,7 @@ export function randomInCircle(
   }
 }
 
-export function randomOnCircle(
+export function onCircle(
   buffer: TypedArray,
   { radius = 1, center = [0, 0] }
 ) {

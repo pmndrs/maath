@@ -7,12 +7,10 @@ import { OrbitControls } from "@react-three/drei";
 import { BufferAttribute, BufferGeometry, MathUtils } from "three";
 
 import {
-  addAxis,
-  fibonacciOnSphere,
-  lerpBuffers,
-  randomInCircle,
-  rsqw,
+  fibonacciOnSphere
 } from "maath";
+
+import { inCircle } from 'maath/random'
 
 function Thing() {
   const [{ geometry }] = useState(() => {
