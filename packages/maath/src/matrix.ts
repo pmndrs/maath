@@ -49,10 +49,12 @@ export function determinant4(...terms: number[]) {
 
 const m = new Matrix3();
 /**
+ * 
+ * Get the determinant of matrix m without row r and col c
  *
- * @param matrix Starter matrix
- * @param c1 row to remove
- * @param c2 col to remove
+ * @param {matrix} m Starter matrix
+ * @param r row to remove
+ * @param c col to remove
  *
  *     | a b c |
  * m = | d e f |
@@ -63,9 +65,9 @@ const m = new Matrix3();
  * | a c |
  * | g i |
  *
- * @returns
+ * @returns {number} determinant
  */
-export function getMinor(matrix: Matrix4, c1: number, c2: number) {
+export function getMinor(matrix: Matrix4, r: number, c: number) {
   const _matrixTranspose = matrix.clone().transpose();
 
   const x = [];
@@ -79,13 +81,10 @@ export function getMinor(matrix: Matrix4, c1: number, c2: number) {
     const row = Math.floor(i / n);
     const col = i % n;
 
-    if (row !== c1 - 1 && col !== c2 - 1) {
+    if (row !== r - 1 && col !== c - 1) {
       x.push(element);
     }
   }
 
-  // @ts-expect-error what's this??
-  m.set(...x);
-
-  return m.determinant();
+  return determinant3(...x)
 }
