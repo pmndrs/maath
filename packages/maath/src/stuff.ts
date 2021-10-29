@@ -1,5 +1,5 @@
 import { MathUtils, Matrix3, Matrix4, Vector2 } from "three";
-import { determinant, determinant2, determinant3 } from "./matrix";
+import { determinant, determinant2, determinant3, getMinor } from "./matrix";
 import type { TypedArray } from "./types";
 
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
@@ -111,6 +111,40 @@ export function arePointsCollinear(points: MyVector2[]) {
 // TODO This is the same principle as the prev function, find a way to make it have sense
 export function isTriangleClockwise(triangle: MyVector2[]) {
   return triangleDeterminant(triangle) < 0
+}
+
+// https://math.stackexchange.com/a/1460096
+export function getCircumcircle(triangle: MyVector2[]) {
+  const [ax, ay] = triangle[0]
+  const [bx, by] = triangle[1]
+  const [cx, cy] = triangle[2]
+
+  if (arePointsCollinear(triangle)) return null // points are collinear
+
+  const m = new Matrix4()
+  // prettier-ignore
+  m.set(
+    1,                  1,  1, 1,
+    ax * ax + ay * ay, ax, ay, 1,
+    bx * bx + by * by, bx, by, 1, 
+    cx * cx + cy * cy, cx, cy, 1
+  )
+
+  const m11 = getMinor(m, 1, 1)
+  const m13 = getMinor(m, 1, 3)
+  const m12 = getMinor(m, 1, 2)
+  const m14 = getMinor(m, 1, 4)
+
+  const x0 = 0.5 * (m12 / m11)
+  const y0 = 0.5 * (m13 / m11)
+
+  const r2 = x0 * x0 + y0 * y0 + m14 / m11
+
+  return {
+    x: x0,
+    y: -y0,
+    r: Math.sqrt(r2)
+  }
 }
 
 // https://stackoverflow.com/questions/39984709/how-can-i-check-wether-a-point-is-inside-the-circumcircle-of-3-points
