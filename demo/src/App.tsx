@@ -15,30 +15,16 @@ import {
 } from "maath";
 
 function Thing() {
-  const [{ bufferA, bufferB, final, geometry }] = useState(() => {
-    const bufferA = new Float32Array(10_000 * 3);
-    let bufferB = new Float32Array(10_000 * 2);
+  const [{ geometry }] = useState(() => {
+    const buffer = new Float32Array(10_000 * 3);
 
     const geometry = new BufferGeometry();
 
-    fibonacciOnSphere(bufferA, { radius: 3 });
+    fibonacciOnSphere(buffer, { radius: 3 });
 
-    randomInCircle(bufferB, { radius: 3 });
-    bufferB = addAxis(bufferB, () => MathUtils.randFloatSpread(10));
+    geometry.setAttribute("position", new BufferAttribute(buffer, 3));
 
-    const final = new Float32Array(bufferB);
-    geometry.setAttribute("position", new BufferAttribute(final, 3));
-
-    return { bufferA, bufferB, final, geometry };
-  });
-
-  useFrame(({ clock }) => {
-    const time = (Math.cos(clock.getElapsedTime()) + 1) * 0.5;
-    const t = rsqw(time);
-
-    lerpBuffers(bufferA, bufferB, final, t);
-    // @ts-ignore
-    geometry.attributes.position.needsUpdate = true;
+    return { buffer, geometry };
   });
 
   return (
