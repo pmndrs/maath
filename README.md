@@ -5,8 +5,6 @@
 
 A collection of useful math helpers, random generators, bits and bobs. 
 
-### Usage
-
 ```bash
 yarn add maath
 ```
