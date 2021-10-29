@@ -1,0 +1,19 @@
+{
+  "name": "maath",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/maath.cjs.js",
+  "module": "dist/maath.esm.js",
+  "types": "dist/maath.cjs.d.ts",
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts"
+    ]
+  },
+  "dependencies": {
+    "three": "^0.134.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.133.1"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "maath",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": "true",
+  "devDependencies": {
+    "@babel/preset-env": "^7.15.8",
+    "@preconstruct/cli": "^2.1.5",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "build": "preconstruct build",
+    "watch": "preconstruct watch",
+    "dev": "preconstruct dev",
+    "validate": "preconstruct validate"
+  },
+  "workspaces": [
+    "packages/*",
+    "demo"
+  ],
+  "preconstruct": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "dependencies": {
+    "@babel/preset-typescript": "^7.15.0"
+  }
+}
