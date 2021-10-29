@@ -75,7 +75,7 @@ export function randomOnCircle(
   for (let i = 0; i < buffer.length; i += 2) {
     const theta = random() * TAU;
 
-    buffer[i] = Math.sin(theta) * radius + center.x;
-    buffer[i + 1] = Math.cos(theta) * radius + center.y;
+    buffer[i] = Math.sin(theta) * radius + center[0];
+    buffer[i + 1] = Math.cos(theta) * radius + center[1];
   }
 }
