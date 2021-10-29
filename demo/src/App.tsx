@@ -7,7 +7,8 @@ import { OrbitControls } from "@react-three/drei";
 import { BufferAttribute, BufferGeometry, MathUtils } from "three";
 
 import {
-  fibonacciOnSphere
+  fibonacciOnSphere,
+  onSphere
 } from "maath";
 
 import { inCircle } from 'maath/random'
