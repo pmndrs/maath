@@ -61,8 +61,8 @@ export function randomInCircle(
     const r = radius * Math.sqrt(random());
     const theta = random() * TAU;
 
-    buffer[i] = Math.sin(theta) * r + center.x;
-    buffer[i + 1] = Math.cos(theta) * r + center.y;
+    buffer[i] = Math.sin(theta) * r + center[0];
+    buffer[i + 1] = Math.cos(theta) * r + center[1];
   }
 }
 
