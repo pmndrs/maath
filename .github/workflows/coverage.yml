@@ -1,4 +1,4 @@
-name: "coverage"
+name: "test"
 on:
   pull_request:
     branches:
@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - uses: actions/checkout@v1
-      - uses: artiomtr/jest-coverage-report-action@v2.0-rc.5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          #   threshold: 80 # optional parameter
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Preconstruct Build
+        run: yarn build
+      - name: test
+        run: yarn test
