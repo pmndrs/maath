@@ -1,5 +1,5 @@
 import { Vector2, Vector3 } from 'three'
-import { inCircle, inSphere, onCircle, onSphere } from '../random'
+import { inCircle, inPoisson, inSphere, onCircle, onSphere } from '../random'
 
 describe('random', () => {
 
@@ -136,4 +136,7 @@ describe('random', () => {
     
   })
 
+  describe('inPoisson', () => {
+    expect(inPoisson())
+  })
 })

@@ -6,11 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { BufferAttribute, BufferGeometry, MathUtils } from "three";
 
-import {
-  fibonacciOnSphere,
-  onSphere
-} from "maath";
-
+import { fibonacciOnSphere } from 'maath/stuff'
 import { inCircle } from 'maath/random'
 
 function Thing() {

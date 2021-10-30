@@ -1,5 +1,5 @@
 {
-  "name": "maath-host",
+  "name": "maath",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -20,7 +20,8 @@
     "test": "jest"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "demo"
   ],
   "preconstruct": {
     "packages": [
