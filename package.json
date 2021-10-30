@@ -17,7 +17,8 @@
     "watch": "preconstruct watch",
     "dev": "preconstruct dev",
     "validate": "preconstruct validate",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\""
   },
   "workspaces": [
     "packages/*"
