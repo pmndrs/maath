@@ -9,9 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - uses: actions/checkout@v1
-      - uses: artiomtr/jest-coverage-report-action@v2.0-rc.5
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Preconstruct Build
+        run: yarn build
+      - name: TestCoverage
+        id: testCoverage
+        uses: anuraag016/Jest-Coverage-Diff@master
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-script: yarn test:coverage
-          #   threshold: 80 # optional parameter
+          fullCoverageDiff: true
+          runCommand: "npx jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit"

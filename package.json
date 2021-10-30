@@ -1,5 +1,5 @@
 {
-  "name": "maath",
+  "name": "maath-host",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -17,8 +17,7 @@
     "watch": "preconstruct watch",
     "dev": "preconstruct dev",
     "validate": "preconstruct validate",
-    "test": "jest",
-    "test:coverage": "jest --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\""
+    "test": "jest"
   },
   "workspaces": [
     "packages/*"
