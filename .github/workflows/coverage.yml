@@ -15,8 +15,9 @@ jobs:
       - name: Preconstruct Build
         run: yarn build
       - name: TestCoverage
-        id: testCoverage
-        uses: anuraag016/Jest-Coverage-Diff@master
+      - uses: artiomtr/jest-coverage-report-action@v2.0-rc.6
         with:
-          fullCoverageDiff: true
-          runCommand: "npx jest --coverage --collectCoverage=true --coverageDirectory='./' --coverageReporters='json-summary' --forceExit"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          package-manager: yarn
+          skip-step: all
+          #   threshold: 80 # optional parameter
