@@ -135,8 +135,4 @@ describe('random', () => {
     })
     
   })
-
-  describe('inPoisson', () => {
-    expect(inPoisson())
-  })
 })
