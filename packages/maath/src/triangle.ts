@@ -30,7 +30,7 @@ import type { Triangle } from "./types";
     px, py, px * px + py * py, 1
   )
 
-  return matrix.determinant() > 0
+  return matrix.determinant() <= 0
 }
 
 
@@ -98,8 +98,8 @@ export function getCircumcircle(triangle: Triangle) {
   const r2 = x0 * x0 + y0 * y0 + m14 / m11
 
   return {
-    x: x0,
-    y: -y0,
+    x: Math.abs(x0) === 0 ? 0 : x0,
+    y: Math.abs(y0) === 0 ? 0 :  -y0,
     r: Math.sqrt(r2)
   }
 }
@@ -111,6 +111,8 @@ export function isPointInCircumcircle(point: number[], triangle: Triangle) {
   const [cx, cy] = triangle[2]
 
   const [px, py] = point
+
+  if (arePointsCollinear(triangle)) throw new Error("Collinear points don't form a triangle")
 
   /**
           | ax-px, ay-py, (ax-px)² + (ay-py)² |
@@ -138,19 +140,9 @@ export function isPointInCircumcircle(point: number[], triangle: Triangle) {
     return true
   }
 
-  if (isTriangleClockwise(triangle)) {
-    if (d > 0) {
-      return true
-    } else {
-      return false
-    }
-  } else {
-    if (d < 0) {
-      return false
-    } else {
-      return true
-    }
-  }
+
+  return !isTriangleClockwise(triangle) ? d > 0 : d < 0;
+  
 }
 
 // From https://algorithmtutor.com/Computational-Geometry/Determining-if-two-consecutive-segments-turn-left-or-right/
@@ -168,7 +160,7 @@ const mv2 = new Vector2();
  * NOTE: Should this use a buffer instead? [x0, y0, x1, y1]?
  */
 export function doThreePointsMakeARight(points: Triangle) {
-  const [p1, p2, p3] = points;
+  const [p1, p2, p3] = points.map(p => new Vector2(...p));
 
   if (arePointsCollinear(points)) return false;
 
@@ -179,6 +171,6 @@ export function doThreePointsMakeARight(points: Triangle) {
 
   const cross = p3p1.cross(p2p1);
 
-  if (cross > 0) return true;
+  return cross > 0
 }
 

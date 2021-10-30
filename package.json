@@ -6,18 +6,21 @@
   "private": "true",
   "devDependencies": {
     "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
     "@preconstruct/cli": "^2.1.5",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.3.1",
     "typescript": "^4.4.4"
   },
   "scripts": {
     "build": "preconstruct build",
     "watch": "preconstruct watch",
     "dev": "preconstruct dev",
-    "validate": "preconstruct validate"
+    "validate": "preconstruct validate",
+    "test": "jest"
   },
   "workspaces": [
-    "packages/*",
-    "demo"
+    "packages/*"
   ],
   "preconstruct": {
     "packages": [
@@ -25,6 +28,7 @@
     ]
   },
   "dependencies": {
-    "@babel/preset-typescript": "^7.15.0"
+    "babel-jest": "^27.3.1",
+    "ts-node": "^10.4.0"
   }
 }
