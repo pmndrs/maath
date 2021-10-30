@@ -28,20 +28,27 @@ describe("Triangle", () => {
     expect(triangleDeterminant(clockwiseTriangle.reverse())).toBe(-2);
   });
 
-  test("isPointInTriangle", () => {
+  describe("isPointInTriangle", () => {
+    
     const triangle = [
       [-1, 0],
       [0, 1],
       [1, 0],
     ];
 
-    // point is ON triangle
-    expect(isPointInTriangle([0, 0], triangle)).toBe(true);
+    it("returns true if point is on an edge", () => {
+      expect(isPointInTriangle([0, 0], triangle)).toBe(true);
+    })
 
-    // point is obviously outside
-    expect(isPointInTriangle([10, 10], triangle)).toBe(false);
+    it("returns false if point is outside of triangle", () => {
+      expect(isPointInTriangle([10, 10], triangle)).toBe(false);
+    })
   });
 
+  /**
+    ●──────●──────●
+    A      B      C
+   */
   test("arePointsCollinear", () => {
     expect(arePointsCollinear(collinearTriangle)).toBe(true);
     expect(arePointsCollinear(clockwiseTriangle)).toBe(false);
@@ -49,6 +56,7 @@ describe("Triangle", () => {
 
   test("getCircumcircle", () => {
     expect(getCircumcircle(collinearTriangle)).toBe(null);
+
     expect(getCircumcircle(clockwiseTriangle)).toStrictEqual({
       x: -1,
       y: 0,
@@ -56,28 +64,88 @@ describe("Triangle", () => {
     });
   });
 
-  test("isPointInCircumcircle", () => {
-    // point is one of the vertices
-    expect(isPointInCircumcircle([0, 0], clockwiseTriangle)).toBe(true);
+  describe("isPointInCircumcircle", () => {
+    it("throws if passed collinear points", () => {
+      expect(() => isPointInCircumcircle([0, 0], collinearTriangle)).toThrow(Error)
+    })
+    
+    /**
+              B            
+          .───●───.        
+       ,─'   ╱ ╲   '─.     
+     ,'     ╱   ╲     `.   
+    ╱      ╱     ╲      ╲  
+   ;      ╱       ╲      : 
+   │     ╱         ╲     │ 
+   │    ╱           ╲    │ 
+   :   ╱             ╲   ; 
+    ╲ ╱               ╲ ╱  
+     ●─────────────────●   
+A / P `.             ,' C  
+        '─.       ,─'      
+           `─────'               
+     */
+    it("returns true if point is one of the vertices", () => {
+      expect(isPointInCircumcircle([0, 0], clockwiseTriangle)).toBe(true);
+    })
 
-    // point lies on edge
-    expect(isPointInCircumcircle([-1, 0], clockwiseTriangle)).toBe(true)
+    /**
+              B            
+          .───●───.        
+       ,─'   ╱ ╲   '─.     
+     ,'     ╱   ╲     `.   
+    ╱      ╱     ╲      ╲  
+   ;      ╱       ╲      : 
+   │     ╱         ╲     │ 
+   │    ╱           ╲    │ 
+   :   ╱             ╲   ; 
+    ╲ ╱      ┌─┐      ╲ ╱  
+     ●───────┤P├───────●   
+  A   `.     └─┘     ,' C  
+        '─.       ,─'      
+           `─────'         
+     */
+    it("returns true if point lies on an edge", () => {
+      expect(isPointInCircumcircle([-1, 0], clockwiseTriangle)).toBe(true)
+    })
 
-    // point is outside
-    expect(isPointInCircumcircle([10, 0], clockwiseTriangle)).toBe(false);
+/**
+
+              B             ┌─┐
+          .───●───.         │P│
+       ,─'   ╱ ╲   '─.      └─┘
+     ,'     ╱   ╲     `.       
+    ╱      ╱     ╲      ╲      
+   ;      ╱       ╲      :     
+   │     ╱         ╲     │     
+   │    ╱           ╲    │     
+   :   ╱             ╲   ;     
+    ╲ ╱               ╲ ╱      
+     ●─────────────────●       
+  A   `.             ,' C      
+        '─.       ,─'          
+           `─────'             
+
+ */
+    it("returns false if point is outside of triangle", () => {
+      expect(isPointInCircumcircle([10, 10], clockwiseTriangle)).toBe(false);
+    })
   });
 
 
-  test("doThreePointsMakeARight", () => {
+  describe("doThreePointsMakeARight", () => {
 
-    // collinear points don't make any turn
-    expect(doThreePointsMakeARight(collinearTriangle)).toBe(false)
+    it("returns false if points are collinear, thus not making any turn", () => {
+      expect(doThreePointsMakeARight(collinearTriangle)).toBe(false)
+    })
 
-    // clockwise triangle should make a right turn
-    expect(doThreePointsMakeARight(clockwiseTriangle)).toBe(true)
+    it("returns true if points are clockwise, thus making a right turn", () => {
+      expect(doThreePointsMakeARight(clockwiseTriangle)).toBe(true)
+    })
 
-    // counterclockwise triangle should make a left turn
-    expect(doThreePointsMakeARight(clockwiseTriangle.reverse())).toBe(false)
+    it ("returns false if points are counter-clockwise, thus making a left turn", () => {
+      expect(doThreePointsMakeARight(clockwiseTriangle.reverse())).toBe(false)
+    })
 
   })
 });

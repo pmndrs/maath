@@ -70,6 +70,35 @@ export function isTriangleClockwise(triangle: Triangle) {
   return triangleDeterminant(triangle) < 0
 }
 
+/**
+ 
+The circumcircle is a circle touching all the vertices of a triangle or polygon.
+
+             ┌───┐             
+             │ B │             
+             └───┘             
+           .───●───.           
+        ,─'   ╱ ╲   '─.        
+      ,'     ╱   ╲     `.      
+     ╱      ╱     ╲      ╲     
+    ;      ╱       ╲      :    
+    │     ╱         ╲     │    
+    │    ╱           ╲    │    
+    :   ╱             ╲   ;    
+     ╲ ╱               ╲ ╱     
+┌───┐ ●─────────────────● ┌───┐
+│ A │  `.             ,'  │ C │
+└───┘    '─.       ,─'    └───┘
+            `─────'                         
+ */
+
+/**
+ * 
+ * @param triangle 
+ * 
+ * @returns {number} circumcircle 
+ */
+
 // https://math.stackexchange.com/a/1460096
 export function getCircumcircle(triangle: Triangle) {
   const [ax, ay] = triangle[0]
