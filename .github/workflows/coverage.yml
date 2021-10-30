@@ -1,4 +1,4 @@
-name: "coverage"
+name: "test"
 on:
   pull_request:
     branches:
@@ -14,10 +14,5 @@ jobs:
         run: yarn
       - name: Preconstruct Build
         run: yarn build
-      - name: TestCoverage
-        uses: artiomtr/jest-coverage-report-action@v2.0-rc.6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          package-manager: yarn
-          skip-step: all
-          #   threshold: 80 # optional parameter
+      - name: test
+        run: yarn test
