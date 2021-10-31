@@ -7,10 +7,10 @@
   "types": "dist/maath.cjs.d.ts",
   "preconstruct": {
     "entrypoints": [
-      "buffer-utils.ts",
+      "buffer.ts",
       "matrix.ts",
       "random.ts",
-      "stuff.ts",
+      "misc.ts",
       "triangle.ts",
       "utils.ts"
     ]

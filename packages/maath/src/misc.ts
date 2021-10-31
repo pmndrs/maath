@@ -1,4 +1,3 @@
-import { MathUtils } from "three";
 import type { TypedArray } from "./types";
 
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
@@ -24,16 +23,6 @@ export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
 }
 
 // buffer utils
-export function lerpBuffers(
-  bufferA: TypedArray,
-  bufferB: TypedArray,
-  final: TypedArray,
-  t: number
-) {
-  for (let i = 0; i < bufferA.length; i++) {
-    final[i] = MathUtils.lerp(bufferA[i], bufferB[i], t);
-  }
-}
 
 // TODO Fix these types
 // timing

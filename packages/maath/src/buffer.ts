@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "three";
+import { MathUtils, Vector2, Vector3 } from "three";
 import type { TypedArray } from "./types";
 
 export function bufferToVectorArray(buffer: TypedArray, stride = 3) {
@@ -46,4 +46,15 @@ export function addAxis(
   }
 
   return newBuffer;
+}
+
+export function lerpBuffers(
+  bufferA: TypedArray,
+  bufferB: TypedArray,
+  final: TypedArray,
+  t: number
+) {
+  for (let i = 0; i < bufferA.length; i++) {
+    final[i] = MathUtils.lerp(bufferA[i], bufferB[i], t);
+  }
 }
