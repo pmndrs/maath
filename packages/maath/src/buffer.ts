@@ -1,15 +1,15 @@
 import { MathUtils, Vector2, Vector3 } from "three";
 import type { TypedArray } from "./types";
 
-export function bufferToVectorArray(buffer: TypedArray, stride = 3) {
+export function toVectorArray(buffer: TypedArray, stride = 3) {
   const p = [];
 
-  for (let i = 0; i < buffer.length; i += stride) {
-    p[i] = new (stride === 3 ? Vector3 : Vector2)(
-      buffer[i],
-      buffer[i + 1],
-      buffer[i + 2]
-    );
+  for (let i = 0, j = 0; i < buffer.length; i += stride, j++) {
+    if (stride === 3) {
+      p[j] = new Vector3(buffer[i], buffer[i + 1], buffer[i + 2]);
+    } else {
+      p[j] = new Vector2(buffer[i], buffer[i + 1]);
+    }
   }
 
   return p;

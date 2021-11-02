@@ -1,4 +1,6 @@
-import type { TypedArray } from "./types";
+import { Vector2, Vector3 } from "three";
+import { MyVector2 } from "../dist/declarations/src/types";
+import type { MyVector3, TypedArray } from "./types";
 
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
 export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
@@ -22,15 +24,6 @@ export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
   }
 }
 
-// buffer utils
-
-// TODO Fix these types
-// timing
-// @ts-ignore
-export const rsqw = (t, delta = 0.01, a = 1, f = 1 / (2 * Math.PI)) =>
-  (a / Math.atan(1 / delta)) * Math.atan(Math.sin(2 * Math.PI * t * f) / delta);
-
-// bits
 // @ts-ignore
 export function vectorEquals(a, b, eps = Number.EPSILON) {
   return (
@@ -38,4 +31,27 @@ export function vectorEquals(a, b, eps = Number.EPSILON) {
     Math.abs(a.y - b.y) < eps &&
     Math.abs(a.z - b.z) < eps
   );
+}
+
+/**
+ * Sorts vectors in lexicographic order, works with both v2 and v3
+ *
+ *  Use as:
+ *  const sorted = arrayOfVectors.sort(lexicographicOrder)
+ */
+// https://en.wikipedia.org/wiki/Lexicographic_order
+export function lexicographic(a: Vector2 & Vector3, b: Vector2 & Vector3) {
+  if (a.x === b.x) {
+    // do a check to see if points is 3D,
+    // in which case add y eq check and sort by z
+    if (typeof a.z !== 'undefined') {
+      if (a.y === b.y) {
+        return a.z - b.z
+      }
+    }
+
+    return a.y - b.y
+  }
+
+  return a.x - b.x
 }

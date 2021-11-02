@@ -1,6 +1,6 @@
 {
   "name": "maath",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.5",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
@@ -8,9 +8,10 @@
   "preconstruct": {
     "entrypoints": [
       "buffer.ts",
+      "easing.ts",
       "matrix.ts",
-      "random.ts",
       "misc.ts",
+      "random.ts",
       "triangle.ts",
       "utils.ts"
     ]
