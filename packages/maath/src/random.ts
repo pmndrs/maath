@@ -21,6 +21,8 @@ export function onSphere(
     buffer[i + 1] = Math.sin(theta) * Math.sin(phi) * radius;
     buffer[i + 2] = Math.cos(theta) * radius;
   }
+
+  return buffer
 }
 
 // TODO Fix center offset
@@ -48,6 +50,8 @@ export function inSphere(
     buffer[i + 1] = y * radius;
     buffer[i + 2] = z * radius;
   }
+
+  return buffer
 }
 
 // random circle https://stackoverflow.com/a/50746409
@@ -64,6 +68,8 @@ export function inCircle(
     buffer[i] = Math.sin(theta) * r + center[0];
     buffer[i + 1] = Math.cos(theta) * r + center[1];
   }
+
+  return buffer
 }
 
 export function onCircle(
@@ -78,4 +84,28 @@ export function onCircle(
     buffer[i] = Math.sin(theta) * radius + center[0];
     buffer[i + 1] = Math.cos(theta) * radius + center[1];
   }
+
+  return buffer
+}
+
+export function inBox(
+  buffer: TypedArray,
+  { sides = 1, center = [0, 0, 0] }: {
+    sides: number | number[],
+    center?: number[]
+  }
+) {
+
+  const sideX = typeof sides === "number" ? sides : sides[0]
+  const sideY = typeof sides === "number" ? sides : sides[1]
+  const sideZ = typeof sides === "number" ? sides : sides[2]
+
+  
+  for (let i = 0; i < buffer.length; i+=3) {
+    buffer[i] = (Math.random() - .5) * sideX + center[0]
+    buffer[i+1] = (Math.random() - .5) * sideY + center[1]
+    buffer[i+2] = (Math.random() - .5) * sideZ + center[2]
+  }
+
+  return buffer
 }

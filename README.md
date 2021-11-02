@@ -31,6 +31,10 @@ If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
 
 ### Buffer
 
+```js
+import * as buffer from 'maath/buffer'
+```
+
 #### 🪶 toVectorArray(buffer, stride)
 
 Converts an `[..., x, y, z, ...]` typed array to a `Vector[]`
@@ -126,6 +130,15 @@ const minor = getMinor([
 
 ### Misc
 ### Random
+
+#### 🪶 onTorus(buffer, { innerRadius, outerRadius })
+
+[TODO](https://math.stackexchange.com/questions/2017079/uniform-random-points-on-a-torus)
+
+#### 🪶 inTorus(buffer, { innerRadius, outerRadius })
+
+[TODO](https://answers.unity.com/questions/1259394/finding-random-position-in-torus.html)
+
 ### Triangle
 
 
