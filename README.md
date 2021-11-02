@@ -26,7 +26,7 @@ Do you want to add something? No rules, but keep these in mind:
 - keep copy-paste simple. Try not to add too many inter-dependencies so the functions are copy-paste friendly
 - loose typing. Try to add typing, but don't go crazy with generics and complexity
 
-If you are not sure how to help, check out the [🟡 Roadmap](#🟡-roadmap) below.
+If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
 ## Functions
 
 ### Random
