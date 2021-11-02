@@ -27,21 +27,63 @@ Do you want to add something? No rules, but keep these in mind:
 - loose typing. Try to add typing, but don't go crazy with generics and complexity
 
 If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
-## Functions
+## 🪶 Reference
 
-### Random
+### Buffer
 
-Functions that give distributions of points in a space. Notice how we use IN and ON in the function names to determine wether the points are in the volume or on the surface.
+#### toVectorArray
 
-- **inCircle**: random points in a circle of given radius
-- **onCircle**: random points on the circumference of a circle of given radius
+Converts an `[..., x, y, z, ...]` typed array to a `Vector[]`
 
-- **inSphere**: random uniform points in a sphere of given radius
-- **onSphere**: random uniform points on the surface of a sphere of given radius
+```js
+const myBuffer = new Float32Array(100 * 3)
+const myArray = toVectorArray(myBuffer, 3) 
+```
 
+
+#### swizzleBuffer 
+
+[Swizzle](https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)) the individual vectors in a vector buffer
+
+```js
+const myBuffer = new Float32Array(100 * 3)
+myBuffer.push(0, 1, 2)
+
+swizzleBuffer(myBuffer, 'xzy') // buffer is now [0, 2, 1] 
+```
+
+This is a way to make simple rotations.
+
+#### addAxis
+
+Adds a z axis to an `[..., x, y, ...]` typed array:
+
+```js
+const my2DBuffer = new Float32Array(100 * 2)
+
+const my3DBuffer = addAxis(my2DBuffer, () => Math.random()) // zAxis will now be a random value between 0 and 1
+```
+
+### lerpBuffers 
+
+Linearly interpolate two buffers, writing on a third one.
+
+```js
+const mySphere = inSphere(new Float32Array(100 * 3), { radius: 4 })
+const myBox = inBox(new Float32Array(100 * 3), { side: 4 })
+
+const interpolationTarget = myBox.slice(0)
+
+lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()))
+```
+
+### Easing
+### Matrix
 ### Misc
+### Random
+### Triangle
 
-- **fibonacciOnSphere**: a Fibonacci lattice mapped on the surface of a sphere of given radius
+
 
 
 ### 🟡 Roadmap
