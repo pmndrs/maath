@@ -17,7 +17,7 @@ The library is mostly meant to be used with [three.js](https://github.com/mrdoob
 
 Yes, there are a lot of these libraries. The more the merrier! We are all here to learn, and maintaining a dedicated library for our creative endeavors at [Poimandres](https://github.com/pmndrs) just made sense.
 
-### Contributing
+## Contributing
 
 Do you want to add something? No rules, but keep these in mind:
 
@@ -31,7 +31,7 @@ If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
 
 ### Buffer
 
-#### toVectorArray
+#### toVectorArray(buffer, stride)
 
 Converts an `[..., x, y, z, ...]` typed array to a `Vector[]`
 
@@ -41,7 +41,7 @@ const myArray = toVectorArray(myBuffer, 3)
 ```
 
 
-#### swizzleBuffer 
+#### swizzleBuffer(buffer, axes)
 
 [Swizzle](https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)) the individual vectors in a vector buffer
 
@@ -54,7 +54,7 @@ swizzleBuffer(myBuffer, 'xzy') // buffer is now [0, 2, 1]
 
 This is a way to make simple rotations.
 
-#### addAxis
+#### addAxis(buffer, getZValue)
 
 Adds a z axis to an `[..., x, y, ...]` typed array:
 
@@ -64,7 +64,7 @@ const my2DBuffer = new Float32Array(100 * 2)
 const my3DBuffer = addAxis(my2DBuffer, () => Math.random()) // zAxis will now be a random value between 0 and 1
 ```
 
-### lerpBuffers 
+#### lerpBuffers(bufferA, bufferB, destinationBuffer, t)
 
 Linearly interpolate two buffers, writing on a third one.
 
@@ -78,7 +78,52 @@ lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()))
 ```
 
 ### Easing
+
+TBD
+
 ### Matrix
+
+#### determinant2(...matrixInRowMajorOrder)
+
+Returns the determinant of a passed 2x2 matrix:
+
+```js
+const d = determinant2(
+  1, 1,
+  2, 2
+)
+```
+
+
+#### determinant3(...matrixInRowMajorOrder)
+
+Returns the determinant of a passed 3x3 matrix:
+
+```js
+const d = determinant3(
+  1, 1, 1,
+  2, 2, 2
+)
+```
+
+#### determinant4(...matrixInRowMajorOrder) // TBD
+
+#### getMinor(matrix, column, row) 
+
+Returns the [minor](https://en.wikipedia.org/wiki/Minor_(linear_algebra)) of a given matrix.
+
+```js
+const minor = getMinor([
+  1, 2, 1,
+  2, 1, 1,
+  3, 2, 3
+], 1, 1)
+
+// minor will be the determinant of the submatrix without row 1 and colum 1
+// | 1 1 |
+// | 2 3 |
+```
+
 ### Misc
 ### Random
 ### Triangle
@@ -86,7 +131,7 @@ lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()))
 
 
 
-### 🟡 Roadmap
+## 🟡 Roadmap
 
 - Make the random generator seedable for every function
 - Figure out a good API for vectors
