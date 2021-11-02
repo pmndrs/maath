@@ -31,7 +31,7 @@ If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
 
 ### Buffer
 
-#### toVectorArray(buffer, stride)
+#### 🪶 toVectorArray(buffer, stride)
 
 Converts an `[..., x, y, z, ...]` typed array to a `Vector[]`
 
@@ -41,7 +41,7 @@ const myArray = toVectorArray(myBuffer, 3)
 ```
 
 
-#### swizzleBuffer(buffer, axes)
+#### 🪶 swizzleBuffer(buffer, axes)
 
 [Swizzle](https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)) the individual vectors in a vector buffer
 
@@ -54,7 +54,7 @@ swizzleBuffer(myBuffer, 'xzy') // buffer is now [0, 2, 1]
 
 This is a way to make simple rotations.
 
-#### addAxis(buffer, getZValue)
+#### 🪶 addAxis(buffer, getZValue)
 
 Adds a z axis to an `[..., x, y, ...]` typed array:
 
@@ -64,7 +64,7 @@ const my2DBuffer = new Float32Array(100 * 2)
 const my3DBuffer = addAxis(my2DBuffer, () => Math.random()) // zAxis will now be a random value between 0 and 1
 ```
 
-#### lerpBuffers(bufferA, bufferB, destinationBuffer, t)
+#### 🪶 lerpBuffers(bufferA, bufferB, destinationBuffer, t)
 
 Linearly interpolate two buffers, writing on a third one.
 
@@ -83,7 +83,7 @@ TBD
 
 ### Matrix
 
-#### determinant2(...matrixInRowMajorOrder)
+#### 🪶 determinant2(...matrixInRowMajorOrder)
 
 Returns the determinant of a passed 2x2 matrix:
 
@@ -95,7 +95,7 @@ const d = determinant2(
 ```
 
 
-#### determinant3(...matrixInRowMajorOrder)
+#### 🪶 determinant3(...matrixInRowMajorOrder)
 
 Returns the determinant of a passed 3x3 matrix:
 
@@ -106,9 +106,9 @@ const d = determinant3(
 )
 ```
 
-#### determinant4(...matrixInRowMajorOrder) // TBD
+#### 🪶 determinant4(...matrixInRowMajorOrder) // TBD
 
-#### getMinor(matrix, column, row) 
+#### 🪶 getMinor(matrix, column, row) 
 
 Returns the [minor](https://en.wikipedia.org/wiki/Minor_(linear_algebra)) of a given matrix.
 
