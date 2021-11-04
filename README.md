@@ -44,7 +44,6 @@ const myBuffer = new Float32Array(100 * 3)
 const myArray = toVectorArray(myBuffer, 3) 
 ```
 
-
 #### 🪶 swizzleBuffer(buffer, axes)
 
 [Swizzle](https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)) the individual vectors in a vector buffer
@@ -83,9 +82,17 @@ lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()))
 
 ### Easing
 
+```js
+import * as easing from 'maath/easing'
+```
+
 TBD
 
 ### Matrix
+
+```js
+import * as matrix from 'maath/matrix'
+```
 
 #### 🪶 determinant2(...matrixInRowMajorOrder)
 
@@ -97,7 +104,6 @@ const d = determinant2(
   2, 2
 )
 ```
-
 
 #### 🪶 determinant3(...matrixInRowMajorOrder)
 
@@ -129,7 +135,18 @@ const minor = getMinor([
 ```
 
 ### Misc
+
+```js
+import * as misc from 'maath/misc'
+```
+
+TBD
+
 ### Random
+
+```js
+import * as random from 'maath/random'
+```
 
 #### 🪶 onTorus(buffer, { innerRadius, outerRadius })
 
@@ -141,8 +158,11 @@ const minor = getMinor([
 
 ### Triangle
 
+```js
+import * as triangle from 'maath/triangle'
+```
 
-
+TBD
 
 ## 🟡 Roadmap
 
