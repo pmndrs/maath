@@ -1,0 +1,4 @@
+{
+  "main": "dist/maath-random-fn.cjs.js",
+  "module": "dist/maath-random-fn.esm.js"
+}

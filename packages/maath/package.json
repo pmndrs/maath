@@ -1,22 +1,28 @@
 {
   "name": "maath",
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1-alpha.6",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
   "types": "dist/maath.cjs.d.ts",
   "preconstruct": {
     "entrypoints": [
-      "buffer.ts",
       "easing.ts",
       "matrix.ts",
       "misc.ts",
-      "random.ts",
+      "random/index.ts",
+      "random/fn.ts",
       "triangle.ts",
-      "utils.ts"
+      "utils.ts",
+      "buffer/index.ts",
+      "buffer/fn.ts"
     ]
   },
   "dependencies": {
+    "@types/lodash": "^4.14.176",
+    "@types/lodash-es": "^4.17.5",
+    "lodash-es": "^4.17.21",
+    "lodash.curry": "^4.1.1",
     "three": "^0.134.0"
   },
   "devDependencies": {
