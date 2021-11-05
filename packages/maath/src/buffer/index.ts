@@ -16,6 +16,8 @@ export function toVectorArray(buffer: TypedArray, stride = 3) {
   return p;
 }
 
+console.log('yoooo')
+
 export function toBuffer<T extends Vector2 | Vector3>(
   vectorArray: T[] | T[],
   stride = 2
