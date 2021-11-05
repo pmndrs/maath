@@ -1,4 +1,4 @@
-import type { TypedArray } from "./types";
+import type { TypedArray } from "../ctypes";
 
 const TAU = Math.PI * 2;
 
@@ -17,6 +17,21 @@ const defaultSphere = {
 
 const random = () => Math.random();
 
+export function distribute(buffer: TypedArray, stride: number = 2, amp = 1) {
+
+  for (let i = 0; i < buffer.length; i += 3) {
+
+    buffer[i] = buffer[i] + 0 * amp
+    buffer[i] = buffer[i + 1] + 0 * amp
+
+    if (stride === 3) {
+      buffer[i + 2] = buffer[i+2] + 0 * amp;
+    }
+  }
+  
+  return buffer;
+
+}
 // random on surface of sphere
 // - https://twitter.com/fermatslibrary/status/1430932503578226688
 // - https://mathworld.wolfram.com/SpherePointPicking.html
@@ -82,7 +97,7 @@ const defaultCircle = {
 };
 
 // random circle https://stackoverflow.com/a/50746409
-export function inCircle(buffer: TypedArray, circle?: Circle) {
+export function inCircle(buffer: TypedArray, circle?: Circle): TypedArray {
   const { radius, center } = {
     ...defaultCircle,
     ...circle,
@@ -124,9 +139,25 @@ type Rect = {
 
 const defaultRect = {
   sides: 1,
+  center: [0, 0]
 };
 
-export function inRect(buffer: TypedArray, rect?: Rect) {
+export function inRect<T extends TypedArray>(buffer: T, rect?: Rect): T {
+  const { sides, center } = {
+    ...defaultRect,
+    ...rect,
+  };
+
+  const sideX = typeof sides === "number" ? sides : sides[0]
+  const sideY = typeof sides === "number" ? sides : sides[1]
+  
+  
+  for (let i = 0; i < buffer.length; i += 2) {
+    buffer[i] = (Math.random() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (Math.random() - 0.5) * sideY + center[1];
+  }
+  
+  
   return buffer;
 }
 

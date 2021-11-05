@@ -1,7 +1,6 @@
-import { Matrix4, Quaternion, Vector, Vector2, Vector3 } from "three";
-import { MyVector2, MyVector3 } from "../../dist/declarations/src/types";
-import type { TypedArray } from "../types";
-import { lerp } from "../utils";
+import { Quaternion, Vector2, Vector3 } from "three";
+import type { TypedArray, MyVector2, MyVector3 } from "../ctypes";
+import { lerp as _lerp } from "../utils";
 
 export function toVectorArray(buffer: TypedArray, stride = 3) {
   const p = [];
@@ -17,7 +16,28 @@ export function toVectorArray(buffer: TypedArray, stride = 3) {
   return p;
 }
 
-export function swizzleBuffer(buffer: TypedArray, stride = 3, swizzle = "xyz") {
+export function toBuffer<T extends Vector2 | Vector3>(
+  vectorArray: T[] | T[],
+  stride = 2
+) {
+  const l = vectorArray.length;
+  const buffer = new Float32Array(l * stride);
+
+  for (let i = 0; i < l; i++) {
+    let j = i * stride;
+
+    buffer[j] = vectorArray[i].x;
+    buffer[j + 1] = vectorArray[i].y;
+
+    if (stride === 3) {
+      buffer[j + 2] = (vectorArray[i] as Vector3).z;
+    }
+  }
+
+  return buffer;
+}
+
+export function swizzle(buffer: TypedArray, stride = 3, swizzle = "xyz") {
   const o = { x: 0, y: 0, z: 0 };
   for (let i = 0; i < buffer.length; i += stride) {
     o.x = buffer[i];
@@ -38,7 +58,7 @@ export function swizzleBuffer(buffer: TypedArray, stride = 3, swizzle = "xyz") {
 export function addAxis(
   buffer: TypedArray,
   valueGenerator: () => number = () => Math.random()
-) {
+): TypedArray {
   const newBuffer = new Float32Array((buffer.length / 2) * 3) as TypedArray;
 
   for (let i = 0; i < buffer.length; i += 2) {
@@ -52,18 +72,18 @@ export function addAxis(
   return newBuffer;
 }
 
-export function lerpBuffers(
+export function lerp(
   bufferA: TypedArray,
   bufferB: TypedArray,
   final: TypedArray,
   t: number
 ) {
   for (let i = 0; i < bufferA.length; i++) {
-    final[i] = lerp(bufferA[i], bufferB[i], t);
+    final[i] = _lerp(bufferA[i], bufferB[i], t);
   }
 }
 
-export function translateBuffer(
+export function translate(
   buffer: TypedArray,
   translationVector: MyVector2 | MyVector3
 ) {
@@ -84,7 +104,8 @@ const defaultRotation = {
 };
 
 const v = new Vector3();
-export function rotateBuffer(
+
+export function rotate(
   buffer: TypedArray,
   rotation: { q: Quaternion; center?: number[] }
 ) {
@@ -106,5 +127,5 @@ export function rotateBuffer(
     buffer[i + 2] = v.z + center[1];
   }
 
-  return buffer
+  return buffer;
 }

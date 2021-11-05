@@ -1,91 +1,124 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Point } from "@react-three/drei";
-import {
-  BufferAttribute,
-  BufferGeometry,
-  Euler,
-  MathUtils,
-  NormalBlending,
-  Quaternion,
-  Vector3,
-} from "three";
+import { Line, OrbitControls } from "@react-three/drei";
+import { Quaternion, Vector3 } from "three";
 
 import "./materials";
 
-import { inSphere } from "maath/random";
-import { lerpBuffers } from "maath/buffer";
-import { useControls } from "leva";
+import * as random from "maath/random";
+import * as buffer from "maath/buffer";
+import * as misc from "maath/misc";
 
-import { translateBuffer, rotateBuffer } from "maath/buffer/fn";
-import { onCircle, onSphere, inBox } from "maath/random/fn";
+import Points from "./Points";
+import { addAxis, toVectorArray } from "maath/buffer";
 
 // prettier-ignore
 // @ts-ignore
 const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 
-function LerpBuffers() {
-  const [{ geometry, box, sphere }] = useState(() => {
-    // @ts-ignore
-    const box = pipe(
-      () => new Float32Array(10_000 * 3),
-      inBox({ sides: [1, 3, 1] }),
-      translateBuffer([0, 1, 0])
-    )();
+const makePoints = () => {};
 
-    const sphere = inSphere(new Float32Array(10_000 * 3), { radius: 1 });
+function ConvexHullDemo() {
+  const pointsRef = useRef<THREE.Points>(null!);
+  const convexHullPointsRef = useRef<THREE.Points>(null!);
+  const [{ points, randomizedPoints, final }, setPoints] = useState(() => {
+    const points = random.inRect(new Float32Array(100 * 2)) as Float32Array;
+    const randomizedPoints = random.inCircle(
+      new Float32Array(100 * 2)
+    ) as Float32Array;
 
-    const final = sphere.slice(0);
+    const final = points.slice(0);
 
-    const geometry = new BufferGeometry();
-    geometry.setAttribute("position", new BufferAttribute(final, 3));
-
-    return { geometry, box, sphere };
+    return { points, randomizedPoints, final };
   });
+
+  let convexHullPoints = new Float32Array(10);
 
   useFrame(({ clock }) => {
-    const t = (Math.sin(clock.getElapsedTime()) + 1) * .5;
+    const t = (Math.sin(clock.getElapsedTime()) + 1) * 0.5;
+    buffer.lerp(points, randomizedPoints, final, t);
 
-    const q = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0).normalize(), (t) * 0.1)
-
-    rotateBuffer(box, {
-      q,
-    });
-
-    lerpBuffers(
-      box,
-      sphere,
-      geometry.getAttribute("position").array as Float32Array,
-      0
+    convexHullPoints = buffer.toBuffer(
+      misc.convexHull(buffer.toVectorArray(final, 2) as THREE.Vector2[]),
+      2
     );
 
-    geometry.attributes.position.needsUpdate = true;
-  });
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    convexHullPointsRef.current.geometry.attributes.position.needsUpdate = true;
 
-  const props = useControls({
-    uFocus: { value: 5, min: 3, max: 7, step: 0.01 },
-    aperture: { value: 3, min: 1, max: 5.6, step: 0.1 },
-    uFov: { value: 0, min: 0, max: 200 },
+    
   });
 
   return (
-    <points>
-      <primitive object={geometry} attach="geometry" />
-      <pointsMaterial size={0.02} />
-      {/* @ts-ignore */}
-      {/* <dofPointsMaterial transparent color="white" blending={NormalBlending} depthWrite={false} {...props} uBlur={(5.6 - props.aperture) * 9} /> */}
-    </points>
+    <>
+      <Points points={final} stride={2} ref={pointsRef}>
+        <pointsMaterial size={0.03} />
+      </Points>
+
+      <Points points={convexHullPoints} stride={2} ref={convexHullPointsRef}>
+        <pointsMaterial size={0.1} color="red" />
+      </Points>
+    </>
+  );
+}
+
+function Lerpbuffer() {
+  const pointsRef = useRef<THREE.Points>(null!);
+  const [{ box, sphere, final }] = useState(() => {
+    // @ts-ignore
+    const box = random.inBox(new Float32Array(10_000), { sides: [1, 2, 1] });
+    const sphere = random.inSphere(box.slice(0), { radius: 0.75 });
+    const final = box.slice(0); // final buffer that will be used for the points mesh
+
+    return { box, sphere, final };
+  });
+
+  useFrame(({ clock }) => {
+    const dt = clock.getElapsedTime();
+    const t = (Math.sin(dt) + 1) * 0.5;
+    const t2 = Math.cos(dt * 2 + 1) * 0.5;
+
+    const q = new Quaternion().setFromAxisAngle(
+      new Vector3(1, 1, 0).normalize(),
+      t2 * 0.1
+    );
+
+    buffer.rotate(box, {
+      q,
+    });
+
+    if (pointsRef.current) {
+      buffer.lerp(
+        box,
+        sphere,
+        pointsRef.current.geometry.getAttribute("position")
+          .array as Float32Array,
+        t
+      );
+
+      pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    }
+  });
+
+  return (
+    <Points points={final} stride={3} ref={pointsRef}>
+      <pointsMaterial size={0.03} />
+    </Points>
   );
 }
 
 function App() {
   return (
-    <Canvas linear camera={{ position: [0, 0, 6], fov: 25 }}>
+    <Canvas linear camera={{ position: [0, 0, 10], fov: 25 }}>
       <axesHelper />
-      <LerpBuffers />
+
+      <group position={[-2, 0, 0]}>
+        <Lerpbuffer />
+      </group>
+      <ConvexHullDemo />
       <OrbitControls />
       <color args={["#080406"]} attach="background" />
     </Canvas>
