@@ -4,7 +4,7 @@ import "./App.css";
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
-import { Quaternion, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Material, Quaternion, Vector3 } from "three";
 
 import "./materials";
 
@@ -13,6 +13,7 @@ import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
 
 import Points from "./Points";
+import Lines from "./Lines";
 import { addAxis, toVectorArray } from "maath/buffer";
 
 // prettier-ignore
@@ -23,7 +24,8 @@ const makePoints = () => {};
 
 function ConvexHullDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
-  const convexHullPointsRef = useRef<THREE.Points>(null!);
+  const lineRef = useRef<any>(null!);
+
   const [{ points, randomizedPoints, final }, setPoints] = useState(() => {
     const points = random.inRect(new Float32Array(100 * 2)) as Float32Array;
     const randomizedPoints = random.inCircle(
@@ -41,15 +43,14 @@ function ConvexHullDemo() {
     const t = (Math.sin(clock.getElapsedTime()) + 1) * 0.5;
     buffer.lerp(points, randomizedPoints, final, t);
 
-    convexHullPoints = buffer.toBuffer(
-      misc.convexHull(buffer.toVectorArray(final, 2) as THREE.Vector2[]),
-      2
+    const convexHullPoints = misc.convexHull(
+      buffer.toVectorArray(final, 2) as THREE.Vector2[]
     );
+    2;
 
     pointsRef.current.geometry.attributes.position.needsUpdate = true;
-    convexHullPointsRef.current.geometry.attributes.position.needsUpdate = true;
 
-    
+    lineRef.current.geometry.setFromPoints([...convexHullPoints, convexHullPoints[0]], 2)
   });
 
   return (
@@ -58,9 +59,10 @@ function ConvexHullDemo() {
         <pointsMaterial size={0.03} />
       </Points>
 
-      <Points points={convexHullPoints} stride={2} ref={convexHullPointsRef}>
-        <pointsMaterial size={0.1} color="red" />
-      </Points>
+      <line ref={lineRef}>
+        <bufferGeometry />
+        <lineBasicMaterial />
+      </line>
     </>
   );
 }
