@@ -3,7 +3,7 @@ import "./App.css";
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { RoundedBox, Text } from "@react-three/drei";
-import { EllipseCurve, Quaternion, Vector3 } from "three";
+import { EllipseCurve, Group, Quaternion, Vector3 } from "three";
 
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
@@ -11,6 +11,7 @@ import * as misc from "maath/misc";
 
 import Points from "./Points";
 import { getCircumcircle } from "maath/triangle";
+import { lerp } from "maath/misc";
 
 function ConvexHullDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
@@ -156,6 +157,9 @@ function TrianglesDemo() {
   );
 }
 
+const rotationAxis = new Vector3(1, 1, 0).normalize();
+const q = new Quaternion();
+
 function LerpbufferDemo(props: any) {
   const pointsRef = useRef<THREE.Points>(null!);
   const [{ box, sphere, final }] = useState(() => {
@@ -168,17 +172,12 @@ function LerpbufferDemo(props: any) {
   });
 
   useFrame(({ clock }) => {
-    const dt = clock.getElapsedTime();
-    const t = misc.remap(Math.sin(dt), [-1, 1], [0, 1]);
-    const t2 = misc.remap(Math.cos(dt * 2), [-1, 1], [0, 1]);
-
-    const q = new Quaternion().setFromAxisAngle(
-      new Vector3(1, 1, 0).normalize(),
-      t2 * 0.1
-    );
+    const et = clock.getElapsedTime();
+    const t = misc.remap(Math.sin(et), [-1, 1], [0, 1]);
+    const t2 = misc.remap(Math.cos(et * 2), [-1, 1], [0, 1]);
 
     buffer.rotate(box, {
-      q,
+      q: q.setFromAxisAngle(rotationAxis, t2 * 0.1),
     });
 
     if (pointsRef.current) {
@@ -211,25 +210,59 @@ function Demo({
   color: string;
   children: ReactNode;
 }) {
-  return (
-    <group position={position}>
-      <group rotation-x={Math.PI / 2} position-y={1}>
-        <Text lineHeight={1.5}>{text}</Text>
-      </group>
-      <group scale={0.8} position={[0, 0, 0.3]}>
-        {children}
-      </group>
+  const container = useRef<Group>(null!);
+  const [hover, setHover] = useState<false | number>(false);
+  const [[p, origin]] = useState(() => [new Vector3(), new Vector3()]);
 
-      <RoundedBox
-        position={[0, 0, -0.25]}
-        castShadow
-        receiveShadow
-        args={[1.5, 1.5, 0.1]}
-        radius={0.05}
-        smoothness={1}
+  useFrame(({ clock }) => {
+    if (hover) {
+      container.current.position.z = lerp(
+        container.current.position.z,
+        misc.remap(
+          Math.sin((clock.getElapsedTime() - hover) * 3),
+          [-1, 1],
+          [-0.05, 0.05]
+        ),
+        0.1
+      );
+    } else {
+      container.current.position.z = lerp(container.current.position.z, 0, 0.1);
+    }
+  });
+
+  return (
+    <group position={position} ref={container}>
+      <mesh
+        onPointerEnter={(e) => {
+          setHover(performance.now());
+          e.stopPropagation();
+        }}
+        onPointerLeave={(e) => {
+          setHover(false);
+          e.stopPropagation();
+        }}
       >
-        <meshStandardMaterial color={color} />
-      </RoundedBox>
+        <boxGeometry args={[1.5, 1.5, 1]} />
+        <meshBasicMaterial transparent opacity={0} wireframe depthWrite={false} />
+
+        <group rotation-x={Math.PI / 2} position-y={1}>
+          <Text lineHeight={1.5}>{text}</Text>
+        </group>
+        <group scale={0.8} position={[0, 0, 0.3]}>
+          {children}
+        </group>
+
+        <RoundedBox
+          position={[0, 0, -0.25]}
+          castShadow
+          receiveShadow
+          args={[1.5, 1.5, 0.1]}
+          radius={0.05}
+          smoothness={1}
+        >
+          <meshStandardMaterial color={color} />
+        </RoundedBox>
+      </mesh>
     </group>
   );
 }

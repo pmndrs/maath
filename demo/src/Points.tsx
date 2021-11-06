@@ -2,8 +2,6 @@ import { forwardRef, ReactNode, useEffect, useState } from "react";
 
 import { BufferAttribute, BufferGeometry, Points } from "three";
 
-import "./materials";
-
 const PointsImpl = forwardRef<
   Points,
   { points: Float32Array; stride: number; children: ReactNode }
