@@ -1,6 +1,6 @@
 import { Quaternion, Vector2, Vector3 } from "three";
 import type { TypedArray, MyVector2, MyVector3 } from "../ctypes";
-import { lerp as _lerp } from "../utils";
+import { lerp as _lerp } from "../misc";
 
 export function toVectorArray(buffer: TypedArray, stride = 3) {
   const p = [];
@@ -15,8 +15,6 @@ export function toVectorArray(buffer: TypedArray, stride = 3) {
 
   return p;
 }
-
-console.log('yoooo')
 
 export function toBuffer<T extends Vector2 | Vector3>(
   vectorArray: T[] | T[],
