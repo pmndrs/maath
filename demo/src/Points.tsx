@@ -8,7 +8,7 @@ const PointsImpl = forwardRef<
   Points,
   { points: Float32Array; stride: number; children: ReactNode }
 >(function Points(props, passedRef) {
-  const { children, points, stride = 3 } = props;
+  const { children, points, stride = 3, ...rest } = props;
 
   const [geometry] = useState(() => {
     return new BufferGeometry();
@@ -19,7 +19,7 @@ const PointsImpl = forwardRef<
   }, [points]);
 
   return (
-    <points ref={passedRef}>
+    <points castShadow ref={passedRef} {...rest}>
       <primitive object={geometry} attach="geometry" />
       {children}
     </points>
