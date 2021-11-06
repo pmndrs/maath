@@ -211,15 +211,14 @@ function Demo({
   children: ReactNode;
 }) {
   const container = useRef<Group>(null!);
-  const [hover, setHover] = useState<false | number>(false);
-  const [[p, origin]] = useState(() => [new Vector3(), new Vector3()]);
+  const [hover, setHover] = useState(false);
 
   useFrame(({ clock }) => {
     if (hover) {
       container.current.position.z = lerp(
         container.current.position.z,
         misc.remap(
-          Math.sin((clock.getElapsedTime() - hover) * 3),
+          Math.sin((clock.getElapsedTime()) * 3),
           [-1, 1],
           [-0.05, 0.05]
         ),
@@ -234,7 +233,7 @@ function Demo({
     <group position={position} ref={container}>
       <mesh
         onPointerEnter={(e) => {
-          setHover(performance.now());
+          setHover(true);
           e.stopPropagation();
         }}
         onPointerLeave={(e) => {
@@ -243,11 +242,16 @@ function Demo({
         }}
       >
         <boxGeometry args={[1.5, 1.5, 1]} />
-        <meshBasicMaterial transparent opacity={0} wireframe depthWrite={false} />
+        <meshBasicMaterial
+          transparent
+          opacity={0}
+          wireframe
+          depthWrite={false}
+        />
 
-        <group rotation-x={Math.PI / 2} position-y={1}>
+        {/* <group rotation-x={Math.PI / 2} position-y={1}>
           <Text lineHeight={1.5}>{text}</Text>
-        </group>
+        </group> */}
         <group scale={0.8} position={[0, 0, 0.3]}>
           {children}
         </group>
@@ -270,43 +274,19 @@ function Demo({
 function Scene() {
   return (
     <group rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
-      <Demo
-        position={[-2, 0, 0]}
-        text={`
-            random.inBox
-            random.inSphere
-            buffer.lerp
-          `}
-        color="#ff6080"
-      >
+      <Demo position={[-2, 0, 0]} color="#ff6080">
         <group scale={0.8}>
           <LerpbufferDemo />
         </group>
       </Demo>
 
-      <Demo
-        text={`
-            random.inCircle
-            triangle.circumcircle
-            buffer.lerp
-          `}
-        color="#ffaf80"
-      >
+      <Demo color="#ffaf80">
         <group scale={0.8} position-z={-0.3}>
           <TrianglesDemo />
         </group>
       </Demo>
 
-      <Demo
-        position={[2, 0, 0]}
-        text={`
-            random.inCircle
-            random.inRect
-            misc.convexHull
-            buffer.lerp
-          `}
-        color="#20b0ff"
-      >
+      <Demo position={[2, 0, 0]} color="#20b0ff">
         <group scale={0.8} position-z={-0.3}>
           <ConvexHullDemo />
         </group>
