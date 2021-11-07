@@ -26,22 +26,19 @@ export default function PointsDemo(props: any) {
   useFrame(({ clock }) => {
     const et = clock.getElapsedTime();
     const t = misc.remap(Math.sin(et), [-1, 1], [0, 1]);
-    const t2 = misc.remap(Math.cos(et * 2), [-1, 1], [0, 1]);
+    const t2 = misc.remap(Math.cos(et * 3), [-1, 1], [0, 1]);
 
     buffer.rotate(box, {
       q: q.setFromAxisAngle(rotationAxis, t2 * 0.1),
     });
 
-    if (pointsRef.current) {
-      buffer.lerp(
-        box,
-        sphere,
-        pointsRef.current.geometry.getAttribute("position")
-          .array as Float32Array,
-        t
-      );
-      pointsRef.current.geometry.attributes.position.needsUpdate = true;
-    }
+    buffer.lerp(
+      box,
+      sphere,
+      pointsRef.current.geometry.getAttribute("position").array as Float32Array,
+      t
+    );
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (

@@ -118,3 +118,7 @@ export function remap(x: number, [low1, high1]: number[], [low2, high2]: number[
 export function lerp(v0: number, v1: number, t: number) {
   return v0*(1-t)+v1*t
 }
+
+export function inverseLerp(v0: number, v1: number, t: number) {
+  return (t - v0) / (v1 - v0)
+}
