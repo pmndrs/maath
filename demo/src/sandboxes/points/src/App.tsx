@@ -9,7 +9,7 @@ import * as misc from "maath/misc";
 
 import Points from "./Points";
 
-const rotationAxis = new Vector3(1, 1, 0).normalize();
+const rotationAxis = new Vector3(0, 1, 0).normalize();
 const q = new Quaternion();
 
 export default function PointsDemo(props: any) {
@@ -38,6 +38,7 @@ export default function PointsDemo(props: any) {
       pointsRef.current.geometry.getAttribute("position").array as Float32Array,
       t
     );
+
     pointsRef.current.geometry.attributes.position.needsUpdate = true;
   });
 

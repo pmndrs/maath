@@ -129,3 +129,22 @@ export function rotate(
 
   return buffer;
 }
+
+export function map(
+  buffer: TypedArray,
+  stride: 2 | 3,
+  fn: (x: number, y: number, z: number) => number[]
+) {
+  for (let i = 0; i < buffer.length; i += stride) {
+
+    
+    if (stride === 3) {
+      const res = fn(buffer[i], buffer[i + 1], buffer[i + 2])
+      buffer.set(res, i);
+    } else {
+      // buffer.set(fn(buffer[i], buffer[i + 1]), i * stride);
+    }
+  }
+
+  return buffer
+}

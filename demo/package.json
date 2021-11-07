@@ -7,6 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@pmndrs/branding": "^0.0.8",
     "@react-three/drei": "^7.19.2",
     "@react-three/fiber": "^7.0.17",
     "@types/three": "^0.133.1",
@@ -14,7 +15,8 @@
     "maath": "0.0.1-alpha.7",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "three": "^0.134.0"
+    "three": "^0.134.0",
+    "wouter": "^2.8.0-alpha.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

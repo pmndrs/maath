@@ -23,3 +23,22 @@ html, body {
     width: 100vw;
     height: 100vh;
   }
+
+  .logo {
+    position: fixed;
+    top: 6vh;
+    left: 6vh;
+    z-index: 2;
+  }
+
+  .pmndrs-menu {
+    top: initial !important;
+    height: auto;
+    z-index: 2;
+    bottom: 0;
+  }
+
+  .pmndrs-menu > div {
+    padding-left: 0 !important;
+    padding-right: 50px !important;
+  }

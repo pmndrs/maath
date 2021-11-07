@@ -44,63 +44,69 @@ export function lexicographic(a: Vector2 | Vector3, b: Vector2 | Vector3) {
   if (a.x === b.x) {
     // do a check to see if points is 3D,
     // in which case add y eq check and sort by z
-    if (typeof (a as Vector3).z !== 'undefined') {
+    if (typeof (a as Vector3).z !== "undefined") {
       if (a.y === b.y) {
-        return (a as Vector3).z - (b as Vector3).z
+        return (a as Vector3).z - (b as Vector3).z;
       }
     }
 
-    return a.y - b.y
+    return a.y - b.y;
   }
 
-  return a.x - b.x
+  return a.x - b.x;
 }
 
 /**
  * Convex Hull
- * 
+ *
  * Returns an array of 2D Vectors representing the convex hull of a set of 2D Vectors
  */
 
 /**
  * Calculate the convex hull of a set of points
  */
- export function convexHull(_points: Vector2[]) {
-
-   let points = _points.sort(lexicographic)
+export function convexHull(_points: Vector2[]) {
+  let points = _points.sort(lexicographic);
 
   // put p1 and p2 in a list lUpper with p1 as the first point
-  const lUpper = [points[0], points[1]]
+  const lUpper = [points[0], points[1]];
 
   // for i <- 3 to n
   for (let i = 2; i < points.length; i++) {
-    lUpper.push(points[i])
+    lUpper.push(points[i]);
 
     // while lUpper contains more than 2 points and the last three points in lUpper do not make a right turn
-    while (lUpper.length > 2 && doThreePointsMakeARight([...lUpper.slice(-3)])) {
+    while (
+      lUpper.length > 2 &&
+      doThreePointsMakeARight([...lUpper.slice(-3)])
+    ) {
       // delete the middle of the last three points from lUpper
-      lUpper.splice(lUpper.length - 2, 1)
-    }4
+      lUpper.splice(lUpper.length - 2, 1);
+    }
+    4;
   }
 
   // put pn and pn-1 in a list lLower with pn as the first point
-  const lLower = [points[points.length - 1], points[points.length - 2]]
+  const lLower = [points[points.length - 1], points[points.length - 2]];
 
   // for (i <- n - 2 downto 1)
   for (let i = points.length - 3; i >= 0; i--) {
     // append pi to lLower
-    lLower.push(points[i])
+    lLower.push(points[i]);
 
     // while lLower contains more than 2 points and the last three points in lLower do not make a right turn
-    while (lLower.length > 2 && doThreePointsMakeARight([...lLower.slice(-3)])) {
+    while (
+      lLower.length > 2 &&
+      doThreePointsMakeARight([...lLower.slice(-3)])
+    ) {
       // delete the middle of the last three points from lLower
-      lLower.splice(lLower.length - 2, 1)
+      lLower.splice(lLower.length - 2, 1);
     }
   }
 
   // remove the first and last point from lLower to avoid duplication of the points where the upper and lower hull meet
-  lLower.splice(0, 1)
-  lLower.splice(lLower.length - 1, 1)
+  lLower.splice(0, 1);
+  lLower.splice(lLower.length - 1, 1);
 
   // prettier-ignore
   const c = [
@@ -108,17 +114,66 @@ export function lexicographic(a: Vector2 | Vector3, b: Vector2 | Vector3) {
     ...lLower,
   ]
 
-  return c
+  return c;
 }
 
-export function remap(x: number, [low1, high1]: number[], [low2, high2]: number[]) {
-  return low2 + (x - low1) * (high2 - low2) / (high1 - low1)
+export function remap(
+  x: number,
+  [low1, high1]: number[],
+  [low2, high2]: number[]
+) {
+  return low2 + ((x - low1) * (high2 - low2)) / (high1 - low1);
 }
 
+/**
+ *
+ * Returns the result of linearly interpolating between input A and input B by input T.
+ *
+ * @param v0
+ * @param v1
+ * @param t
+ * @returns
+ */
 export function lerp(v0: number, v1: number, t: number) {
-  return v0*(1-t)+v1*t
+  return v0 * (1 - t) + v1 * t;
 }
 
+/**
+ *
+ * Returns the linear parameter that produces the interpolant specified by input T within the range of input A to input B.
+ *
+ * @param v0
+ * @param v1
+ * @param t
+ * @returns
+ */
 export function inverseLerp(v0: number, v1: number, t: number) {
-  return (t - v0) / (v1 - v0)
+  return (t - v0) / (v1 - v0);
+}
+
+/**
+ *
+ */
+
+export function normalize(x: number, y: number, z: number) {
+  const m = Math.sqrt(x * x + y * y + z * z);
+
+  return [x / m, y / m, z / m];
+}
+
+
+
+/**
+ * 
+ */
+ export function pointOnCubeToPointOnSphere(x: number, y: number, z: number) {
+  const x2 = x * x;
+  const y2 = y * y;
+  const z2 = z * z;
+
+  const nx = x * Math.sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
+  const ny = y * Math.sqrt(1 - (z2 + x2) / 2 + (z2 * x2) / 3);
+  const nz = z * Math.sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
+
+  return [nx, ny, nz];
 }
