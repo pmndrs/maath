@@ -3,7 +3,9 @@
   "sandboxes": [
     "/demo/src/sandboxes/circumcircle",
     "/demo/src/sandboxes/convexHull",
-    "/demo/src/sandboxes/points"
+    "/demo/src/sandboxes/points",
+    "/demo/src/sandboxes/boxSphere",
+    "/demo/src/sandboxes/sutherlandHodgman"
   ],
   "node": "14"
 }
