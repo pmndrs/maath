@@ -88,3 +88,18 @@ export function getMinor(matrix: Matrix4, r: number, c: number) {
 
   return determinant3(...x)
 }
+
+/**
+ * 
+ */
+export function matrixSum3(m1: Matrix3, m2: Matrix3) {
+  const sum = [];
+  const m1Array = m1.toArray();
+  const m2Array = m2.toArray();
+
+  for (let i = 0; i < m1Array.length; i++) {
+    sum[i] = m1Array[i] + m2Array[i];
+  }
+
+  return new Matrix3().fromArray(sum);
+}

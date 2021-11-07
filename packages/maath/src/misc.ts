@@ -1,6 +1,7 @@
-import { Vector2, Vector3 } from "three";
+import { Matrix3, Plane, Vector2, Vector3 } from "three";
 import { doThreePointsMakeARight } from "./triangle";
 import type { TypedArray } from "./ctypes";
+import { matrixSum3 } from "./matrix";
 
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
 export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
@@ -161,12 +162,10 @@ export function normalize(x: number, y: number, z: number) {
   return [x / m, y / m, z / m];
 }
 
-
-
 /**
- * 
+ *
  */
- export function pointOnCubeToPointOnSphere(x: number, y: number, z: number) {
+export function pointOnCubeToPointOnSphere(x: number, y: number, z: number) {
   const x2 = x * x;
   const y2 = y * y;
   const z2 = z * z;
@@ -176,4 +175,78 @@ export function normalize(x: number, y: number, z: number) {
   const nz = z * Math.sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
 
   return [nx, ny, nz];
+}
+
+// https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
+/**
+ * Give two unit vectors a and b, returns the transformation matrix that rotates a onto b.
+ * */
+export function rotateVectorOnVector(a: Vector3, b: Vector3): Matrix3 {
+  const v = new Vector3().crossVectors(a, b);
+  const c = a.dot(b);
+
+  const i = new Matrix3().identity();
+  //  skew-symmetric cross-product matrix of 𝑣 https://en.wikipedia.org/wiki/Skew-symmetric_matrix
+  // prettier-ignore
+  const vx = new Matrix3().set(
+    0, -v.z, v.y,
+    v.z, 0, -v.x,
+    -v.y, v.x, 0
+  );
+
+  const vxsquared = new Matrix3()
+    .multiplyMatrices(vx, vx)
+    .multiplyScalar(1 / (1 + c));
+
+  const final = matrixSum3(matrixSum3(i, vx), vxsquared);
+
+  return final;
+}
+
+// calculate latitude and longitude (in radians) from point on unit sphere
+export function pointToCoordinate(x: number, y: number, z: number) {
+  const lat = Math.asin(y);
+  const lon = Math.atan2(x, -z);
+
+  return [lat, lon];
+}
+
+// calculate point on unit sphere given latitude and logitude in radians
+export function coordinateToPoint(lat: number, lon: number) {
+  const y = Math.sin(lat);
+  const r = Math.cos(lat);
+  const x = Math.sin(lon) * r;
+  const z = -Math.cos(lon) * r;
+
+  return [x, y, z];
+}
+
+/**
+ * Given a plane and a segment, return the intersection point if it exists or null it doesn't.
+ */
+export function planeSegmentIntersection(
+  plane: Plane,
+  segment: Vector3[]
+): null | Vector3 {
+  const [a, b] = segment;
+  const matrix = rotateVectorOnVector(plane.normal, new Vector3(0, 1, 0));
+
+  const t = inverseLerp(
+    a.clone().applyMatrix3(matrix).y,
+    b.clone().applyMatrix3(matrix).y,
+    0
+  );
+
+  return new Vector3().lerpVectors(a, b, t);
+}
+
+/**
+ * Given a plane and a point, return the distance.
+ */
+export function pointToPlaneDistance(p: Vector3, plane: Plane): number {
+  const d = plane.normal.dot(p);
+
+  // TODO
+
+  return d;
 }

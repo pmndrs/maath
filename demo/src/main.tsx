@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import Sandbox from "./Sandbox";
 import { Route } from "wouter";
-import PointsDemo from "./sandboxes/points2/src/App";
+import PointsDemo from "./sandboxes/sutherlandHodgman/src/App";
 import { OrbitControls } from "@react-three/drei";
 
 import { Footer } from "@pmndrs/branding";
