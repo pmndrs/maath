@@ -7,7 +7,7 @@ import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
 
-import Points from "../../../Points";
+import Points from "./Points";
 
 const rotationAxis = new Vector3(1, 1, 0).normalize();
 const q = new Quaternion();
