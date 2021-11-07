@@ -13,7 +13,6 @@
       "misc.ts",
       "random/index.ts",
       "triangle.ts",
-      "utils.ts",
       "buffer/index.ts"
     ]
   },
