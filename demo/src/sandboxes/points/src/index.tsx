@@ -6,7 +6,7 @@ import App from "./App";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <React.StrictMode>
-    <Canvas>
+    <Canvas orthographic camera={{ zoom: 200 }}>
       <color attach="background" args={['#000']} />
       <App />
     </Canvas>
