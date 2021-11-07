@@ -1,5 +1,4 @@
 import { ReactNode, useRef, useState } from "react";
-import "./App.css";
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
