@@ -47,7 +47,6 @@ export function determinant4(...terms: number[]) {
   // TODO
 }
 
-const m = new Matrix3();
 /**
  * 
  * Get the determinant of matrix m without row r and col c

@@ -51,7 +51,6 @@ function Demo() {
     $intersection.current.position.copy(
       misc.planeSegmentIntersection(plane, [a, b]) as Vector3
     );
-
     
   });
 
@@ -69,7 +68,7 @@ function Demo() {
       </points>
 
       <mesh ref={$intersection}>
-        <sphereGeometry args={[0.05, 32, 32]} />
+        <sphereGeometry args={[0.025, 32, 32]} />
         <meshNormalMaterial />
       </mesh>
 
@@ -84,10 +83,4 @@ function Demo() {
   );
 }
 
-export default function PointsDemo(props: any) {
-  return (
-    <>
-      <Demo position={[0, 0, -1]} color="#ff005b" />
-    </>
-  );
-}
+export default Demo
