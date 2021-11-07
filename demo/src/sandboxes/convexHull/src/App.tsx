@@ -6,7 +6,7 @@ import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc"
 
-import Points from "../../../Points";
+import Points from "./Points";
 
 export default function ConvexHullDemo() {
   const pointsRef = useRef<THREE.Points>(null!);

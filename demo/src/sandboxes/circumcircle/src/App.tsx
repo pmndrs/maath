@@ -5,9 +5,9 @@ import { EllipseCurve } from "three";
 
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
+import * as triangle from "maath/triangle";
 
-import Points from "../../../Points";
-import { getCircumcircle } from "maath/triangle";
+import Points from "./Points";
 
 function TrianglesDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
@@ -41,7 +41,7 @@ function TrianglesDemo() {
 
     {
       // get the circumcircle for the first triangle
-      const circle = getCircumcircle([
+      const circle = triangle.getCircumcircle([
         [a.x, a.y],
         [b.x, b.y],
         [c.x, c.y],
@@ -63,7 +63,7 @@ function TrianglesDemo() {
 
     {
       // get the circumcircle for the second triangle
-      const circle = getCircumcircle([
+      const circle = triangle.getCircumcircle([
         [b.x, b.y],
         [c.x, c.y],
         [d.x, d.y],
@@ -111,4 +111,4 @@ function TrianglesDemo() {
   );
 }
 
-export default TrianglesDemo
+export default TrianglesDemo;
