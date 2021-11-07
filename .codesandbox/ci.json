@@ -1,0 +1,7 @@
+{
+  "packages": ["packages/*"],
+  "sandboxes": [
+    "/demo/src/sandboxes/circumcircle"
+  ],
+  "node": "14"
+}
