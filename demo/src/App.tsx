@@ -2,20 +2,14 @@ import { ReactNode, useRef, useState } from "react";
 import "./App.css";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
-import { EllipseCurve, Group, Quaternion, Vector3 } from "three";
+import { RoundedBox } from "@react-three/drei";
+import { Group, Vector3 } from "three";
 
-import * as random from "maath/random";
-import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
 
-import Points from "./Points";
-import { getCircumcircle } from "maath/triangle";
-import { lerp } from "maath/misc";
-
-import CircumcircleDemo from './sandboxes/circumcircle/src/App' 
-import ConvexHullDemo from './sandboxes/convexHull/src/App' 
-import PointsDemo from './sandboxes/points/src/App' 
+import CircumcircleDemo from "./sandboxes/circumcircle/src/App";
+import ConvexHullDemo from "./sandboxes/convexHull/src/App";
+import PointsDemo from "./sandboxes/points/src/App";
 
 function Demo({
   position,
@@ -24,7 +18,7 @@ function Demo({
   color,
 }: {
   position?: Vector3 | [x: number, y: number, z: number];
-  text: string;
+  text?: string;
   color: string;
   children: ReactNode;
 }) {
@@ -33,17 +27,17 @@ function Demo({
 
   useFrame(({ clock }) => {
     if (hover) {
-      container.current.position.z = lerp(
+      container.current.position.z = misc.lerp(
         container.current.position.z,
         misc.remap(
-          Math.sin((clock.getElapsedTime()) * 3),
+          Math.sin(clock.getElapsedTime() * 3),
           [-1, 1],
           [-0.05, 0.05]
         ),
         0.1
       );
     } else {
-      container.current.position.z = lerp(container.current.position.z, 0, 0.1);
+      container.current.position.z = misc.lerp(container.current.position.z, 0, 0.1);
     }
   });
 
@@ -66,10 +60,6 @@ function Demo({
           wireframe
           depthWrite={false}
         />
-
-        {/* <group rotation-x={Math.PI / 2} position-y={1}>
-          <Text lineHeight={1.5}>{text}</Text>
-        </group> */}
         <group scale={0.8} position={[0, 0, 0.3]}>
           {children}
         </group>
@@ -119,7 +109,7 @@ function App() {
       orthographic
       shadows
       dpr={[1, 2]}
-      camera={{ position: [8, 8, 8], zoom: 150 }}
+      camera={{ position: [8, 8, 8], zoom: 200 }}
     >
       <color args={["#333337"]} attach="background" />
       <directionalLight
