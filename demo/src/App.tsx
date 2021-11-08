@@ -22,7 +22,7 @@ function Demo({
   text?: string;
   color: string;
   children: ReactNode;
-  slug: "circumcircle" | "convexHull" | "points"
+  slug: "circumcircle" | "convex-hull" | "points"
 }) {
   const container = useRef<Group>(null!);
   const [hover, setHover] = useState(false);
