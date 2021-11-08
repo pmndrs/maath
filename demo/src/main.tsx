@@ -39,11 +39,11 @@ function SandboxOverlay() {
             position: "fixed",
             left: "50%",
             right: 0,
-            bottom: -10,
+            bottom: 0,
             zIndex: 10,
             transform: "translateX(-50%)",
             border: 0,
-            borderRadius: "4px",
+            borderRadius: "4px 4px 0 0",
             overflow: "hidden",
           }}
           width={"90%"}
