@@ -164,6 +164,14 @@ import * as triangle from 'maath/triangle'
 
 TBD
 
+
+## Inspiration
+
+The kitchen-sink nature of the library was inspired by other projects that manage to bring together an immense amount of knowledge from different domains that would otherwise be fragmented in many places or even lost:
+
+- [drei](https://github.com/pmndrs/drei) 🌭 useful helpers for react-three-fiber
+- [lygia](https://github.com/patriciogonzalezvivo/lygia) a granular and multi-language shader library designed for performance and flexibility
+
 ## 🟡 Roadmap
 
 - Make the random generator seedable for every function
@@ -172,4 +180,5 @@ TBD
 - Fix type errors that might come from using different vector libs
 - Keep adding tests
 - Figure out if we can get rid of the Three.js dependency. While useful, it feels superfluous 
+
 
