@@ -1,41 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useFrame } from "@react-three/fiber";
-import {
-  BoxGeometry,
-  BufferAttribute,
-  DoubleSide,
-  PlaneGeometry,
-  Quaternion,
-  Vector3,
-} from "three";
+import { BufferAttribute, PlaneGeometry, Quaternion, Vector3 } from "three";
 
-import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
 
-import Points from "./Points";
-
 const rotationAxis = new Vector3(0, 1, 0).normalize();
 const q = new Quaternion();
-
-// calculate latitude and longitude (in radians) from point on unit sphere
-function pointToCoordinate(x: number, y: number, z: number) {
-  const lat = Math.asin(y);
-  const lon = Math.atan2(x, -z);
-
-  return [lat, lon];
-}
-
-// calculate point on unit sphere given latitude and logitude in radians
-function coordinateToPoint(lat: number, lon: number) {
-  const y = Math.sin(lat);
-  const r = Math.cos(lat);
-  const x = Math.sin(lon) * r;
-  const z = -Math.cos(lon) * r;
-
-  return [x, y, z];
-}
 
 function Side({
   position,
@@ -63,10 +35,7 @@ function Side({
 
     rotate2 &&
       buffer.rotate(box, {
-        q: new Quaternion().setFromAxisAngle(
-          new Vector3(1, 0, 0),
-          Math.PI / 2
-        ),
+        q: new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2),
       });
 
     const sphere = box.slice(0);
@@ -111,7 +80,7 @@ function Side({
       <axesHelper />
       <mesh ref={pointsRef}>
         <bufferGeometry />
-        <meshBasicMaterial  color={color} />
+        <meshBasicMaterial color={color} />
       </mesh>
     </>
   );

@@ -1,31 +1,21 @@
 import { useEffect, useRef } from "react";
 
 import {
-  ArrowHelper,
   BufferAttribute,
   Group,
   Line,
-  Matrix3,
   Plane,
-  PlaneHelper,
-  Quaternion,
   Vector3,
   Points,
-  Matrix4,
-  LineBasicMaterial,
   Mesh,
 } from "three";
 
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
-import * as matrix from "maath/matrix";
-
-// https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
 
 function Demo() {
-
-  const plane = new Plane(new Vector3().randomDirection().normalize())
+  const plane = new Plane(new Vector3().randomDirection().normalize());
 
   const $group = useRef<Group>(null!);
   const $line = useRef<Line>(null!);
@@ -33,7 +23,7 @@ function Demo() {
   const $planeHelper = useRef<Points>(null!);
   const $intersection = useRef<Mesh>(null!);
 
-  const points = random.inSphere(new Float32Array(2 * 3))
+  const points = random.inSphere(new Float32Array(2 * 3));
 
   useEffect(() => {
     $line.current.geometry.setAttribute(
@@ -51,7 +41,6 @@ function Demo() {
     $intersection.current.position.copy(
       misc.planeSegmentIntersection(plane, [a, b]) as Vector3
     );
-    
   });
 
   return (
@@ -83,4 +72,4 @@ function Demo() {
   );
 }
 
-export default Demo
+export default Demo;
