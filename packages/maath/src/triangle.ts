@@ -99,8 +99,13 @@ The circumcircle is a circle touching all the vertices of a triangle or polygon.
 
 // https://math.stackexchange.com/a/1460096
 export function getCircumcircle(triangle: Triangle) {
+  // TS-TODO the next few lines are ignored because the types aren't current to the change in vectors (that can now be iterated)
+  
+  // @ts-ignore
   const [ax, ay] = triangle[0];
+  // @ts-ignore
   const [bx, by] = triangle[1];
+  // @ts-ignore
   const [cx, cy] = triangle[2];
 
   if (arePointsCollinear(triangle)) return null; // points are collinear

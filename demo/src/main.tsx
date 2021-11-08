@@ -19,6 +19,7 @@ ReactDOM.render(
         <img src={logo} />
       </a>
       <App />
+      {/* @ts-ignore */}
       <Footer year="2021" />
     </Route>
 

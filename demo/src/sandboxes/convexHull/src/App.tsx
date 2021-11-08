@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
-import * as misc from "maath/misc"
+import * as misc from "maath/misc";
 
 import Points from "./Points";
 
@@ -41,7 +41,7 @@ export default function ConvexHullDemo() {
       <Points points={final} stride={2} ref={pointsRef}>
         <pointsMaterial size={1} />
       </Points>
-
+      {/* @ts-ignore */}
       <line castShadow ref={lineRef}>
         <bufferGeometry />
         <lineBasicMaterial />

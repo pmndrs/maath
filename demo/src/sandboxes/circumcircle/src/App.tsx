@@ -89,20 +89,21 @@ function TrianglesDemo() {
 
   return (
     <>
-      <Points points={final} stride={2} ref={pointsRef}>
+      <Points points={final as Float32Array} stride={2} ref={pointsRef}>
         <pointsMaterial size={5} />
       </Points>
 
+      {/* @ts-ignore */}
       <line castShadow ref={lineRef}>
         <bufferGeometry />
         <lineBasicMaterial />
       </line>
-
+      {/* @ts-ignore */}
       <line castShadow ref={circleRef}>
         <bufferGeometry />
         <lineBasicMaterial />
       </line>
-
+      {/* @ts-ignore */}
       <line castShadow ref={circle2Ref}>
         <bufferGeometry />
         <lineBasicMaterial />
