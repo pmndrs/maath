@@ -24,32 +24,6 @@ export function radToDeg(radians: number) {
   return (radians * 180) / Math.PI;
 }
 
-/**
- * Gets 3D coordinates from latitude and longitude along a sphere.
- *
- * @param latitude Target latitude in degrees.
- * @param longitude Target longitude in degrees.
- * @param size Target sphere's dimensions in pixels.
- * @param radius Target sphere's radius.
- */
-export function getSphericalCoordinates(
-  latitude: number,
-  longitude: number,
-  size: { width: number; height: number },
-  radius: number
-) {
-  latitude = ((latitude - size.width) / size.width) * -180;
-  longitude = ((longitude - size.height) / size.height) * -90;
-
-  const convertedRadius = Math.cos(degToRad(longitude)) * radius;
-
-  const x = Math.cos(degToRad(latitude)) * convertedRadius;
-  const y = Math.sin(degToRad(longitude)) * radius;
-  const z = Math.sin(degToRad(latitude)) * convertedRadius;
-
-  return { x, y, z };
-}
-
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
 export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
   const samples = buffer.length / 3;
