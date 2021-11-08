@@ -171,4 +171,5 @@ TBD
 - Figure out a good API for functions that might work on both buffers and arrays of vectors
 - Fix type errors that might come from using different vector libs
 - Keep adding tests
+- Figure out if we can get rid of the Three.js dependency. While useful, it feels superfluous 
 
