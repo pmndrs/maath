@@ -45,8 +45,8 @@ function Side({
 }: {
   color: string;
   position: [x: number, y: number, z: number];
-  rotate: boolean;
-  rotate2: boolean;
+  rotate?: boolean;
+  rotate2?: boolean;
 }) {
   const pointsRef = useRef<THREE.Points>(null!);
   const [{ box, sphere, final }] = useState(() => {
@@ -97,9 +97,9 @@ function Side({
       t
     );
 
-    // buffer.rotate(final, {
-    //   q: q.setFromAxisAngle(rotationAxis, et * 0.2 * Math.PI),
-    // });
+    buffer.rotate(final, {
+      q: q.setFromAxisAngle(rotationAxis, et * 0.2 * Math.PI),
+    });
 
     pointsRef.current.geometry.computeVertexNormals();
 
@@ -122,13 +122,13 @@ export default function PointsDemo(props: any) {
     <>
       <axesHelper />
       <Side position={[0, 0, -1]} color="#ff005b" />
-      {/* <Side position={[0, 0, 1]} color="#ff005b" /> */}
+      <Side position={[0, 0, 1]} color="#ff005b" />
 
       <Side position={[0, 0, -1]} rotate color="#0EEC82" />
-      {/* <Side position={[0, 0, 1]} rotate color="#0EEC82" /> */}
+      <Side position={[0, 0, 1]} rotate color="#0EEC82" />
 
       <Side position={[0, 0, -1]} rotate2 color="#F8D628" />
-      {/* <Side position={[0, 0, 1]} rotate2 color="#F8D628" /> */}
+      <Side position={[0, 0, 1]} rotate2 color="#F8D628" />
     </>
   );
 }

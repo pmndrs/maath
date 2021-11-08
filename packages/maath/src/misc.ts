@@ -180,6 +180,7 @@ export function pointOnCubeToPointOnSphere(x: number, y: number, z: number) {
 // https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
 /**
  * Give two unit vectors a and b, returns the transformation matrix that rotates a onto b.
+ * 
  * */
 export function rotateVectorOnVector(a: Vector3, b: Vector3): Matrix3 {
   const v = new Vector3().crossVectors(a, b);

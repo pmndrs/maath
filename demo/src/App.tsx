@@ -7,19 +7,22 @@ import { Group, Vector3 } from "three";
 import * as misc from "maath/misc";
 
 import CircumcircleDemo from "./sandboxes/circumcircle/src/App";
-import ConvexHullDemo from "./sandboxes/convexHull/src/App";
+import ConvexHullDemo from "./sandboxes/convex-hull/src/App";
 import PointsDemo from "./sandboxes/points/src/App";
+import { useStore } from "./main";
 
 function Demo({
   position,
   text,
   children,
   color,
+  slug
 }: {
   position?: Vector3 | [x: number, y: number, z: number];
   text?: string;
   color: string;
   children: ReactNode;
+  slug: "circumcircle" | "convex-hull" | "points"
 }) {
   const container = useRef<Group>(null!);
   const [hover, setHover] = useState(false);
@@ -40,6 +43,8 @@ function Demo({
     }
   });
 
+  const setActive = useStore(state => state.setActive)
+
   return (
     <group position={position} ref={container}>
       <mesh
@@ -51,6 +56,7 @@ function Demo({
           setHover(false);
           e.stopPropagation();
         }}
+        onPointerDown={() => setActive(slug)}
       >
         <boxGeometry args={[1.5, 1.5, 1]} />
         <meshBasicMaterial
@@ -81,19 +87,19 @@ function Demo({
 function Scene() {
   return (
     <group rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
-      <Demo position={[-2, 0, 0]} color="#ff6080">
+      <Demo slug={"points"} position={[-2, 0, 0]} color="#ff6080">
         <group scale={0.8}>
           <PointsDemo />
         </group>
       </Demo>
 
-      <Demo color="#ffaf80">
+      <Demo slug="circumcircle" color="#ffaf80">
         <group scale={0.8} position-z={-0.3}>
           <CircumcircleDemo />
         </group>
       </Demo>
 
-      <Demo position={[2, 0, 0]} color="#20b0ff">
+      <Demo slug="convex-hull" position={[2, 0, 0]} color="#20b0ff">
         <group scale={0.8} position-z={-0.3}>
           <ConvexHullDemo />
         </group>
