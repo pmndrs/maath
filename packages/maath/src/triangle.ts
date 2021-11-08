@@ -133,9 +133,9 @@ export function getCircumcircle(triangle: Triangle) {
 
 // https://stackoverflow.com/questions/39984709/how-can-i-check-wether-a-point-is-inside-the-circumcircle-of-3-points
 export function isPointInCircumcircle(point: number[], triangle: Triangle) {
-  const [ax, ay] = triangle[0];
-  const [bx, by] = triangle[1];
-  const [cx, cy] = triangle[2];
+  const [ax, ay] = Array.isArray(triangle[0]) ? triangle[0] : triangle[0].toArray();
+  const [bx, by] = Array.isArray(triangle[1]) ? triangle[1] : triangle[1].toArray();
+  const [cx, cy] = Array.isArray(triangle[2]) ? triangle[2] : triangle[2].toArray();
 
   const [px, py] = point;
 

@@ -5,8 +5,8 @@
   "license": "MIT",
   "private": "true",
   "devDependencies": {
-    "@babel/preset-env": "^7.15.8",
-    "@babel/preset-typescript": "^7.15.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
     "@preconstruct/cli": "^2.1.5",
     "@types/jest": "^27.0.2",
     "jest": "^27.3.1",
