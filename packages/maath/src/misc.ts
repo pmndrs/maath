@@ -3,6 +3,27 @@ import { doThreePointsMakeARight } from "./triangle";
 import type { TypedArray } from "./ctypes";
 import { matrixSum3 } from "./matrix";
 
+/**
+ * Clamps a value between a range.
+ */
+export function clamp([min, max]: [number, number], value: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+/**
+ * Converts degrees to radians.
+ */
+export function degToRad(degrees: number) {
+  return (degrees / 180) * Math.PI;
+}
+
+/**
+ * Converts radians to degrees.
+ */
+export function radToDeg(radians: number) {
+  return (radians * 180) / Math.PI;
+}
+
 // adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
 export function fibonacciOnSphere(buffer: TypedArray, { radius = 1 }) {
   const samples = buffer.length / 3;
