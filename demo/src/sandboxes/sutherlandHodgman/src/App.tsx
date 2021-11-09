@@ -8,6 +8,7 @@ import {
   Vector3,
   Points,
   Mesh,
+  StreamDrawUsage,
 } from "three";
 
 import * as random from "maath/random";
@@ -26,15 +27,11 @@ function Demo() {
   const points = random.inSphere(new Float32Array(2 * 3));
 
   useEffect(() => {
-    $line.current.geometry.setAttribute(
-      "position",
-      new BufferAttribute(points, 3)
-    );
+    const attr = new BufferAttribute(points, 3);
+    attr.usage = StreamDrawUsage;
 
-    $points.current.geometry.setAttribute(
-      "position",
-      new BufferAttribute(points, 3)
-    );
+    $line.current.geometry.setAttribute("position", attr);
+    $points.current.geometry.setAttribute("position", attr);
 
     const [a, b] = buffer.toVectorArray(points, 3) as Vector3[];
 

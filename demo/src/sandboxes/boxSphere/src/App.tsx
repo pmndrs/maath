@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useFrame } from "@react-three/fiber";
-import { BufferAttribute, PlaneGeometry, Quaternion, Vector3 } from "three";
+import { BufferAttribute, PlaneGeometry, Quaternion, StreamDrawUsage, Vector3 } from "three";
 
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
@@ -49,9 +49,12 @@ function Side({
   });
 
   useEffect(() => {
+    const attr = new BufferAttribute(final, 3)
+    attr.usage = StreamDrawUsage
+    
     pointsRef.current.geometry.setAttribute(
       "position",
-      new BufferAttribute(final, 3)
+      attr
     );
   }, []);
 
