@@ -1,22 +1,17 @@
+import { lazy, ReactNode, useRef, useState } from "react";
 
-import * as React from "react";
-import { ReactNode, useRef, useState } from "react";
-
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import { Group, Vector3 } from "three";
 
-import * as misc from "maath/misc";
+import { remap, lerp } from "maath/misc";
 
 import { useStore } from "../store";
 
-const CircumcircleDemo = React.lazy(
-  () => import("../sandboxes/circumcircle/src/App")
-);
-const ConvexHullDemo = React.lazy(
-  () => import("../sandboxes/convex-hull/src/App")
-);
-const PointsDemo = React.lazy(() => import("../sandboxes/points/src/App"));
+// prettier-ignore
+const CircumcircleDemo = lazy(() => import("../sandboxes/circumcircle/src/App"));
+const ConvexHullDemo = lazy(() => import("../sandboxes/convex-hull/src/App"));
+const PointsDemo = lazy(() => import("../sandboxes/points/src/App"));
 
 function Demo({
   position,
@@ -36,21 +31,13 @@ function Demo({
 
   useFrame(({ clock }) => {
     if (hover) {
-      container.current.position.z = misc.lerp(
+      container.current.position.z = lerp(
         container.current.position.z,
-        misc.remap(
-          Math.sin(clock.getElapsedTime() * 3),
-          [-1, 1],
-          [-0.05, 0.05]
-        ),
+        remap(Math.sin(clock.getElapsedTime() * 3), [-1, 1], [-0.05, 0.05]),
         0.1
       );
     } else {
-      container.current.position.z = misc.lerp(
-        container.current.position.z,
-        0,
-        0.1
-      );
+      container.current.position.z = lerp(container.current.position.z, 0, 0.1);
     }
   });
 
