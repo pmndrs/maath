@@ -6,6 +6,7 @@ import { EllipseCurve } from "three";
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as triangle from "maath/triangle";
+import * as threeUtils from "maath/three"
 
 import Points from "./Points";
 
@@ -31,7 +32,7 @@ function TrianglesDemo() {
     buffer.lerp(points, pointsB, final, t);
 
     // get the points as an array, to use them to create the geometries
-    const [a, b, c, d] = buffer.toVectorArray(final, 2);
+    const [a, b, c, d] = threeUtils.bufferToVectors(final, 2);
 
     // prettier-ignore
     lineRef.current.geometry.setFromPoints([ 

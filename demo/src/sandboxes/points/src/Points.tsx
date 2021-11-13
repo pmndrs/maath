@@ -1,6 +1,11 @@
 import { forwardRef, ReactNode, useEffect, useState } from "react";
 
-import { BufferAttribute, BufferGeometry, Points, StreamDrawUsage } from "three";
+import {
+  BufferAttribute,
+  BufferGeometry,
+  Points,
+  StreamDrawUsage,
+} from "three";
 
 const PointsImpl = forwardRef<
   Points,
@@ -9,13 +14,20 @@ const PointsImpl = forwardRef<
   const { children, points, stride = 3, ...rest } = props;
 
   const [geometry] = useState(() => {
-    return new BufferGeometry();
+    const geometry = new BufferGeometry();
+
+    const attr = new BufferAttribute(points, stride);
+    attr.usage = StreamDrawUsage;
+
+    geometry.setAttribute("position", attr);
+
+    return geometry;
   });
 
   useEffect(() => {
-    const attr = new BufferAttribute(points, stride)
-    attr.usage = StreamDrawUsage
-    
+    const attr = new BufferAttribute(points, stride);
+    attr.usage = StreamDrawUsage;
+
     geometry.setAttribute("position", attr);
   }, [points]);
 

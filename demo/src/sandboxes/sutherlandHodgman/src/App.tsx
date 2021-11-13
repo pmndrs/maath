@@ -14,6 +14,7 @@ import {
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as misc from "maath/misc";
+import * as threeUtils from "maath/three";
 
 function Demo() {
   const plane = new Plane(new Vector3().randomDirection().normalize());
@@ -33,7 +34,7 @@ function Demo() {
     $line.current.geometry.setAttribute("position", attr);
     $points.current.geometry.setAttribute("position", attr);
 
-    const [a, b] = buffer.toVectorArray(points, 3) as Vector3[];
+    const [a, b] = threeUtils.bufferToVectors(points, 3);
 
     $intersection.current.position.copy(
       misc.planeSegmentIntersection(plane, [a, b]) as Vector3

@@ -1,19 +1,21 @@
 {
   "name": "maath",
-  "version": "0.0.1-alpha.11",
+  "version": "0.0.1-alpha.12",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
   "types": "dist/maath.cjs.d.ts",
   "preconstruct": {
     "entrypoints": [
-      "index.ts",
+      "buffer/index.ts",
       "easing.ts",
       "matrix.ts",
       "misc.ts",
       "random/index.ts",
       "triangle.ts",
-      "buffer/index.ts"
+      "vector2.ts",
+      "vector3.ts",
+      "three.ts"
     ]
   },
   "dependencies": {

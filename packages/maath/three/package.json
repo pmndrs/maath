@@ -1,0 +1,4 @@
+{
+  "main": "dist/maath-three.cjs.js",
+  "module": "dist/maath-three.esm.js"
+}

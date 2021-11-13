@@ -3,19 +3,23 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 
 import * as random from "maath/random";
-import * as threeUtils from "maath/three";
-import * as misc from "maath/misc";
 import * as buffer from "maath/buffer";
+import * as misc from "maath/misc";
+import * as v2 from "maath/vector2";
+import * as threeUtils from "maath/three"
 
 import Points from "./Points";
+import { Mesh, Vector } from "three";
 
 export default function ConvexHullDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
-  const lineRef = useRef<any>(null!);
+  const $line = useRef<any>(null!);
+  const $line2 = useRef<any>(null!);
+  const $center = useRef<Mesh>(null!);
 
   const [{ points, randomizedPoints, final }, setPoints] = useState(() => {
-    const points = random.inRect(new Float32Array(1_000 * 2)) as Float32Array;
-    const randomizedPoints = random.inCircle(points.slice(0), { radius: 0.75 });
+    const points = random.inRect(new Float32Array(10_000 * 2)) as Float32Array;
+    const randomizedPoints = random.inCircle(points.slice(0), { radius: 1 });
     const final = points.slice(0);
 
     return { points, randomizedPoints, final };
@@ -23,16 +27,32 @@ export default function ConvexHullDemo() {
 
   useFrame(({ clock }) => {
     const t = misc.remap(Math.sin(clock.getElapsedTime()), [-1, 1], [0, 1]);
+
     buffer.lerp(points, randomizedPoints, final, t);
 
     const convexHullPoints = misc.convexHull(
       threeUtils.bufferToVectors(final, 2) as THREE.Vector2[]
     );
 
+    const convexHullBuffer = threeUtils.vectorsToBuffer(convexHullPoints, 2);
+
+    let center = v2.zero();
+    center = buffer.center(convexHullBuffer, 2);
+    center = v2.scale(center, 1 / convexHullBuffer.length / 2);
+
+    buffer.expand(convexHullBuffer, 2, { center, distance: 1 * t });
+
     pointsRef.current.geometry.attributes.position.needsUpdate = true;
 
-    lineRef.current.geometry.setFromPoints(
+    const expandedBufferArr = threeUtils.bufferToVectors(convexHullBuffer, 2);
+
+    $line.current.geometry.setFromPoints(
       [...convexHullPoints, convexHullPoints[0]],
+      2
+    );
+
+    $line2.current.geometry.setFromPoints(
+      [...expandedBufferArr, expandedBufferArr[0]],
       2
     );
   });
@@ -43,7 +63,13 @@ export default function ConvexHullDemo() {
         <pointsMaterial size={1} />
       </Points>
       {/* @ts-ignore */}
-      <line castShadow ref={lineRef}>
+      <line castShadow ref={$line}>
+        <bufferGeometry />
+        <lineBasicMaterial />
+      </line>
+
+      {/* @ts-ignore */}
+      <line castShadow ref={$line2}>
         <bufferGeometry />
         <lineBasicMaterial />
       </line>

@@ -32,14 +32,10 @@ export default function PointsDemo(props: any) {
       q: q.setFromAxisAngle(rotationAxis, t2 * 0.1),
     });
 
-    buffer.lerp(
-      box,
-      sphere,
-      pointsRef.current.geometry.getAttribute("position").array as Float32Array,
-      t
-    );
+    const posAttribute = pointsRef.current.geometry.attributes.position;
 
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    buffer.lerp(box, sphere, posAttribute.array as Float32Array, t);
+    posAttribute.needsUpdate = true;
   });
 
   return (

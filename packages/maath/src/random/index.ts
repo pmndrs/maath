@@ -2,6 +2,36 @@ import type { TypedArray } from "../ctypes";
 
 const TAU = Math.PI * 2;
 
+// Credits @kchapelier https://github.com/kchapelier/wavefunctioncollapse/blob/master/example/lcg.js#L22-L30
+function normalizeSeed (seed: number | string) {
+  if (typeof seed === 'number') {
+    seed = Math.abs(seed);
+  } else if (typeof seed === 'string') {
+    const string = seed;
+    seed = 0;
+
+    for(let i = 0; i < string.length; i++) {
+      seed = (seed + (i + 1) * (string.charCodeAt(i) % 96)) % 2147483647;
+    }
+  }
+
+  if (seed === 0) {
+    seed = 311;
+  }
+
+  return seed;
+}
+
+function lcgRandom (seed: number | string) {
+  let state = normalizeSeed(seed);
+
+  return function () {
+    const result = (state * 48271) % 2147483647;
+    state = result;
+    return result / 2147483647;
+  };
+}
+
 /***
  * [3D] Sphere
  */
@@ -15,7 +45,18 @@ const defaultSphere = {
   center: [0, 0, 0],
 };
 
-const random = () => Math.random();
+class Random {
+  seed: string | number = 0;
+
+  init = (seed: number | string) => {
+    this.seed = seed;
+    this.get = lcgRandom(seed)
+  }
+
+  get = lcgRandom(this.seed)
+}
+
+const random = new Random();
 
 export function distribute(buffer: TypedArray, stride: number = 2, amp = 1) {
 
@@ -42,8 +83,8 @@ export function onSphere(buffer: TypedArray, sphere?: Sphere) {
   };
 
   for (let i = 0; i < buffer.length; i += 3) {
-    const u = random();
-    const v = random();
+    const u = random.get();
+    const v = random.get();
 
     const theta = Math.acos(2 * v - 1);
     const phi = TAU * u;
@@ -63,11 +104,11 @@ export function inSphere(buffer: TypedArray, sphere?: Sphere) {
     ...sphere,
   };
   for (let i = 0; i < buffer.length; i += 3) {
-    const u = Math.pow(random(), 1 / 3);
+    const u = Math.pow(random.get(), 1 / 3);
 
-    let x = random() * 2 - 1;
-    let y = random() * 2 - 1;
-    let z = random() * 2 - 1;
+    let x = random.get() * 2 - 1;
+    let y = random.get() * 2 - 1;
+    let z = random.get() * 2 - 1;
 
     const mag = Math.sqrt(x * x + y * y + z * z);
 
@@ -104,8 +145,8 @@ export function inCircle(buffer: TypedArray, circle?: Circle): TypedArray {
   };
 
   for (let i = 0; i < buffer.length; i += 2) {
-    const r = radius * Math.sqrt(random());
-    const theta = random() * TAU;
+    const r = radius * Math.sqrt(random.get());
+    const theta = random.get() * TAU;
 
     buffer[i] = Math.sin(theta) * r + center[0];
     buffer[i + 1] = Math.cos(theta) * r + center[1];
@@ -121,7 +162,7 @@ export function onCircle(buffer: TypedArray, circle?: Circle) {
   };
 
   for (let i = 0; i < buffer.length; i += 2) {
-    const theta = random() * TAU;
+    const theta = random.get() * TAU;
 
     buffer[i] = Math.sin(theta) * radius + center[0];
     buffer[i + 1] = Math.cos(theta) * radius + center[1];
@@ -153,8 +194,8 @@ export function inRect<T extends TypedArray>(buffer: T, rect?: Rect): T {
   
   
   for (let i = 0; i < buffer.length; i += 2) {
-    buffer[i] = (Math.random() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (Math.random() - 0.5) * sideY + center[1];
+    buffer[i] = (random.get() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (random.get() - 0.5) * sideY + center[1];
   }
   
   
@@ -179,9 +220,9 @@ export function inBox(buffer: TypedArray, box?: Box) {
   const sideZ = typeof sides === "number" ? sides : sides[2];
 
   for (let i = 0; i < buffer.length; i += 3) {
-    buffer[i] = (Math.random() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (Math.random() - 0.5) * sideY + center[1];
-    buffer[i + 2] = (Math.random() - 0.5) * sideZ + center[2];
+    buffer[i] = (random.get() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (random.get() - 0.5) * sideY + center[1];
+    buffer[i + 2] = (random.get() - 0.5) * sideZ + center[2];
   }
 
   return buffer;
@@ -208,9 +249,9 @@ export function onBox(buffer: TypedArray, box?: Box) {
   const sideZ = typeof sides === "number" ? sides : sides[2];
 
   for (let i = 0; i < buffer.length; i += 3) {
-    buffer[i] = (Math.random() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (Math.random() - 0.5) * sideY + center[1];
-    buffer[i + 2] = (Math.random() - 0.5) * sideZ + center[2];
+    buffer[i] = (random.get() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (random.get() - 0.5) * sideY + center[1];
+    buffer[i + 2] = (random.get() - 0.5) * sideZ + center[2];
   }
 
   return buffer;

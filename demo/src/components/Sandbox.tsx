@@ -5,7 +5,7 @@ function App({ children }: { children: any }) {
     <Canvas
       orthographic
       dpr={[1, 2]}
-      camera={{ position: [8, 8, 8], zoom: 200 }}
+      camera={{ position: [0, 0, 5], zoom: 250 }}
     >
       <color args={["#333"]} attach="background" />
 
