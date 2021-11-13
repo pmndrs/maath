@@ -1,8 +1,7 @@
 import { Vector2, Vector3 } from 'three'
-import { inCircle, inPoisson, inSphere, onCircle, onSphere } from '../random'
+import { Generator, inCircle, inPoisson, inSphere, onCircle, onSphere } from '../random'
 
 describe('random', () => {
-
   describe('inCircle', () => {
 
     const circle = { radius: 3 }
@@ -135,4 +134,29 @@ describe('random', () => {
     })
     
   })
+})
+
+describe("seeded random", () => {
+
+  describe('random value', () => {
+
+    it ('should always produce the same sequence of numbers given the same seed', () => {
+      const generator = new Generator("test")
+      const generator2 = new Generator("test2")
+
+      const numbers = Array.from({ length: 40 }, () => generator.get())
+      const numbers2 = Array.from({ length: 40 }, () => generator2.get())
+      
+      expect(numbers).not.toEqual(numbers2)
+
+      // same seed as the first generator
+      const generator3 = new Generator("test")
+      const numbers3 = Array.from({ length: 40 }, () => generator3.get())
+
+      expect(numbers).toEqual(numbers3)
+     
+    })
+
+  })
+
 })

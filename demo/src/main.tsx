@@ -12,7 +12,7 @@ import SandboxOverlay from "./components/SandboxOverlay";
 import Header from "./components/Header";
 
 const Sandbox = lazy(() => import("./components/Sandbox"));
-const PointsDemo = lazy(() => import("./sandboxes/sutherlandHodgman/src/App"));
+const DevBox = lazy(() => import("./sandboxes/__a/src/App"));
 
 import "./index.css";
 
@@ -30,7 +30,7 @@ ReactDOM.render(
     <Route path="/sandbox">
       <Suspense fallback="">
         <Sandbox>
-          <PointsDemo />
+          <DevBox />
         </Sandbox>
       </Suspense>
     </Route>
