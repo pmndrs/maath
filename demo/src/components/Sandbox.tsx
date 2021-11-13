@@ -1,3 +1,4 @@
+import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
 function App({ children }: { children: any }) {
@@ -10,6 +11,8 @@ function App({ children }: { children: any }) {
       <color args={["#333"]} attach="background" />
 
       {children}
+
+      <OrbitControls />
     </Canvas>
   );
 }
