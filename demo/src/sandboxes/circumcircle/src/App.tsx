@@ -6,9 +6,9 @@ import { EllipseCurve } from "three";
 import * as random from "maath/random";
 import * as buffer from "maath/buffer";
 import * as triangle from "maath/triangle";
-import * as threeUtils from "maath/three"
+import * as threeUtils from "maath/three";
 
-import Points from "./Points";
+import { Points } from "@react-three/drei";
 
 function TrianglesDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
@@ -83,14 +83,11 @@ function TrianglesDemo() {
 
       circle2Ref.current.geometry.setFromPoints(curve.getPoints(128));
     }
-
-    // update the points geometry since we imperatively updated the positions buffer
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
     <>
-      <Points points={final as Float32Array} stride={2} ref={pointsRef}>
+      <Points positions={final} stride={2} ref={pointsRef}>
         <pointsMaterial size={5} />
       </Points>
 

@@ -4,6 +4,7 @@ const path = require("path");
 
 const sandboxesFolder = ["demo", "src", "sandboxes"];
 
+const DREI_V = "https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei";
 const currentV = JSON.parse(
   fs.readFileSync(path.join("packages", "maath", "package.json"), "utf-8")
 ).version;
@@ -23,14 +24,20 @@ fs.readdirSync(path.join(...sandboxesFolder))
   .filter((file) => file !== ".DS_Store")
   .forEach((file) => {
     mutateJSONAtPath(
-      (json) => (json.dependencies.maath = NEW_V),
+      (json) => {
+        json.dependencies.maath = NEW_V;
+        json.dependencies["@react-three/drei"] = DREI_V;
+      },
       ...sandboxesFolder,
       file
     );
   });
 
 // 2. update version in demo
-mutateJSONAtPath((json) => (json.dependencies.maath = NEW_V), "demo");
+mutateJSONAtPath((json) => {
+  json.dependencies.maath = NEW_V;
+  json.dependencies["@react-three/drei"] = DREI_V;
+}, "demo");
 
 // 3. update version in package
 mutateJSONAtPath((json) => (json.version = NEW_V), "packages", "maath");

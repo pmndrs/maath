@@ -1,6 +1,6 @@
 {
   "name": "maath",
-  "version": "0.0.1-alpha.21",
+  "version": "0.0.1-alpha.22",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
@@ -19,11 +19,11 @@
     ]
   },
   "peerDependencies": {
-    "@types/three": "^0.133.1",
+    "@types/three": "^0.134.0",
     "three": "^0.134.0"
   },
   "devDependencies": {
-    "@types/three": "^0.133.1",
+    "@types/three": "^0.134.0",
     "three": "^0.134.0"
   }
 }

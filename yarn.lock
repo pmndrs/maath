@@ -1439,10 +1439,9 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@react-three/drei@^7.20.6":
-  version "7.20.6"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-7.20.6.tgz#de58805611a0dcf64485d3d411205a80982a7500"
-  integrity sha512-/W7YY34uNgmv0dSUeuL8+dcRikDTLKBu8ZMYmNqvKDUO0xeVE23CKROupb/u+PZrrIrNqhOA3JnWvleznH7cKw==
+"@react-three/drei@https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei":
+  version "0.0.0-semantic-release"
+  resolved "https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei#d68213d43a894d47fe90bb66bf3500bfaeea614c"
   dependencies:
     "@babel/runtime" "^7.11.2"
     detect-gpu "^3.1.25"
@@ -1729,11 +1728,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
-
-"@types/three@^0.133.1":
-  version "0.133.1"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.133.1.tgz#6007faaf7f6b53339150a2a1fe57121e4c6607c1"
-  integrity sha512-XqBrP/+kbs+o0CYRhCVVE95v7FaL2bO5Z7+3VQJE0nEyjo+9LoLfeNgZITOnndKHxM+7ltEciAIR7uE0SZlsOg==
 
 "@types/three@^0.134.0":
   version "0.134.0"
