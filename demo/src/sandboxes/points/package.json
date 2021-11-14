@@ -17,7 +17,7 @@
     "@react-three/drei": "7.12.6",
     "@react-three/fiber": "7.0.9",
     "three": "0.134.0",
-    "maath": "0.0.1-alpha.18"
+    "maath": "0.0.1-alpha.21"
   },
   "devDependencies": {
     "@types/react": "17.0.20",

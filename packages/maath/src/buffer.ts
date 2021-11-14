@@ -5,10 +5,10 @@
  */
 
 import { Quaternion, Vector3 } from "three";
-import type { TypedArray, MyVector2, MyVector3 } from "../ctypes";
-import { lerp as _lerp } from "../misc";
-import * as v2 from "../vector2";
-import * as v3 from "../vector3";
+import type { TypedArray, MyVector2, MyVector3 } from "./ctypes";
+import { lerp as _lerp } from "./misc";
+import * as v2 from "./vector2";
+import * as v3 from "./vector3";
 
 export function swizzle(buffer: TypedArray, stride = 3, swizzle = "xyz") {
   const o = { x: 0, y: 0, z: 0 };
@@ -73,6 +73,7 @@ export function lerp(
 }
 
 // TODO add stride
+// TODO Fix types & vectors
 /**
  *
  * Translate all points in the passed buffer by the passed translactionVector.

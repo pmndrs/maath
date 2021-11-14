@@ -1,4 +1,4 @@
 node ./.scripts/version.js
-yarn build
+NODE_ENV="production" && yarn build
 cd packages/maath
 npm publish

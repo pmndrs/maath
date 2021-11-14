@@ -1,5 +1,6 @@
 import { Vector2, Vector3 } from 'three'
 import { Generator, inCircle, inPoisson, inSphere, onCircle, onSphere } from '../random'
+import { noise } from '../random'
 
 describe('random', () => {
   describe('inCircle', () => {
@@ -159,4 +160,32 @@ describe("seeded random", () => {
 
   })
 
+})
+
+describe("noise", () => {
+  it('should produce same values for same coords & seed', () => {
+
+    let i = 0;
+    const values = Array.from({ length: 10 }, () => noise.simplex2(i, i++))
+
+    i = 0;
+    const values2 = Array.from({ length: 10 }, () => noise.simplex2(i, i++))
+
+    expect(values).toEqual(values2)
+
+  })
+
+  it('should produce different values for same coords & different seed', () => {
+  
+    let i = 0;
+    const values = Array.from({ length: 10 }, () => noise.simplex2(i, i++))
+
+    noise.seed(1)
+
+    i = 0;
+    const values2 = Array.from({ length: 10 }, () => noise.simplex2(i, i++))
+
+    expect(values).not.toEqual(values2)
+
+  })
 })

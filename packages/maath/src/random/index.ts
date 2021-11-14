@@ -47,7 +47,6 @@ export class Generator {
   value = lcgRandom(this.seed)
 }
 
-
 const defaultGen = new Generator(Math.random())
 
 /***
@@ -244,3 +243,5 @@ export function onBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen
 
   return buffer;
 }
+
+export * as noise from './noise'

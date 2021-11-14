@@ -148,6 +148,19 @@ export function remap(
 }
 
 /**
+ * 
+ * https://www.desmos.com/calculator/vsnmlaljdu
+ * 
+ * Ease-in-out, goes to -Infinite before 0 and Infinite after 1 
+ * 
+ * @param t 
+ * @returns 
+ */
+export function fade(t: number) {
+  return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+/**
  *
  * Returns the result of linearly interpolating between input A and input B by input T.
  *

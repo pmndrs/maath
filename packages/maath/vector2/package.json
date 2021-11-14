@@ -1,4 +1,3 @@
 {
-  "main": "dist/maath-vector2.cjs.js",
-  "module": "dist/maath-vector2.esm.js"
+  "main": "dist/maath-vector2.cjs.js"
 }

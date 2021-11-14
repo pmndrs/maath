@@ -1,4 +1,3 @@
 {
-  "main": "dist/maath-buffer.cjs.js",
-  "module": "dist/maath-buffer.esm.js"
+  "main": "dist/maath-buffer.cjs.js"
 }
