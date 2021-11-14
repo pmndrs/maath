@@ -1,26 +1,9 @@
 {
-  "name": "maath",
+  "name": "@maath/root",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "private": "true",
-  "devDependencies": {
-    "@babel/preset-env": "^7.16.0",
-    "@babel/preset-typescript": "^7.16.0",
-    "@preconstruct/cli": "^2.1.5",
-    "@types/jest": "^27.0.2",
-    "jest": "^27.3.1",
-    "semver": "^7.3.5",
-    "typescript": "^4.4.4"
-  },
-  "scripts": {
-    "build": "preconstruct build",
-    "watch": "preconstruct watch",
-    "dev": "preconstruct dev",
-    "validate": "preconstruct validate",
-    "test": "jest",
-    "pub": "./.scripts/publish.sh"
-  },
+  "private": true,
   "workspaces": [
     "packages/*",
     "demo"
@@ -30,8 +13,29 @@
       "packages/*"
     ]
   },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@preconstruct/cli": "^2.1.5",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "jest": "^27.3.1",
+    "semver": "^7.3.5",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "build": "preconstruct build",
+    "watch": "preconstruct watch",
+    "validate": "preconstruct validate",
+    "test": "jest",
+    "pub": "./.scripts/publish.sh",
+    "postinstall": "preconstruct dev",
+    "dev": "yarn workspace demo dev"
+  },
   "dependencies": {
     "babel-jest": "^27.3.1",
     "ts-node": "^10.4.0"
-  }
+  },
+  "packageManager": "yarn@2.4.3"
 }

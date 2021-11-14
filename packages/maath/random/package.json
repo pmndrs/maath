@@ -1,3 +1,4 @@
 {
-  "main": "dist/maath-random.cjs.js"
+  "main": "dist/maath-random.cjs.js",
+  "module": "dist/maath-random.esm.js"
 }
