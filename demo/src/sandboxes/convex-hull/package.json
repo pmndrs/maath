@@ -2,7 +2,13 @@
   "name": "maath-demo-convex-hull",
   "version": "1.0.0",
   "description": "React and TypeScript example starter project",
-  "keywords": ["typescript", "react", "starter", "maath", "r3f"],
+  "keywords": [
+    "typescript",
+    "react",
+    "starter",
+    "maath",
+    "r3f"
+  ],
   "main": "src/index.tsx",
   "dependencies": {
     "react": "17.0.2",
@@ -11,7 +17,7 @@
     "@react-three/drei": "7.12.6",
     "@react-three/fiber": "7.0.9",
     "three": "0.134.0",
-    "maath": "0.0.1-alpha.11"
+    "maath": "0.0.1-alpha.18"
   },
   "devDependencies": {
     "@types/react": "17.0.20",
@@ -25,5 +31,10 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

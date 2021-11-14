@@ -12,7 +12,7 @@ import SandboxOverlay from "./components/SandboxOverlay";
 import Header from "./components/Header";
 
 const Sandbox = lazy(() => import("./components/Sandbox"));
-const DevBox = lazy(() => import("./sandboxes/__a/src/App"));
+const DevBox = lazy(() => import("./sandboxes/points/src/App"));
 
 import "./index.css";
 

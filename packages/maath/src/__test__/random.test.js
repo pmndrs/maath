@@ -144,14 +144,14 @@ describe("seeded random", () => {
       const generator = new Generator("test")
       const generator2 = new Generator("test2")
 
-      const numbers = Array.from({ length: 40 }, () => generator.get())
-      const numbers2 = Array.from({ length: 40 }, () => generator2.get())
-      
+      const numbers = Array.from({ length: 40 }, () => generator.value())
+      const numbers2 = Array.from({ length: 40 }, () => generator2.value())
+
       expect(numbers).not.toEqual(numbers2)
 
       // same seed as the first generator
       const generator3 = new Generator("test")
-      const numbers3 = Array.from({ length: 40 }, () => generator3.get())
+      const numbers3 = Array.from({ length: 40 }, () => generator3.value())
 
       expect(numbers).toEqual(numbers3)
      

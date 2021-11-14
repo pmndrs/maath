@@ -41,10 +41,10 @@ export class Generator {
 
   init = (seed: number | string) => {
     this.seed = seed;
-    this.get = lcgRandom(seed)
+    this.value = lcgRandom(seed)
   }
 
-  get = lcgRandom(this.seed)
+  value = lcgRandom(this.seed)
 }
 
 
@@ -73,8 +73,8 @@ export function onSphere(buffer: TypedArray, sphere?: Sphere, rng: Generator = d
   };
 
   for (let i = 0; i < buffer.length; i += 3) {
-    const u = rng.get();
-    const v = rng.get();
+    const u = rng.value();
+    const v = rng.value();
 
     const theta = Math.acos(2 * v - 1);
     const phi = TAU * u;
@@ -94,11 +94,11 @@ export function inSphere(buffer: TypedArray, sphere?: Sphere, rng: Generator = d
     ...sphere,
   };
   for (let i = 0; i < buffer.length; i += 3) {
-    const u = Math.pow(rng.get(), 1 / 3);
+    const u = Math.pow(rng.value(), 1 / 3);
 
-    let x = rng.get() * 2 - 1;
-    let y = rng.get() * 2 - 1;
-    let z = rng.get() * 2 - 1;
+    let x = rng.value() * 2 - 1;
+    let y = rng.value() * 2 - 1;
+    let z = rng.value() * 2 - 1;
 
     const mag = Math.sqrt(x * x + y * y + z * z);
 
@@ -135,8 +135,8 @@ export function inCircle(buffer: TypedArray, circle?: Circle, rng: Generator = d
   };
 
   for (let i = 0; i < buffer.length; i += 2) {
-    const r = radius * Math.sqrt(rng.get());
-    const theta = rng.get() * TAU;
+    const r = radius * Math.sqrt(rng.value());
+    const theta = rng.value() * TAU;
 
     buffer[i] = Math.sin(theta) * r + center[0];
     buffer[i + 1] = Math.cos(theta) * r + center[1];
@@ -152,7 +152,7 @@ export function onCircle(buffer: TypedArray, circle?: Circle, rng: Generator = d
   };
 
   for (let i = 0; i < buffer.length; i += 2) {
-    const theta = rng.get() * TAU;
+    const theta = rng.value() * TAU;
 
     buffer[i] = Math.sin(theta) * radius + center[0];
     buffer[i + 1] = Math.cos(theta) * radius + center[1];
@@ -183,8 +183,8 @@ export function inRect<T extends TypedArray>(buffer: T, rect?: Rect, rng: Genera
   const sideY = typeof sides === "number" ? sides : sides[1]
   
   for (let i = 0; i < buffer.length; i += 2) {
-    buffer[i] = (rng.get() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (rng.get() - 0.5) * sideY + center[1];
+    buffer[i] = (rng.value() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (rng.value() - 0.5) * sideY + center[1];
   }
   
   return buffer;
@@ -208,9 +208,9 @@ export function inBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen
   const sideZ = typeof sides === "number" ? sides : sides[2];
 
   for (let i = 0; i < buffer.length; i += 3) {
-    buffer[i] = (rng.get() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (rng.get() - 0.5) * sideY + center[1];
-    buffer[i + 2] = (rng.get() - 0.5) * sideZ + center[2];
+    buffer[i] = (rng.value() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (rng.value() - 0.5) * sideY + center[1];
+    buffer[i + 2] = (rng.value() - 0.5) * sideZ + center[2];
   }
 
   return buffer;
@@ -237,9 +237,9 @@ export function onBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen
   const sideZ = typeof sides === "number" ? sides : sides[2];
 
   for (let i = 0; i < buffer.length; i += 3) {
-    buffer[i] = (rng.get() - 0.5) * sideX + center[0];
-    buffer[i + 1] = (rng.get() - 0.5) * sideY + center[1];
-    buffer[i + 2] = (rng.get() - 0.5) * sideZ + center[2];
+    buffer[i] = (rng.value() - 0.5) * sideX + center[0];
+    buffer[i + 1] = (rng.value() - 0.5) * sideY + center[1];
+    buffer[i + 2] = (rng.value() - 0.5) * sideZ + center[2];
   }
 
   return buffer;

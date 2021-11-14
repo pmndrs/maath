@@ -1,6 +1,6 @@
 {
   "name": "maath",
-  "version": "0.0.1-alpha.12",
+  "version": "0.0.1-alpha.18",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
@@ -18,14 +18,8 @@
       "three.ts"
     ]
   },
-  "dependencies": {
-    "@types/lodash": "^4.14.176",
-    "@types/lodash-es": "^4.17.5",
-    "lodash-es": "^4.17.21",
-    "lodash.curry": "^4.1.1",
-    "three": "^0.134.0"
-  },
-  "devDependencies": {
+  "peerDepencies": {
+    "three": "^0.134.0",
     "@types/three": "^0.133.1"
   }
 }

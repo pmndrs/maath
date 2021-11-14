@@ -10,6 +10,7 @@
     "@preconstruct/cli": "^2.1.5",
     "@types/jest": "^27.0.2",
     "jest": "^27.3.1",
+    "semver": "^7.3.5",
     "typescript": "^4.4.4"
   },
   "scripts": {
@@ -17,7 +18,8 @@
     "watch": "preconstruct watch",
     "dev": "preconstruct dev",
     "validate": "preconstruct validate",
-    "test": "jest"
+    "test": "jest",
+    "pub": "./.scripts/publish.sh"
   },
   "workspaces": [
     "packages/*",
