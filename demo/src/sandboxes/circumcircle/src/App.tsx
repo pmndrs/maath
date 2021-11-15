@@ -87,6 +87,7 @@ function TrianglesDemo() {
 
   return (
     <>
+      {/* @ts-ignore */}
       <Points positions={final} stride={2} ref={pointsRef}>
         <pointsMaterial size={5} />
       </Points>
