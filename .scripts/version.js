@@ -4,7 +4,7 @@ const path = require("path");
 
 const sandboxesFolder = ["demo", "src", "sandboxes"];
 
-const DREI_V = "https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei";
+const DREI_V = "^7.22.0";
 const currentV = JSON.parse(
   fs.readFileSync(path.join("packages", "maath", "package.json"), "utf-8")
 ).version;
