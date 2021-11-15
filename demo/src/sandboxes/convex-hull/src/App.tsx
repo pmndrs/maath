@@ -9,7 +9,6 @@ import * as v2 from "maath/vector2";
 import * as threeUtils from "maath/three";
 
 import { Points } from "@react-three/drei"
-import { Mesh, Vector } from "three";
 
 export default function ConvexHullDemo() {
   const pointsRef = useRef<THREE.Points>(null!);
@@ -58,7 +57,7 @@ export default function ConvexHullDemo() {
 
   return (
     <>
-      <Points points={final} stride={2} ref={pointsRef}>
+      <Points positions={final} stride={2} ref={pointsRef}>
         <pointsMaterial size={1} />
       </Points>
       {/* @ts-ignore */}
