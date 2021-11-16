@@ -285,3 +285,7 @@ export function pointToPlaneDistance(p: Vector3, plane: Plane): number {
 
   return d;
 }
+
+export function test() {
+  return null
+}
