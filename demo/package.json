@@ -11,6 +11,7 @@
     "@react-three/drei": "^7.22.0",
     "@react-three/fiber": "^7.0.19",
     "@types/three": "^0.134.0",
+    "colord": "^2.9.1",
     "leva": "^0.9.14",
     "maath": "0.0.1-alpha.23",
     "nice-color-palettes": "^3.0.0",

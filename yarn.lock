@@ -1439,9 +1439,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@react-three/drei@https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei":
-  version "0.0.0-semantic-release"
-  resolved "https://pkg.csb.dev/pmndrs/drei/commit/3a287467/@react-three/drei#d68213d43a894d47fe90bb66bf3500bfaeea614c"
+"@react-three/drei@^7.22.0":
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-7.22.0.tgz#934387a04b9791b1d3aa9ef3af670055b14ed6ee"
+  integrity sha512-TkNXg9VddYSNiVcc6UQui1zkOtCuCmwU3Ts080NPOFvoel34w8K/PZ70iPSr6FBC+2WCjECnSSwQYwb3/9c1oQ==
   dependencies:
     "@babel/runtime" "^7.11.2"
     detect-gpu "^3.1.25"
@@ -2196,7 +2197,7 @@ color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
-colord@^2.0.1:
+colord@^2.0.1, colord@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/colord/-/colord-2.9.1.tgz#c961ea0efeb57c9f0f4834458f26cb9cc4a3f90e"
   integrity sha512-4LBMSt09vR0uLnPVkOUBnmxgoaeN4ewRbx801wY/bXcltXfpR/G46OdWn96XpYmCWuYvO46aBZP4NgX8HpNAcw==
