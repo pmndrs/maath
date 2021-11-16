@@ -134,22 +134,22 @@ export function rotate(
 export function map(
   buffer: TypedArray,
   stride: 2,
-  fn: (x: number, y: number) => number[]
+  fn: (v: v2.V2, i: number) => number[]
 ): TypedArray;
 
 export function map(
   buffer: TypedArray,
   stride: 3,
-  fn: (x: number, y: number, z: number) => number[]
+  fn: (v: v3.V3, i: number) => number[]
 ): TypedArray;
 
 export function map(buffer: any, stride: any, callback: any) {
-  for (let i = 0; i < buffer.length; i += stride) {
+  for (let i = 0, j = 0; i < buffer.length; i += stride, j++) {
     if (stride === 3) {
-      const res = callback(buffer[i], buffer[i + 1], buffer[i + 2]);
+      const res = callback([buffer[i], buffer[i + 1], buffer[i + 2]], j);
       buffer.set(res, i);
     } else {
-      buffer.set(callback(buffer[i], buffer[i + 1]), i);
+      buffer.set(callback([buffer[i], buffer[i + 1]], j), i);
     }
   }
 
