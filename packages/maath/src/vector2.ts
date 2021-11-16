@@ -53,6 +53,6 @@ export function length(a: V2): number {
 
 export function distance(a: V2, b: V2): number {
   return Math.sqrt(
-    (a[0] - b[0]) * (a[0] - b[0]) + (a[0] - b[1]) * (a[0] - b[1])
+    (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])
   );
 }
