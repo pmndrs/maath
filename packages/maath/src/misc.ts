@@ -2,6 +2,7 @@ import { Matrix3, Plane, Vector2, Vector3 } from "three";
 import { doThreePointsMakeARight } from "./triangle";
 import type { TypedArray } from "./ctypes";
 import { matrixSum3 } from "./matrix";
+import { V3 } from './vector3'
 
 /**
  * Clamps a value between a range.
@@ -286,6 +287,21 @@ export function pointToPlaneDistance(p: Vector3, plane: Plane): number {
   return d;
 }
 
-export function test() {
-  return null
+export function getIndexFrom3D(coords: V3, sides: V3) {
+  const [ix, iy, iz] = coords;
+  const [rx, ry] = sides
+  
+  return iz * rx * ry + iy * rx + ix;
+}
+
+export function get3DFromIndex(index: number, size: V3): V3 {
+  const [rx, ry] = size
+
+  let a = (rx * ry);
+  const z = index / a;
+  let b = index - a * z;
+  const y = b / rx;
+  const x = b % rx;
+
+  return [x, y, z];
 }
