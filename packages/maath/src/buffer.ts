@@ -239,3 +239,42 @@ export function center(myBuffer: TypedArray, stride: any) {
     v2.zero()
   );
 }
+
+type ISortingCallback<T> = (a: T, b: T) => number;
+
+export function sort(
+  myBuffer: TypedArray,
+  stride: 2,
+  callback: ISortingCallback<v2.V2>
+): TypedArray;
+export function sort(
+  myBuffer: TypedArray,
+  stride: 3,
+  callback: ISortingCallback<v3.V3>
+): TypedArray;
+export function sort(myBuffer: TypedArray, stride: 2 | 3, callback: any) {
+  // 1. make an array of the correct size
+  const indices = Int16Array.from(
+    { length: myBuffer.length / stride },
+    (_, i) => i
+  );
+
+  // 2. sort the indices array
+  indices.sort((a, b) => {
+    const pa = myBuffer.slice(a * stride, a * stride + stride);
+    const pb = myBuffer.slice(b * stride, b * stride + stride);
+
+    return callback(pa, pb);
+  });
+
+  // 3. make a copy of the original array to fetch indices from
+  const prevBuffer = myBuffer.slice(0);
+
+  // 4. mutate the passed array
+  for (let i = 0; i < indices.length; i++) {
+    const j = indices[i];
+    myBuffer.set(prevBuffer.slice(j * stride, j * stride + stride), i * 3);
+  }
+
+  return myBuffer;
+}
