@@ -17,6 +17,7 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
+    "@changesets/cli": "^2.18.0",
     "@preconstruct/cli": "^2.1.5",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
@@ -31,7 +32,8 @@
     "test": "jest",
     "pub": "./.scripts/publish.sh",
     "postinstall": "preconstruct dev",
-    "dev": "yarn workspace demo dev"
+    "dev": "yarn workspace demo dev",
+    "release": "yarn build && yarn changeset publish"
   },
   "dependencies": {
     "babel-jest": "^27.3.1",
