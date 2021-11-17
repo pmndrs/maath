@@ -3,6 +3,7 @@ import { doThreePointsMakeARight } from "./triangle";
 import type { TypedArray } from "./ctypes";
 import { matrixSum3 } from "./matrix";
 import { V3 } from './vector3'
+import { V2 } from "./vector2";
 
 /**
  * Clamps a value between a range.
@@ -304,4 +305,15 @@ export function get3DFromIndex(index: number, size: V3): V3 {
   const x = b % rx;
 
   return [x, y, z];
+}
+
+export function getIndexFrom2D(coords: V2, size: V2): number {
+  return coords[0] + size[0]*coords[1];
+}
+
+export function get2DFromIndex(index: number, columns: number): V2 {
+  const x = index % columns
+  const y = Math.floor(index/columns);
+  
+  return [x,y]
 }
