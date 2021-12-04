@@ -33,7 +33,7 @@
     "pub": "./.scripts/publish.sh",
     "postinstall": "preconstruct dev",
     "dev": "yarn workspace demo dev",
-    "release": "yarn build && yarn changeset publish"
+    "release": "NODE_ENV=production && yarn build && yarn changeset publish"
   },
   "dependencies": {
     "babel-jest": "^27.3.1",
