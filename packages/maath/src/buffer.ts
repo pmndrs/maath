@@ -38,16 +38,26 @@ export function swizzle(buffer: TypedArray, stride = 3, swizzle = "xyz") {
  */
 export function addAxis(
   buffer: TypedArray,
+  size: number,
   valueGenerator: (j: number) => number = () => Math.random()
 ): TypedArray {
-  const newBuffer = new Float32Array((buffer.length / 2) * 3) as TypedArray;
+  const newSize = size + 1;
+  const newBuffer = new Float32Array((buffer.length / size) * newSize) as TypedArray;
 
-  for (let i = 0; i < buffer.length; i += 2) {
-    let j = (i / 2) * 3;
+  for (let i = 0; i < buffer.length; i += size) {
+    let j = (i / size) * newSize;
 
     newBuffer[j] = buffer[i];
     newBuffer[j + 1] = buffer[i + 1];
-    newBuffer[j + 2] = valueGenerator(j);
+
+    if (size === 2) {
+      newBuffer[j + 2] = valueGenerator(j);
+    }
+
+    if (size === 3) {
+      newBuffer[j + 2] = buffer[i + 2];
+      newBuffer[j + 3] = valueGenerator(j);
+    }
   }
 
   return newBuffer;

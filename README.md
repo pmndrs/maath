@@ -64,14 +64,14 @@ swizzleBuffer(myBuffer, 'xzy') // buffer is now [0, 2, 1]
 
 This is a way to make simple rotations.
 
-#### 🪶 addAxis(buffer, getZValue)
+#### 🪶 addAxis(buffer, size, getZValue)
 
 Adds a z axis to an `[..., x, y, ...]` typed array:
 
 ```js
 const my2DBuffer = new Float32Array(100 * 2)
-
-const my3DBuffer = addAxis(my2DBuffer, () => Math.random()) // zAxis will now be a random value between 0 and 1
+const my3DBuffer = addAxis(my2DBuffer, 2, () => Math.random()) // zAxis will now be a random value between 0 and 1
+const my4DBuffer = addAxis(my3DBuffer, 3, () => 1) // 4th value (imagine a in rgba) will be 1 
 ```
 
 #### 🪶 lerpBuffers(bufferA, bufferB, destinationBuffer, t)
