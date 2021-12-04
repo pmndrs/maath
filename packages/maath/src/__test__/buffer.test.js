@@ -16,6 +16,8 @@ describe('addAxis', () => {
 
     }
 
+    expect( my3DBuffer.length ).toEqual(1_000 * 3)
+
   })
 
   it('adds a 4th axis to a 3D buffer', () => {
@@ -32,6 +34,8 @@ describe('addAxis', () => {
       expect( my4DBuffer[j+3] ).toEqual( .75 )
 
     }
+
+    expect( my4DBuffer.length ).toEqual(1_000 * 4)
 
   })
 })
