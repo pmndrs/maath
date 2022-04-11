@@ -7,6 +7,7 @@
   "types": "dist/maath.cjs.d.ts",
   "preconstruct": {
     "entrypoints": [
+      "index.ts",
       "buffer.ts",
       "easing.ts",
       "matrix.ts",
