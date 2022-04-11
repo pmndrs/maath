@@ -1,5 +1,11 @@
 # maath
 
+## 0.1.0
+
+### Minor Changes
+
+- 1a033d1: adds entry point that exports everything
+
 ## 0.0.2
 
 ### Patch Changes
