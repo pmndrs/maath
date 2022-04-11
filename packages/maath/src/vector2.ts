@@ -28,7 +28,7 @@ export function subValue(a: V2, n: number): V2 {
 }
 
 export function scale(a: V2, n: number): V2 {
-  return [a[0] * n, a[1] * n]
+  return [a[0] * n, a[1] * n];
 }
 
 export function dot(a: V2, b: V2): number {
