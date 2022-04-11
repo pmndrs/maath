@@ -42,7 +42,9 @@ export function addAxis(
   valueGenerator: (j: number) => number = () => Math.random()
 ): TypedArray {
   const newSize = size + 1;
-  const newBuffer = new Float32Array((buffer.length / size) * newSize) as TypedArray;
+  const newBuffer = new Float32Array(
+    (buffer.length / size) * newSize
+  ) as TypedArray;
 
   for (let i = 0; i < buffer.length; i += size) {
     let j = (i / size) * newSize;

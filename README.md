@@ -7,16 +7,14 @@
 yarn add maath
 ```
 
-This is a collection of useful math helpers, random generators, bits and bobs. 
+This is a collection of useful math helpers, random generators, bits and bobs.
 
 The library is mostly meant to be used with [three.js](https://github.com/mrdoob/three.js/), so if you are using it outside of a three project, make sure you check the source and - if you don't need the dep - just copy paste!
 
-
 ### Check out the demos on Codesandbox: 🪶
 
-
 | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/points"><img   src="https://codesandbox.io/api/v1/sandboxes/lex1g/screenshot.png"  /></a> | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/convex-hull"><img src="https://codesandbox.io/api/v1/sandboxes/fh8l2/screenshot.png" /></a> | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/circumcircle"><img src="https://codesandbox.io/api/v1/sandboxes/zuff9/screenshot.png"  /></a> |
-|----------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------|
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 > 🟡 The library is still heavily WIP, don't use it for production work until a stable API is relased in a ^1.0.0
 
@@ -34,22 +32,23 @@ Do you want to add something? No rules, but keep these in mind:
 - loose typing. Try to add typing, but don't go crazy with generics and complexity
 
 If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
+
 ## 🪶 Reference
 
 ### Using specific entry points
 
 ```js
 // you can import the namespaces from the main entrypoint
-import { buffer, random } from 'maath'
+import { buffer, random } from "maath";
 // or import each function or all of them from each namespace entrypoint
-import * as buffer from 'maath/buffer'
-import { inSphere } from 'maath/random'
+import * as buffer from "maath/buffer";
+import { inSphere } from "maath/random";
 ```
 
 ### Buffer
 
 ```js
-import * as buffer from 'maath/buffer'
+import * as buffer from "maath/buffer";
 ```
 
 #### 🪶 toVectorArray(buffer, stride)
@@ -57,19 +56,19 @@ import * as buffer from 'maath/buffer'
 Converts an `[..., x, y, z, ...]` typed array to a `Vector[]`
 
 ```js
-const myBuffer = new Float32Array(100 * 3)
-const myArray = toVectorArray(myBuffer, 3) 
+const myBuffer = new Float32Array(100 * 3);
+const myArray = toVectorArray(myBuffer, 3);
 ```
 
 #### 🪶 swizzleBuffer(buffer, axes)
 
-[Swizzle](https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)) the individual vectors in a vector buffer
+[Swizzle](<https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)>) the individual vectors in a vector buffer
 
 ```js
-const myBuffer = new Float32Array(100 * 3)
-myBuffer.push(0, 1, 2)
+const myBuffer = new Float32Array(100 * 3);
+myBuffer.push(0, 1, 2);
 
-swizzleBuffer(myBuffer, 'xzy') // buffer is now [0, 2, 1] 
+swizzleBuffer(myBuffer, "xzy"); // buffer is now [0, 2, 1]
 ```
 
 This is a way to make simple rotations.
@@ -79,9 +78,9 @@ This is a way to make simple rotations.
 Adds a z axis to an `[..., x, y, ...]` typed array:
 
 ```js
-const my2DBuffer = new Float32Array(100 * 2)
-const my3DBuffer = addAxis(my2DBuffer, 2, () => Math.random()) // zAxis will now be a random value between 0 and 1
-const my4DBuffer = addAxis(my3DBuffer, 3, () => 1) // 4th value (imagine a in rgba) will be 1 
+const my2DBuffer = new Float32Array(100 * 2);
+const my3DBuffer = addAxis(my2DBuffer, 2, () => Math.random()); // zAxis will now be a random value between 0 and 1
+const my4DBuffer = addAxis(my3DBuffer, 3, () => 1); // 4th value (imagine a in rgba) will be 1
 ```
 
 #### 🪶 lerpBuffers(bufferA, bufferB, destinationBuffer, t)
@@ -89,18 +88,18 @@ const my4DBuffer = addAxis(my3DBuffer, 3, () => 1) // 4th value (imagine a in rg
 Linearly interpolate two buffers, writing on a third one.
 
 ```js
-const mySphere = inSphere(new Float32Array(100 * 3), { radius: 4 })
-const myBox = inBox(new Float32Array(100 * 3), { side: 4 })
+const mySphere = inSphere(new Float32Array(100 * 3), { radius: 4 });
+const myBox = inBox(new Float32Array(100 * 3), { side: 4 });
 
-const interpolationTarget = myBox.slice(0)
+const interpolationTarget = myBox.slice(0);
 
-lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()))
+lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()));
 ```
 
 ### Easing
 
 ```js
-import * as easing from 'maath/easing'
+import * as easing from "maath/easing";
 ```
 
 TBD
@@ -108,7 +107,7 @@ TBD
 ### Matrix
 
 ```js
-import * as matrix from 'maath/matrix'
+import * as matrix from "maath/matrix";
 ```
 
 #### 🪶 determinant2(...matrixInRowMajorOrder)
@@ -116,10 +115,7 @@ import * as matrix from 'maath/matrix'
 Returns the determinant of a passed 2x2 matrix:
 
 ```js
-const d = determinant2(
-  1, 1,
-  2, 2
-)
+const d = determinant2(1, 1, 2, 2);
 ```
 
 #### 🪶 determinant3(...matrixInRowMajorOrder)
@@ -127,24 +123,17 @@ const d = determinant2(
 Returns the determinant of a passed 3x3 matrix:
 
 ```js
-const d = determinant3(
-  1, 1, 1,
-  2, 2, 2
-)
+const d = determinant3(1, 1, 1, 2, 2, 2);
 ```
 
 #### 🪶 determinant4(...matrixInRowMajorOrder) // TBD
 
-#### 🪶 getMinor(matrix, column, row) 
+#### 🪶 getMinor(matrix, column, row)
 
-Returns the [minor](https://en.wikipedia.org/wiki/Minor_(linear_algebra)) of a given matrix.
+Returns the [minor](<https://en.wikipedia.org/wiki/Minor_(linear_algebra)>) of a given matrix.
 
 ```js
-const minor = getMinor([
-  1, 2, 1,
-  2, 1, 1,
-  3, 2, 3
-], 1, 1)
+const minor = getMinor([1, 2, 1, 2, 1, 1, 3, 2, 3], 1, 1);
 
 // minor will be the determinant of the submatrix without row 1 and colum 1
 // | 1 1 |
@@ -154,7 +143,7 @@ const minor = getMinor([
 ### Misc
 
 ```js
-import * as misc from 'maath/misc'
+import * as misc from "maath/misc";
 ```
 
 TBD
@@ -162,7 +151,7 @@ TBD
 ### Random
 
 ```js
-import * as random from 'maath/random'
+import * as random from "maath/random";
 ```
 
 #### 🪶 onTorus(buffer, { innerRadius, outerRadius })
@@ -176,11 +165,10 @@ import * as random from 'maath/random'
 ### Triangle
 
 ```js
-import * as triangle from 'maath/triangle'
+import * as triangle from "maath/triangle";
 ```
 
 TBD
-
 
 ## Inspiration
 
@@ -196,6 +184,4 @@ The kitchen-sink nature of the library was inspired by other projects that manag
 - Figure out a good API for functions that might work on both buffers and arrays of vectors
 - Fix type errors that might come from using different vector libs
 - Keep adding tests
-- Figure out if we can get rid of the Three.js dependency. While useful, it feels superfluous 
-
-
+- Figure out if we can get rid of the Three.js dependency. While useful, it feels superfluous

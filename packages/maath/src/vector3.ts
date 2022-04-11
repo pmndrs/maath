@@ -32,7 +32,7 @@ export function scale(a: V3, n: number): V3 {
 }
 
 export function dot(a: V3, b: V3): number {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
 export function cross(a: V3, b: V3): V3 {
@@ -40,7 +40,7 @@ export function cross(a: V3, b: V3): V3 {
   const y = a[2] * b[0] - a[0] * b[2];
   const z = a[0] * b[1] - a[1] * b[0];
 
-  return [x,y,z]
+  return [x, y, z];
 }
 
 /**

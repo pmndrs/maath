@@ -48,7 +48,7 @@ export function determinant4(...terms: number[]) {
 }
 
 /**
- * 
+ *
  * Get the determinant of matrix m without row r and col c
  *
  * @param {matrix} m Starter matrix
@@ -85,11 +85,11 @@ export function getMinor(matrix: Matrix4, r: number, c: number) {
     }
   }
 
-  return determinant3(...x)
+  return determinant3(...x);
 }
 
 /**
- * 
+ *
  */
 export function matrixSum3(m1: Matrix3, m2: Matrix3) {
   const sum = [];

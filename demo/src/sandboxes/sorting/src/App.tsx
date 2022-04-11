@@ -15,13 +15,13 @@ import { colord } from "colord";
 const rotationAxis = new Vector3(0, 1, 0).normalize();
 const q = new Quaternion();
 
-const x = new Float32Array()
+const x = new Float32Array();
 
 // function pipe<Q extends 2 | 3>(n: number, s: Q, ...fns: ((b: Float32Array, s: Q) => any)[]) {
 //   const buffer = new Float32Array(n * s)
 
 //   fns.reduce((buffer, fn) => fn(buffer, s), buffer)
-  
+
 //   return buffer
 // }
 
@@ -38,7 +38,7 @@ export default function PointsDemo(props: any) {
   const [box] = useState(() => {
     const box = random.inSphere(new Float32Array(100_000 * 3), { radius: 3 });
     // buffer.sort(box, 3, (a,b) => a[0] - b[0]);
-    buffer.sort(box, 3, (a, b) => a[1] * a[0] * a[2] - b[1] * b[0] * b[2])
+    buffer.sort(box, 3, (a, b) => a[1] * a[0] * a[2] - b[1] * b[0] * b[2]);
 
     return box;
   });

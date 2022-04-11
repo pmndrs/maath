@@ -3,14 +3,14 @@ import type { TypedArray } from "../ctypes";
 const TAU = Math.PI * 2;
 
 // Credits @kchapelier https://github.com/kchapelier/wavefunctioncollapse/blob/master/example/lcg.js#L22-L30
-function normalizeSeed (seed: number | string) {
-  if (typeof seed === 'number') {
+function normalizeSeed(seed: number | string) {
+  if (typeof seed === "number") {
     seed = Math.abs(seed);
-  } else if (typeof seed === 'string') {
+  } else if (typeof seed === "string") {
     const string = seed;
     seed = 0;
 
-    for(let i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
       seed = (seed + (i + 1) * (string.charCodeAt(i) % 96)) % 2147483647;
     }
   }
@@ -22,7 +22,7 @@ function normalizeSeed (seed: number | string) {
   return seed;
 }
 
-function lcgRandom (seed: number | string) {
+function lcgRandom(seed: number | string) {
   let state = normalizeSeed(seed);
 
   return function () {
@@ -36,18 +36,18 @@ export class Generator {
   seed: string | number = 0;
 
   constructor(seed: string | number) {
-    this.init(seed)
+    this.init(seed);
   }
 
   init = (seed: number | string) => {
     this.seed = seed;
-    this.value = lcgRandom(seed)
-  }
+    this.value = lcgRandom(seed);
+  };
 
-  value = lcgRandom(this.seed)
+  value = lcgRandom(this.seed);
 }
 
-const defaultGen = new Generator(Math.random())
+const defaultGen = new Generator(Math.random());
 
 /***
  * [3D] Sphere
@@ -65,7 +65,11 @@ const defaultSphere = {
 // random on surface of sphere
 // - https://twitter.com/fermatslibrary/status/1430932503578226688
 // - https://mathworld.wolfram.com/SpherePointPicking.html
-export function onSphere(buffer: TypedArray, sphere?: Sphere, rng: Generator = defaultGen) {
+export function onSphere(
+  buffer: TypedArray,
+  sphere?: Sphere,
+  rng: Generator = defaultGen
+) {
   const { radius, center } = {
     ...defaultSphere,
     ...sphere,
@@ -87,7 +91,11 @@ export function onSphere(buffer: TypedArray, sphere?: Sphere, rng: Generator = d
 }
 
 // from "Another Method" https://datagenetics.com/blog/january32020/index.html
-export function inSphere(buffer: TypedArray, sphere?: Sphere, rng: Generator = defaultGen) {
+export function inSphere(
+  buffer: TypedArray,
+  sphere?: Sphere,
+  rng: Generator = defaultGen
+) {
   const { radius, center } = {
     ...defaultSphere,
     ...sphere,
@@ -127,7 +135,11 @@ const defaultCircle = {
 };
 
 // random circle https://stackoverflow.com/a/50746409
-export function inCircle(buffer: TypedArray, circle?: Circle, rng: Generator = defaultGen): TypedArray {
+export function inCircle(
+  buffer: TypedArray,
+  circle?: Circle,
+  rng: Generator = defaultGen
+): TypedArray {
   const { radius, center } = {
     ...defaultCircle,
     ...circle,
@@ -144,7 +156,11 @@ export function inCircle(buffer: TypedArray, circle?: Circle, rng: Generator = d
   return buffer;
 }
 
-export function onCircle(buffer: TypedArray, circle?: Circle, rng: Generator = defaultGen) {
+export function onCircle(
+  buffer: TypedArray,
+  circle?: Circle,
+  rng: Generator = defaultGen
+) {
   const { radius, center } = {
     ...defaultCircle,
     ...circle,
@@ -169,34 +185,46 @@ type Rect = {
 
 const defaultRect = {
   sides: 1,
-  center: [0, 0]
+  center: [0, 0],
 };
 
-export function inRect<T extends TypedArray>(buffer: T, rect?: Rect, rng: Generator = defaultGen): T {
+export function inRect<T extends TypedArray>(
+  buffer: T,
+  rect?: Rect,
+  rng: Generator = defaultGen
+): T {
   const { sides, center } = {
     ...defaultRect,
     ...rect,
   };
 
-  const sideX = typeof sides === "number" ? sides : sides[0]
-  const sideY = typeof sides === "number" ? sides : sides[1]
-  
+  const sideX = typeof sides === "number" ? sides : sides[0];
+  const sideY = typeof sides === "number" ? sides : sides[1];
+
   for (let i = 0; i < buffer.length; i += 2) {
     buffer[i] = (rng.value() - 0.5) * sideX + center[0];
     buffer[i + 1] = (rng.value() - 0.5) * sideY + center[1];
   }
-  
+
   return buffer;
 }
 
-export function onRect(buffer: TypedArray, rect?: Rect, rng: Generator = defaultGen) {
+export function onRect(
+  buffer: TypedArray,
+  rect?: Rect,
+  rng: Generator = defaultGen
+) {
   return buffer;
 }
 
 /***
  * [3D] Box
  */
-export function inBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen) {
+export function inBox(
+  buffer: TypedArray,
+  box?: Box,
+  rng: Generator = defaultGen
+) {
   const { sides, center } = {
     ...defaultBox,
     ...box,
@@ -225,7 +253,11 @@ const defaultBox = {
   center: [0, 0, 0],
 };
 
-export function onBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen) {
+export function onBox(
+  buffer: TypedArray,
+  box?: Box,
+  rng: Generator = defaultGen
+) {
   const { sides, center } = {
     ...defaultBox,
     ...box,
@@ -244,4 +276,4 @@ export function onBox(buffer: TypedArray, box?: Box, rng: Generator = defaultGen
   return buffer;
 }
 
-export * as noise from './noise'
+export * as noise from "./noise";

@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - '**/package.json'
-      - '.changeset/**'
+      - "**/package.json"
+      - ".changeset/**"
 
 jobs:
   release:
@@ -22,7 +22,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -45,8 +45,8 @@ jobs:
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
           publish: yarn release
-          commit: 'chore(release): update monorepo packages versions'
-          title: 'Upcoming Release Changes'
+          commit: "chore(release): update monorepo packages versions"
+          title: "Upcoming Release Changes"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

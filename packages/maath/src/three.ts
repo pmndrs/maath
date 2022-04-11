@@ -9,10 +9,10 @@ export function bufferToVectors(buffer: TypedArray, stride: 3): Vector3[];
 export function bufferToVectors(buffer: TypedArray, stride: 2): Vector2[];
 /**
  * Convents passed buffer of passed stride to an array of vectors with the correct length.
- * 
- * @param buffer 
- * @param stride 
- * @returns 
+ *
+ * @param buffer
+ * @param stride
+ * @returns
  */
 export function bufferToVectors(buffer: TypedArray, stride = 3) {
   const p = [];
@@ -30,9 +30,9 @@ export function bufferToVectors(buffer: TypedArray, stride = 3) {
 
 /**
  * Transforms a passed Vector2 or Vector3 array to a points buffer
- * 
- * @param vectorArray 
- * @returns 
+ *
+ * @param vectorArray
+ * @returns
  */
 export function vectorsToBuffer(vectorArray: Vector2[] | Vector3[]) {
   const l = vectorArray.length;
