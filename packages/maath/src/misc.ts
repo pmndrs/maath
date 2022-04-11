@@ -2,7 +2,7 @@ import { Matrix3, Plane, Vector2, Vector3 } from "three";
 import { doThreePointsMakeARight } from "./triangle";
 import type { TypedArray } from "./ctypes";
 import { matrixSum3 } from "./matrix";
-import { V3 } from './vector3'
+import { V3 } from "./vector3";
 import { V2 } from "./vector2";
 
 /**
@@ -150,13 +150,13 @@ export function remap(
 }
 
 /**
- * 
+ *
  * https://www.desmos.com/calculator/vsnmlaljdu
- * 
- * Ease-in-out, goes to -Infinite before 0 and Infinite after 1 
- * 
- * @param t 
- * @returns 
+ *
+ * Ease-in-out, goes to -Infinite before 0 and Infinite after 1
+ *
+ * @param t
+ * @returns
  */
 export function fade(t: number) {
   return t * t * t * (t * (t * 6 - 15) + 10);
@@ -216,7 +216,7 @@ export function pointOnCubeToPointOnSphere(x: number, y: number, z: number) {
 // https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
 /**
  * Give two unit vectors a and b, returns the transformation matrix that rotates a onto b.
- * 
+ *
  * */
 export function rotateVectorOnVector(a: Vector3, b: Vector3): Matrix3 {
   const v = new Vector3().crossVectors(a, b);
@@ -290,15 +290,15 @@ export function pointToPlaneDistance(p: Vector3, plane: Plane): number {
 
 export function getIndexFrom3D(coords: V3, sides: V3) {
   const [ix, iy, iz] = coords;
-  const [rx, ry] = sides
-  
+  const [rx, ry] = sides;
+
   return iz * rx * ry + iy * rx + ix;
 }
 
 export function get3DFromIndex(index: number, size: V3): V3 {
-  const [rx, ry] = size
+  const [rx, ry] = size;
 
-  let a = (rx * ry);
+  let a = rx * ry;
   const z = index / a;
   let b = index - a * z;
   const y = b / rx;
@@ -308,12 +308,12 @@ export function get3DFromIndex(index: number, size: V3): V3 {
 }
 
 export function getIndexFrom2D(coords: V2, size: V2): number {
-  return coords[0] + size[0]*coords[1];
+  return coords[0] + size[0] * coords[1];
 }
 
 export function get2DFromIndex(index: number, columns: number): V2 {
-  const x = index % columns
-  const y = Math.floor(index/columns);
-  
-  return [x,y]
+  const x = index % columns;
+  const y = Math.floor(index / columns);
+
+  return [x, y];
 }

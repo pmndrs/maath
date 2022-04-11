@@ -35,4 +35,4 @@ function SandboxOverlay() {
   );
 }
 
-export default SandboxOverlay
+export default SandboxOverlay;

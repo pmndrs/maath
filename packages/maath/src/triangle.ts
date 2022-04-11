@@ -100,7 +100,7 @@ The circumcircle is a circle touching all the vertices of a triangle or polygon.
 // https://math.stackexchange.com/a/1460096
 export function getCircumcircle(triangle: Triangle) {
   // TS-TODO the next few lines are ignored because the types aren't current to the change in vectors (that can now be iterated)
-  
+
   // @ts-ignore
   const [ax, ay] = triangle[0];
   // @ts-ignore
@@ -138,9 +138,15 @@ export function getCircumcircle(triangle: Triangle) {
 
 // https://stackoverflow.com/questions/39984709/how-can-i-check-wether-a-point-is-inside-the-circumcircle-of-3-points
 export function isPointInCircumcircle(point: number[], triangle: Triangle) {
-  const [ax, ay] = Array.isArray(triangle[0]) ? triangle[0] : triangle[0].toArray();
-  const [bx, by] = Array.isArray(triangle[1]) ? triangle[1] : triangle[1].toArray();
-  const [cx, cy] = Array.isArray(triangle[2]) ? triangle[2] : triangle[2].toArray();
+  const [ax, ay] = Array.isArray(triangle[0])
+    ? triangle[0]
+    : triangle[0].toArray();
+  const [bx, by] = Array.isArray(triangle[1])
+    ? triangle[1]
+    : triangle[1].toArray();
+  const [cx, cy] = Array.isArray(triangle[2])
+    ? triangle[2]
+    : triangle[2].toArray();
 
   const [px, py] = point;
 
