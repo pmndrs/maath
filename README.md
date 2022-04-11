@@ -36,6 +36,16 @@ Do you want to add something? No rules, but keep these in mind:
 If you are not sure how to help, check out the [🟡 Roadmap](#-roadmap) below.
 ## 🪶 Reference
 
+### Using specific entry points
+
+```js
+// you can import the namespaces from the main entrypoint
+import { buffer, random } from 'maath'
+// or import each function or all of them from each namespace entrypoint
+import * as buffer from 'maath/buffer'
+import { inSphere } from 'maath/random'
+```
+
 ### Buffer
 
 ```js
