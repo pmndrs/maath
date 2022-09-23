@@ -1,5 +1,11 @@
 # maath
 
+## 0.4.1
+
+### Patch Changes
+
+- fix: eps check for dampm"
+
 ## 0.4.0
 
 ### Minor Changes
