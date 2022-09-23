@@ -1,5 +1,12 @@
 # maath
 
+## 0.1.0
+
+### Minor Changes
+
+- 1a033d1: adds entry point that exports everything
+- feat: exp, deltaAngle, damp, dampAngle
+
 ## 0.0.2
 
 ### Patch Changes
