@@ -22,11 +22,18 @@ export function damp(
   smoothTime = 0.25,
   delta = 0.01,
   maxSpeed = Infinity,
-  easing = exp
+  easing = exp,
+  eps = 0.001
 ) {
   const vel = "velocity_" + prop;
   if (current.__damp === undefined) current.__damp = {};
   if (current.__damp[vel] === undefined) current.__damp[vel] = 0;
+
+  if (Math.abs(current[prop] - target) <= eps) {
+    current[prop] = target;
+    return false;
+  }
+
   smoothTime = Math.max(0.0001, smoothTime);
   const omega = 2 / smoothTime;
   const t = easing(omega * delta);
@@ -45,6 +52,7 @@ export function damp(
     current.__damp[vel] = (output - originalTo) / delta;
   }
   current[prop] = output;
+  return true;
 }
 
 /**
@@ -56,14 +64,16 @@ export function dampAngle(
   target: number,
   smoothTime?: number,
   delta?: number,
-  maxSpeed?: number
+  maxSpeed?: number,
+  eps?: number
 ) {
-  damp(
+  return damp(
     current,
     prop,
     current[prop] + deltaAngle(current[prop], target),
     smoothTime,
     delta,
-    maxSpeed
+    maxSpeed,
+    eps
   );
 }
