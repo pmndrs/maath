@@ -1,5 +1,11 @@
 # maath
 
+## 0.3.0
+
+### Minor Changes
+
+- feat: dampq, support for quaternions
+
 ## 0.2.0
 
 ### Minor Changes
