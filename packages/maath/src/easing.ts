@@ -65,6 +65,7 @@ export function dampAngle(
   smoothTime?: number,
   delta?: number,
   maxSpeed?: number,
+  easing?: (t: number) => number,
   eps?: number
 ) {
   return damp(
@@ -74,6 +75,7 @@ export function dampAngle(
     smoothTime,
     delta,
     maxSpeed,
+    easing,
     eps
   );
 }
