@@ -4,6 +4,7 @@ import {
   Vector4,
   Euler,
   Color,
+  Matrix4,
   Quaternion,
   ColorRepresentation,
 } from "three";
@@ -202,6 +203,10 @@ export function dampC(
 /**
  * Quaternion Damp
  * https://gist.github.com/maxattack/4c7b4de00f5c1b95a33b
+ * Copyright 2016 Max Kaufmann (max.kaufmann@gmail.com)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const qt = /*@__PURE__*/ new Quaternion();
 const v4result = /*@__PURE__*/ new Vector4();
@@ -251,4 +256,86 @@ export function dampQ(
 
   current.set(v4result.x, v4result.y, v4result.z, v4result.w);
   return a || b || c || d;
+}
+
+/**
+ * Matrix4 Damp
+ */
+const mat = /*@__PURE__*/ new Matrix4();
+const mPos = /*@__PURE__*/ new Vector3();
+const mRot = /*@__PURE__*/ new Quaternion();
+const mSca = /*@__PURE__*/ new Vector3();
+export function dampM(
+  current: Matrix4,
+  target:
+    | [
+        n11: number,
+        n12: number,
+        n13: number,
+        n14: number,
+        n21: number,
+        n22: number,
+        n23: number,
+        n24: number,
+        n31: number,
+        n32: number,
+        n33: number,
+        n34: number,
+        n41: number,
+        n42: number,
+        n43: number,
+        n44: number
+      ]
+    | Matrix4,
+  smoothTime: number,
+  delta: number,
+  maxSpeed: number,
+  easing?: (t: number) => number,
+  eps?: number
+) {
+  const cur = current as Matrix4 & {
+    __damp: {
+      position: Vector3;
+      rotation: Quaternion;
+      scale: Vector3;
+    };
+  };
+  if (cur.__damp === undefined) {
+    cur.__damp = {
+      position: new Vector3(),
+      rotation: new Quaternion(),
+      scale: new Vector3(),
+    };
+    current.decompose(
+      cur.__damp.position,
+      cur.__damp.rotation,
+      cur.__damp.scale
+    );
+  }
+
+  if (Array.isArray(target)) mat.set(...target);
+  else mat.copy(target);
+  mat.decompose(mPos, mRot, mSca);
+
+  a = damp3(
+    cur.__damp.position,
+    mPos,
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
+  a = dampQ(
+    cur.__damp.rotation,
+    mRot,
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
+  a = damp3(cur.__damp.scale, mSca, smoothTime, delta, maxSpeed, easing, eps);
+  current.compose(cur.__damp.position, cur.__damp.rotation, cur.__damp.scale);
+  return a || b || c;
 }
