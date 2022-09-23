@@ -326,7 +326,7 @@ export function dampM(
     easing,
     eps
   );
-  a = dampQ(
+  b = dampQ(
     cur.__damp.rotation,
     mRot,
     smoothTime,
@@ -335,7 +335,7 @@ export function dampM(
     easing,
     eps
   );
-  a = damp3(cur.__damp.scale, mSca, smoothTime, delta, maxSpeed, easing, eps);
+  c = damp3(cur.__damp.scale, mSca, smoothTime, delta, maxSpeed, easing, eps);
   current.compose(cur.__damp.position, cur.__damp.rotation, cur.__damp.scale);
   return a || b || c;
 }
