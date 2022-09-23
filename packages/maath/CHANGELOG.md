@@ -1,5 +1,11 @@
 # maath
 
+## 0.1.1
+
+### Patch Changes
+
+- fix: damp is missing eps
+
 ## 0.1.0
 
 ### Minor Changes
