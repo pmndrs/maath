@@ -8,8 +8,20 @@ import { V2 } from "./vector2";
 /**
  * Clamps a value between a range.
  */
-export function clamp([min, max]: [number, number], value: number) {
+export function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
+}
+
+// Loops the value t, so that it is never larger than length and never smaller than 0.
+function repeat(t: number, length: number) {
+  return clamp(t - Math.floor(t / length) * length, 0, length);
+}
+
+// Calculates the shortest difference between two given angles.
+export function deltaAngle(current: number, target: number) {
+  let delta = repeat(target - current, Math.PI * 2);
+  if (delta > Math.PI) delta -= Math.PI * 2;
+  return delta;
 }
 
 /**
