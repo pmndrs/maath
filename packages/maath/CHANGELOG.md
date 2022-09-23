@@ -1,5 +1,11 @@
 # maath
 
+## 0.4.0
+
+### Minor Changes
+
+- feat: dampm, support for matrix4"
+
 ## 0.3.0
 
 ### Minor Changes
