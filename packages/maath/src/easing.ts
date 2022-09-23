@@ -4,6 +4,7 @@ import {
   Vector4,
   Euler,
   Color,
+  Quaternion,
   ColorRepresentation,
 } from "three";
 import { deltaAngle } from "./misc";
@@ -88,7 +89,11 @@ export function dampAngle(
   );
 }
 
-let a, b, c;
+let a: boolean, b: boolean, c: boolean, d: boolean;
+
+/**
+ * Vector2D Damp
+ */
 const v2d = /*@__PURE__*/ new Vector2();
 export function damp2(
   current: Vector2,
@@ -107,6 +112,9 @@ export function damp2(
   return a || b;
 }
 
+/**
+ * Vector3D Damp
+ */
 const v3d = /*@__PURE__*/ new Vector3();
 export function damp3(
   current: Vector3,
@@ -126,6 +134,9 @@ export function damp3(
   return a || b || c;
 }
 
+/**
+ * Vector4D Damp
+ */
 const v4d = /*@__PURE__*/ new Vector4();
 export function damp4(
   current: Vector4,
@@ -146,6 +157,9 @@ export function damp4(
   return a || b || c;
 }
 
+/**
+ * Euler Damp
+ */
 const rot = /*@__PURE__*/ new Euler();
 export function dampE(
   current: Euler,
@@ -165,6 +179,9 @@ export function dampE(
   return a || b || c;
 }
 
+/**
+ * Color Damp
+ */
 const col = /*@__PURE__*/ new Color();
 export function dampC(
   current: Color,
@@ -180,4 +197,58 @@ export function dampC(
   b = damp(current, "g", col.g, smoothTime, delta, maxSpeed, easing, eps);
   c = damp(current, "b", col.b, smoothTime, delta, maxSpeed, easing, eps);
   return a || b || c;
+}
+
+/**
+ * Quaternion Damp
+ * https://gist.github.com/maxattack/4c7b4de00f5c1b95a33b
+ */
+const qt = /*@__PURE__*/ new Quaternion();
+const v4result = /*@__PURE__*/ new Vector4();
+const v4velocity = /*@__PURE__*/ new Vector4();
+const v4error = /*@__PURE__*/ new Vector4();
+export function dampQ(
+  current: Quaternion,
+  target: [x: number, y: number, z: number, w: number] | Quaternion,
+  smoothTime: number,
+  delta: number,
+  maxSpeed: number,
+  easing?: (t: number) => number,
+  eps?: number
+) {
+  const cur = current as Quaternion & { __damp: { [key: string]: number } };
+  if (Array.isArray(target)) qt.set(target[0], target[1], target[2], target[3]);
+  else qt.copy(target);
+
+  const multi = current.dot(qt) > 0 ? 1 : -1;
+  qt.x *= multi;
+  qt.y *= multi;
+  qt.z *= multi;
+  qt.w *= multi;
+
+  a = damp(current, "x", qt.x, smoothTime, delta, maxSpeed, easing, eps);
+  b = damp(current, "y", qt.y, smoothTime, delta, maxSpeed, easing, eps);
+  c = damp(current, "z", qt.z, smoothTime, delta, maxSpeed, easing, eps);
+  d = damp(current, "w", qt.w, smoothTime, delta, maxSpeed, easing, eps);
+
+  // smooth damp (nlerp approx)
+  v4result.set(current.x, current.y, current.z, current.w).normalize();
+  v4velocity.set(
+    cur.__damp.velocity_x,
+    cur.__damp.velocity_y,
+    cur.__damp.velocity_z,
+    cur.__damp.velocity_w
+  );
+
+  // ensure deriv is tangent
+  v4error
+    .copy(v4result)
+    .multiplyScalar(v4velocity.dot(v4result) / v4result.dot(v4result));
+  cur.__damp.velocity_x -= v4error.x;
+  cur.__damp.velocity_y -= v4error.y;
+  cur.__damp.velocity_z -= v4error.z;
+  cur.__damp.velocity_w -= v4error.w;
+
+  current.set(v4result.x, v4result.y, v4result.z, v4result.w);
+  return a || b || c || d;
 }
