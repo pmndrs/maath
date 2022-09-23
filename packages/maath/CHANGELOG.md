@@ -1,5 +1,11 @@
 # maath
 
+## 0.2.0
+
+### Minor Changes
+
+- feat: damp2,3,4,E,C
+
 ## 0.1.1
 
 ### Patch Changes
