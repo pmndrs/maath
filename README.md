@@ -102,7 +102,39 @@ lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()));
 import * as easing from "maath/easing";
 ```
 
-TBD
+Unity-smooth-damping functions. These are fast, refresh-rate independent, interruptible animation primitives primed to THREE.Vector2D, 3D, 4D, Euler (shortest path), Matrix4, Quaternion and Color.
+
+```jsx
+import { damp, damp2, damp3, damp4, dampE, dampM, dampQ, dampC } from 'maath/easing'
+
+function frameloop() {
+  const delta = clock.getDelta()
+  // Animates foo.bar to 10
+  damp(foo, "bar", 10, 0.25, delta)
+
+  // Animates mesh.position to 0,1,2
+  damp3(mesh.position, [0, 1, 2], 0.25, delta)
+  // Also takes vectors, shallow vectors and scalars
+  // damp3(mesh.position, new THREE.Vector3(0, 1, 2), 0.25, delta)
+  // damp3(mesh.position, { x: 0, y: 1, z: 2 }, 0.25, delta)
+  // damp3(mesh.scale, 2, 0.25, delta)
+
+  dampC(mesh.material.color, "green", 0.25, delta)
+  // Also takes colors, fake colors, numbers and arrays
+  // dampC(mesh.material.color, new THREE.Color("green"), 0.25, delta)
+  // dampC(mesh.material.color, 0xdead00, 0.25, delta)
+  // dampC(mesh.material.color, [1, 0, 0], 0.25, delta)
+  // dampC(mesh.material.color, { r: 1, g: 0, b: 0 }, 0.25, delta)
+
+  dampE(mesh.rotation, [Math.PI / 2, 0, 0], 0.25, delta)
+  // Also takes eulers
+  // dampE(mesh.rotation, new THREE.Euler(Math.PI / 2, 0, 0), 0.25, delta)
+
+  // damp2 for Vector2
+  // damp4 for Vector4
+  // dampM for Matrix4
+  // dampQ for Quaternion
+```
 
 ### Matrix
 

@@ -186,14 +186,16 @@ export function dampE(
 const col = /*@__PURE__*/ new Color();
 export function dampC(
   current: Color,
-  target: ColorRepresentation,
+  target: ColorRepresentation | [r: number, g: number, b: number],
   smoothTime: number,
   delta: number,
   maxSpeed: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
-  col.set(target);
+  if (target instanceof Color) col.copy(target);
+  else if (Array.isArray(target)) col.setRGB(target[0], target[1], target[2]);
+  else col.set(target);
   a = damp(current, "r", col.r, smoothTime, delta, maxSpeed, easing, eps);
   b = damp(current, "g", col.g, smoothTime, delta, maxSpeed, easing, eps);
   c = damp(current, "b", col.b, smoothTime, delta, maxSpeed, easing, eps);
