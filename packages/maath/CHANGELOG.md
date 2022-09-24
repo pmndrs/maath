@@ -1,5 +1,11 @@
 # maath
 
+## 0.4.2
+
+### Patch Changes
+
+- fix: dampc rgb array support
+
 ## 0.4.1
 
 ### Patch Changes
