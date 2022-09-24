@@ -16,7 +16,7 @@ The library is mostly meant to be used with [three.js](https://github.com/mrdoob
 | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/points"><img   src="https://codesandbox.io/api/v1/sandboxes/lex1g/screenshot.png"  /></a> | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/convex-hull"><img src="https://codesandbox.io/api/v1/sandboxes/fh8l2/screenshot.png" /></a> | <a href="https://codesandbox.io/s/github/pmndrs/maath/tree/main/demo/src/sandboxes/circumcircle"><img src="https://codesandbox.io/api/v1/sandboxes/zuff9/screenshot.png"  /></a> |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-> 🟡 The library is still heavily WIP, don't use it for production work until a stable API is relased in a ^1.0.0
+> 🟡 The library is still heavily WIP
 
 ### But why?
 
