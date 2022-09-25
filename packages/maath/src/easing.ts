@@ -6,6 +6,7 @@ import {
   Color,
   Matrix4,
   Quaternion,
+  Spherical,
   ColorRepresentation,
 } from "three";
 import { deltaAngle } from "./misc";
@@ -258,6 +259,27 @@ export function dampQ(
 
   current.set(v4result.x, v4result.y, v4result.z, v4result.w);
   return a || b || c || d;
+}
+
+/**
+ * Spherical Damp
+ */
+const spherical = /*@__PURE__*/ new Spherical();
+export function dampS(
+    current: Spherical,
+    target: [radius: number, phi: number, theta: number] | Spherical,
+    smoothTime: number,
+    delta: number,
+    maxSpeed: number,
+    easing?: (t: number) => number,
+    eps?: number
+) {
+  if (Array.isArray(target)) spherical.set(target[0], target[1], target[2]);
+  else spherical.copy(target);
+  a = damp(current, "radius", spherical.radius, smoothTime, delta, maxSpeed, easing, eps);
+  b = dampAngle(current, "phi", spherical.phi, smoothTime, delta, maxSpeed, easing, eps);
+  c = dampAngle(current, "theta", spherical.theta, smoothTime, delta, maxSpeed, easing, eps);
+  return a || b || c;
 }
 
 /**
