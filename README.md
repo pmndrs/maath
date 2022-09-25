@@ -105,7 +105,7 @@ import * as easing from "maath/easing";
 Unity-smooth-damping functions. These are fast, refresh-rate independent, interruptible animation primitives primed to THREE.Vector2D, 3D, 4D, Euler (shortest path), Matrix4, Quaternion and Color.
 
 ```jsx
-import { damp, damp2, damp3, damp4, dampE, dampM, dampQ, dampC } from 'maath/easing'
+import { damp, damp2, damp3, damp4, dampE, dampM, dampQ, dampS, dampC } from 'maath/easing'
 
 function frameloop() {
   const delta = clock.getDelta()
@@ -134,6 +134,7 @@ function frameloop() {
   // damp4 for Vector4
   // dampM for Matrix4
   // dampQ for Quaternion
+  // dampS for Spherical
 ```
 
 ### Matrix
