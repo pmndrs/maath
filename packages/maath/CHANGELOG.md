@@ -1,5 +1,11 @@
 # maath
 
+## 0.5.1
+
+### Patch Changes
+
+- fix uppercase for roundedplanegeom
+
 ## 0.5.0
 
 ### Minor Changes
