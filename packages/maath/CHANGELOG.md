@@ -1,5 +1,11 @@
 # maath
 
+## 0.5.0
+
+### Minor Changes
+
+- new category for geometry + roundedplane
+
 ## 0.4.2
 
 ### Patch Changes
