@@ -102,7 +102,7 @@ lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()));
 import * as geometry from "maath/geometry";
 ```
 
-#### 🪶 roundedPlaneGeometry(width = 2, height = 1, radius = 0.2, segments = 16)
+#### 🪶 roundedPlaneGeometry(width = 1, height = 1, radius = 0.2, segments = 16)
 
 ### Easing
 
