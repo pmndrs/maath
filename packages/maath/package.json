@@ -16,7 +16,8 @@
       "triangle.ts",
       "vector2.ts",
       "vector3.ts",
-      "three.ts"
+      "three.ts",
+      "geometry.ts"
     ]
   },
   "peerDependencies": {

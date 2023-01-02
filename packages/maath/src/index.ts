@@ -1,6 +1,7 @@
 export * as buffer from "./buffer";
 export * as random from "./random";
 export * as easing from "./easing";
+export * as geometry from "./geometry";
 export * as matrix from "./matrix";
 export * as misc from "./misc";
 export * as three from "./three";

@@ -96,6 +96,14 @@ const interpolationTarget = myBox.slice(0);
 lerpBuffers(mySphere, myBox, interpolationTarget, Math.sin(performance.now()));
 ```
 
+### Geometry
+
+```js
+import * as geometry from "maath/geometry";
+```
+
+#### 🪶 roundedPlaneGeometry(width = 2, height = 1, radius = 0.2, segments = 16)
+
 ### Easing
 
 ```js
