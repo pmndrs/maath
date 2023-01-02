@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 
-export class roundedPlaneGeometry extends THREE.BufferGeometry {
+export class RoundedPlaneGeometry extends THREE.BufferGeometry {
   constructor(width = 2, height = 1, radius = 0.2, segments = 16) {
     super();
 
