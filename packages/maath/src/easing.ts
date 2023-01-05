@@ -33,11 +33,14 @@ export function damp(
   prop: string,
   /** To goal value */
   target: number,
-  /** Interpolation time */
+  /** Approximately the time it will take to reach the target. A smaller value will reach the target faster. */
   smoothTime = 0.25,
   /** Frame delta, for refreshrate independence */
   delta = 0.01,
-  /** Clamp time. If smoothTime is Xs and looks OK going between two close points, but not for points far apart as it'll move very rapid. So maxSpeed lets you clamp it to avoid ridiculous visuals */
+  /** Optionally allows you to clamp the maximum speed. If smoothTime is 0.25s and looks OK
+   *  going between two close points but not for points far apart as it'll move very rapid,
+   *  then a maxSpeed of e.g. 1 which will clamp the speed to 1 unit per second, it may now
+   *  take much longer than smoothTime to reach the target if it is far away. */
   maxSpeed = Infinity,
   /** Easing function */
   easing = exp,
