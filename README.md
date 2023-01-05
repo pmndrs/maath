@@ -125,8 +125,8 @@ export function damp(
   /** Frame delta, for refreshrate independence */
   delta = 0.01,
   /** Clamp time. If smoothTime is Xs and looks OK going between two close points,
-   *  but not for points far apart as it'll move very rapid.
-   *  So maxSpeed lets you clamp it to avoid ridiculous visuals */
+   *  but not for points far apart as it'll move very rapid, then maxSpeed lets you
+   *  clamp it to avoid ridiculous visuals */
   maxSpeed = Infinity,
   /** Easing function */
   easing = (t: number) => 1 / (1 + t + 0.48 * t * t + 0.235 * t * t * t),
