@@ -110,7 +110,20 @@ import * as geometry from "maath/geometry";
 import * as easing from "maath/easing";
 ```
 
-Unity-smooth-damping functions. These are fast, refresh-rate independent, interruptible animation primitives primed to THREE.Vector2D, 3D, 4D, Euler (shortest path), Matrix4, Quaternion and Color.
+Unity-smooth-damping functions based on Game Programming Gems 4 Chapter 1.10. These are fast, refresh-rate independent, interruptible animation primitives primed to THREE.Vector2D, 3D, 4D, Euler (shortest path), Matrix4, Quaternion and Color.
+
+```tsx
+export function damp(
+  current: { [key: string]: any },
+  prop: string,
+  target: number,
+  smoothTime = 0.25,
+  delta = 0.01,
+  maxSpeed = Infinity,
+  easing = exp,
+  eps = 0.001
+);
+```
 
 ```jsx
 import { damp, damp2, damp3, damp4, dampE, dampM, dampQ, dampS, dampC } from 'maath/easing'
