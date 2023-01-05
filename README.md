@@ -120,7 +120,7 @@ export function damp(
   prop: string,
   /** To target (or goal) value */
   target: number,
-  /** Approximately the time it will take to reach the target. A smaller value will reach the target faster. */
+  /** Approximate time to reach the target. A smaller value will reach the target faster. */
   smoothTime = 0.25,
   /** Frame delta, for refreshrate independence */
   delta = 0.01,
