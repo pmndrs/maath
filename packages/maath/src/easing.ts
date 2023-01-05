@@ -27,13 +27,21 @@ export const exp = (t: number) =>
  * Damp, based on Game Programming Gems 4 Chapter 1.10
  */
 export function damp(
+  /** The object */
   current: { [key: string]: any },
+  /** The key to animate */
   prop: string,
+  /** To goal value */
   target: number,
+  /** Interpolation time */
   smoothTime = 0.25,
+  /** Frame delta, for refreshrate independence */
   delta = 0.01,
+  /** Clamp time. If smoothTime is Xs and looks OK going between two close points, but not for points far apart as it'll move very rapid. So maxSpeed lets you clamp it to avoid ridiculous visuals */
   maxSpeed = Infinity,
+  /** Easing function */
   easing = exp,
+  /** End of animation precision */
   eps = 0.001
 ) {
   const vel = "velocity_" + prop;
@@ -266,19 +274,46 @@ export function dampQ(
  */
 const spherical = /*@__PURE__*/ new Spherical();
 export function dampS(
-    current: Spherical,
-    target: [radius: number, phi: number, theta: number] | Spherical,
-    smoothTime: number,
-    delta: number,
-    maxSpeed: number,
-    easing?: (t: number) => number,
-    eps?: number
+  current: Spherical,
+  target: [radius: number, phi: number, theta: number] | Spherical,
+  smoothTime: number,
+  delta: number,
+  maxSpeed: number,
+  easing?: (t: number) => number,
+  eps?: number
 ) {
   if (Array.isArray(target)) spherical.set(target[0], target[1], target[2]);
   else spherical.copy(target);
-  a = damp(current, "radius", spherical.radius, smoothTime, delta, maxSpeed, easing, eps);
-  b = dampAngle(current, "phi", spherical.phi, smoothTime, delta, maxSpeed, easing, eps);
-  c = dampAngle(current, "theta", spherical.theta, smoothTime, delta, maxSpeed, easing, eps);
+  a = damp(
+    current,
+    "radius",
+    spherical.radius,
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
+  b = dampAngle(
+    current,
+    "phi",
+    spherical.phi,
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
+  c = dampAngle(
+    current,
+    "theta",
+    spherical.theta,
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
   return a || b || c;
 }
 

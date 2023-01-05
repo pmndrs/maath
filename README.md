@@ -114,13 +114,23 @@ Unity-smooth-damping functions based on Game Programming Gems 4 Chapter 1.10. Th
 
 ```tsx
 export function damp(
+  /** The object */
   current: { [key: string]: any },
+  /** The key to animate */
   prop: string,
+  /** To goal value */
   target: number,
+  /** Interpolation time */
   smoothTime = 0.25,
+  /** Frame delta, for refreshrate independence */
   delta = 0.01,
+  /** Clamp time. If smoothTime is Xs and looks OK going between two close points,
+   *  but not for points far apart as it'll move very rapid.
+   *  So maxSpeed lets you clamp it to avoid ridiculous visuals */
   maxSpeed = Infinity,
-  easing = exp,
+  /** Easing function */
+  easing = (t: number) => 1 / (1 + t + 0.48 * t * t + 0.235 * t * t * t),
+  /** End of animation precision */
   eps = 0.001
 );
 ```
