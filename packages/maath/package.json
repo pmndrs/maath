@@ -1,6 +1,6 @@
 {
   "name": "maath",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "main": "dist/maath.cjs.js",
   "module": "dist/maath.esm.js",
