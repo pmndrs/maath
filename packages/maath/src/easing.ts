@@ -113,7 +113,7 @@ export function damp2(
   target: number | [x: number, y: number] | Vector2,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -134,7 +134,7 @@ export function damp3(
   target: number | [x: number, y: number, z: number] | Vector3,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -156,7 +156,7 @@ export function damp4(
   target: number | [x: number, y: number, z: number, w: number] | Vector4,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -179,7 +179,7 @@ export function dampE(
   target: [x: number, y: number, z: number, order?: string] | Euler,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -201,7 +201,7 @@ export function dampC(
   target: ColorRepresentation | [r: number, g: number, b: number],
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -231,7 +231,7 @@ export function dampQ(
   target: [x: number, y: number, z: number, w: number] | Quaternion,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -281,7 +281,7 @@ export function dampS(
   target: [radius: number, phi: number, theta: number] | Spherical,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -351,7 +351,7 @@ export function dampM(
     | Matrix4,
   smoothTime: number,
   delta: number,
-  maxSpeed: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
