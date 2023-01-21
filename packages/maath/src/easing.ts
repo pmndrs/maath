@@ -111,9 +111,9 @@ const v2d = /*@__PURE__*/ new Vector2();
 export function damp2(
   current: Vector2,
   target: number | [x: number, y: number] | Vector2,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -132,9 +132,9 @@ const v3d = /*@__PURE__*/ new Vector3();
 export function damp3(
   current: Vector3,
   target: number | [x: number, y: number, z: number] | Vector3,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -154,9 +154,9 @@ const v4d = /*@__PURE__*/ new Vector4();
 export function damp4(
   current: Vector4,
   target: number | [x: number, y: number, z: number, w: number] | Vector4,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -176,10 +176,10 @@ export function damp4(
 const rot = /*@__PURE__*/ new Euler();
 export function dampE(
   current: Euler,
-  target: [x: number, y: number, z: number, order?: string] | Euler,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  target: [x: number, y: number, z: number, order?: THREE.EulerOrder] | Euler,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -199,9 +199,9 @@ const col = /*@__PURE__*/ new Color();
 export function dampC(
   current: Color,
   target: ColorRepresentation | [r: number, g: number, b: number],
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -229,9 +229,9 @@ const v4error = /*@__PURE__*/ new Vector4();
 export function dampQ(
   current: Quaternion,
   target: [x: number, y: number, z: number, w: number] | Quaternion,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -279,9 +279,9 @@ const spherical = /*@__PURE__*/ new Spherical();
 export function dampS(
   current: Spherical,
   target: [radius: number, phi: number, theta: number] | Spherical,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
@@ -349,9 +349,9 @@ export function dampM(
         n44: number
       ]
     | Matrix4,
-  smoothTime: number,
-  delta: number,
-  maxSpeed: number,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
   easing?: (t: number) => number,
   eps?: number
 ) {
