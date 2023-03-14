@@ -25,6 +25,7 @@ export const exp = (t: number) =>
 
 /**
  * Damp, based on Game Programming Gems 4 Chapter 1.10
+ *   Return value indicates whether the animation is still running.
  */
 export function damp(
   /** The object */
@@ -102,12 +103,11 @@ export function dampAngle(
   );
 }
 
-let a: boolean, b: boolean, c: boolean, d: boolean;
-
 /**
  * Vector2D Damp
  */
 const v2d = /*@__PURE__*/ new Vector2();
+let a2: boolean, b2: boolean;
 export function damp2(
   current: Vector2,
   target: number | [x: number, y: number] | Vector2,
@@ -120,15 +120,16 @@ export function damp2(
   if (typeof target === "number") v2d.setScalar(target);
   else if (Array.isArray(target)) v2d.set(target[0], target[1]);
   else v2d.copy(target);
-  a = damp(current, "x", v2d.x, smoothTime, delta, maxSpeed, easing, eps);
-  b = damp(current, "y", v2d.y, smoothTime, delta, maxSpeed, easing, eps);
-  return a || b;
+  a2 = damp(current, "x", v2d.x, smoothTime, delta, maxSpeed, easing, eps);
+  b2 = damp(current, "y", v2d.y, smoothTime, delta, maxSpeed, easing, eps);
+  return a2 || b2;
 }
 
 /**
  * Vector3D Damp
  */
 const v3d = /*@__PURE__*/ new Vector3();
+let a3: boolean, b3: boolean, c3: boolean;
 export function damp3(
   current: Vector3,
   target: number | [x: number, y: number, z: number] | Vector3,
@@ -141,16 +142,17 @@ export function damp3(
   if (typeof target === "number") v3d.setScalar(target);
   else if (Array.isArray(target)) v3d.set(target[0], target[1], target[2]);
   else v3d.copy(target);
-  a = damp(current, "x", v3d.x, smoothTime, delta, maxSpeed, easing, eps);
-  b = damp(current, "y", v3d.y, smoothTime, delta, maxSpeed, easing, eps);
-  c = damp(current, "z", v3d.z, smoothTime, delta, maxSpeed, easing, eps);
-  return a || b || c;
+  a3 = damp(current, "x", v3d.x, smoothTime, delta, maxSpeed, easing, eps);
+  b3 = damp(current, "y", v3d.y, smoothTime, delta, maxSpeed, easing, eps);
+  c3 = damp(current, "z", v3d.z, smoothTime, delta, maxSpeed, easing, eps);
+  return a3 || b3 || c3;
 }
 
 /**
  * Vector4D Damp
  */
 const v4d = /*@__PURE__*/ new Vector4();
+let a4: boolean, b4: boolean, c4: boolean, d4: boolean;
 export function damp4(
   current: Vector4,
   target: number | [x: number, y: number, z: number, w: number] | Vector4,
@@ -164,16 +166,18 @@ export function damp4(
   else if (Array.isArray(target))
     v4d.set(target[0], target[1], target[2], target[3]);
   else v4d.copy(target);
-  a = damp(current, "x", v3d.x, smoothTime, delta, maxSpeed, easing, eps);
-  b = damp(current, "y", v3d.y, smoothTime, delta, maxSpeed, easing, eps);
-  c = damp(current, "z", v3d.z, smoothTime, delta, maxSpeed, easing, eps);
-  return a || b || c;
+  a4 = damp(current, "x", v4d.x, smoothTime, delta, maxSpeed, easing, eps);
+  b4 = damp(current, "y", v4d.y, smoothTime, delta, maxSpeed, easing, eps);
+  c4 = damp(current, "z", v4d.z, smoothTime, delta, maxSpeed, easing, eps);
+  d4 = damp(current, "w", v4d.w, smoothTime, delta, maxSpeed, easing, eps);
+  return a4 || b4 || c4 || d4;
 }
 
 /**
  * Euler Damp
  */
 const rot = /*@__PURE__*/ new Euler();
+let aE: boolean, bE: boolean, cE: boolean;
 export function dampE(
   current: Euler,
   target: [x: number, y: number, z: number, order?: THREE.EulerOrder] | Euler,
@@ -186,16 +190,17 @@ export function dampE(
   if (Array.isArray(target))
     rot.set(target[0], target[1], target[2], target[3]);
   else rot.copy(target);
-  a = dampAngle(current, "x", rot.x, smoothTime, delta, maxSpeed, easing, eps);
-  b = dampAngle(current, "y", rot.y, smoothTime, delta, maxSpeed, easing, eps);
-  c = dampAngle(current, "z", rot.z, smoothTime, delta, maxSpeed, easing, eps);
-  return a || b || c;
+  aE = dampAngle(current, "x", rot.x, smoothTime, delta, maxSpeed, easing, eps);
+  bE = dampAngle(current, "y", rot.y, smoothTime, delta, maxSpeed, easing, eps);
+  cE = dampAngle(current, "z", rot.z, smoothTime, delta, maxSpeed, easing, eps);
+  return aE || bE || cE;
 }
 
 /**
  * Color Damp
  */
 const col = /*@__PURE__*/ new Color();
+let aC: boolean, bC: boolean, cC: boolean;
 export function dampC(
   current: Color,
   target: ColorRepresentation | [r: number, g: number, b: number],
@@ -208,10 +213,10 @@ export function dampC(
   if (target instanceof Color) col.copy(target);
   else if (Array.isArray(target)) col.setRGB(target[0], target[1], target[2]);
   else col.set(target);
-  a = damp(current, "r", col.r, smoothTime, delta, maxSpeed, easing, eps);
-  b = damp(current, "g", col.g, smoothTime, delta, maxSpeed, easing, eps);
-  c = damp(current, "b", col.b, smoothTime, delta, maxSpeed, easing, eps);
-  return a || b || c;
+  aC = damp(current, "r", col.r, smoothTime, delta, maxSpeed, easing, eps);
+  bC = damp(current, "g", col.g, smoothTime, delta, maxSpeed, easing, eps);
+  cC = damp(current, "b", col.b, smoothTime, delta, maxSpeed, easing, eps);
+  return aC || bC || cC;
 }
 
 /**
@@ -226,6 +231,7 @@ const qt = /*@__PURE__*/ new Quaternion();
 const v4result = /*@__PURE__*/ new Vector4();
 const v4velocity = /*@__PURE__*/ new Vector4();
 const v4error = /*@__PURE__*/ new Vector4();
+let aQ: boolean, bQ: boolean, cQ: boolean, dQ: boolean;
 export function dampQ(
   current: Quaternion,
   target: [x: number, y: number, z: number, w: number] | Quaternion,
@@ -245,10 +251,10 @@ export function dampQ(
   qt.z *= multi;
   qt.w *= multi;
 
-  a = damp(current, "x", qt.x, smoothTime, delta, maxSpeed, easing, eps);
-  b = damp(current, "y", qt.y, smoothTime, delta, maxSpeed, easing, eps);
-  c = damp(current, "z", qt.z, smoothTime, delta, maxSpeed, easing, eps);
-  d = damp(current, "w", qt.w, smoothTime, delta, maxSpeed, easing, eps);
+  aQ = damp(current, "x", qt.x, smoothTime, delta, maxSpeed, easing, eps);
+  bQ = damp(current, "y", qt.y, smoothTime, delta, maxSpeed, easing, eps);
+  cQ = damp(current, "z", qt.z, smoothTime, delta, maxSpeed, easing, eps);
+  dQ = damp(current, "w", qt.w, smoothTime, delta, maxSpeed, easing, eps);
 
   // smooth damp (nlerp approx)
   v4result.set(current.x, current.y, current.z, current.w).normalize();
@@ -269,13 +275,14 @@ export function dampQ(
   cur.__damp.velocity_w -= v4error.w;
 
   current.set(v4result.x, v4result.y, v4result.z, v4result.w);
-  return a || b || c || d;
+  return aQ || bQ || cQ || dQ;
 }
 
 /**
  * Spherical Damp
  */
 const spherical = /*@__PURE__*/ new Spherical();
+let aS: boolean, bS: boolean, cS: boolean;
 export function dampS(
   current: Spherical,
   target: [radius: number, phi: number, theta: number] | Spherical,
@@ -287,7 +294,7 @@ export function dampS(
 ) {
   if (Array.isArray(target)) spherical.set(target[0], target[1], target[2]);
   else spherical.copy(target);
-  a = damp(
+  aS = damp(
     current,
     "radius",
     spherical.radius,
@@ -297,7 +304,7 @@ export function dampS(
     easing,
     eps
   );
-  b = dampAngle(
+  bS = dampAngle(
     current,
     "phi",
     spherical.phi,
@@ -307,7 +314,7 @@ export function dampS(
     easing,
     eps
   );
-  c = dampAngle(
+  cS = dampAngle(
     current,
     "theta",
     spherical.theta,
@@ -317,7 +324,7 @@ export function dampS(
     easing,
     eps
   );
-  return a || b || c;
+  return aS || bS || cS;
 }
 
 /**
@@ -327,6 +334,7 @@ const mat = /*@__PURE__*/ new Matrix4();
 const mPos = /*@__PURE__*/ new Vector3();
 const mRot = /*@__PURE__*/ new Quaternion();
 const mSca = /*@__PURE__*/ new Vector3();
+let aM: boolean, bM: boolean, cM: boolean;
 export function dampM(
   current: Matrix4,
   target:
@@ -379,7 +387,7 @@ export function dampM(
   else mat.copy(target);
   mat.decompose(mPos, mRot, mSca);
 
-  a = damp3(
+  aM = damp3(
     cur.__damp.position,
     mPos,
     smoothTime,
@@ -388,7 +396,7 @@ export function dampM(
     easing,
     eps
   );
-  b = dampQ(
+  bM = dampQ(
     cur.__damp.rotation,
     mRot,
     smoothTime,
@@ -397,7 +405,7 @@ export function dampM(
     easing,
     eps
   );
-  c = damp3(cur.__damp.scale, mSca, smoothTime, delta, maxSpeed, easing, eps);
+  cM = damp3(cur.__damp.scale, mSca, smoothTime, delta, maxSpeed, easing, eps);
   current.compose(cur.__damp.position, cur.__damp.rotation, cur.__damp.scale);
-  return a || b || c;
+  return aM || bM || cM;
 }
