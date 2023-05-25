@@ -19,7 +19,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "three": "^0.134.0",
-    "three-stdlib": "https://pkg.csb.dev/pmndrs/three-stdlib/commit/e1dce68d/three-stdlib",
     "wouter": "^2.8.0-alpha.2",
     "zustand": "^3.6.5"
   },
