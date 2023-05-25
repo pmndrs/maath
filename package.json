@@ -46,8 +46,5 @@
   "packageManager": "yarn@2.4.3",
   "lint-staged": {
     "*.{ts,tsx,js,css,md}": "prettier --write"
-  },
-  "resolutions": {
-    "three-stdlib": "https://pkg.csb.dev/pmndrs/three-stdlib/commit/e1dce68d/three-stdlib"
   }
 }

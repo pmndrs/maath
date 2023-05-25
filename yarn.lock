@@ -6439,9 +6439,10 @@ three-mesh-bvh@^0.5.2:
   resolved "https://registry.npmjs.org/three-mesh-bvh/-/three-mesh-bvh-0.5.2.tgz"
   integrity sha512-DAKWujkp8xpSBqGiIsZbZC1utxAbYBg0SShQk9LdOG/xWWl1/OLK76eXDGfov47trl3L7PUTHi0hhRvZdVro1Q==
 
-three-stdlib@^2.5.9, "three-stdlib@https://pkg.csb.dev/pmndrs/three-stdlib/commit/e1dce68d/three-stdlib":
-  version "0.0.0-semantic-released"
-  resolved "https://pkg.csb.dev/pmndrs/three-stdlib/commit/e1dce68d/three-stdlib#43bbc728f6bf48c98532e4572416d4021c74052a"
+three-stdlib@^2.22.2, three-stdlib@^2.5.9:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.22.2.tgz#6fa8c3af317f15b12e4217d33a0b7956dd76d9d9"
+  integrity sha512-r1d70V/Tx7LyxjJwMz9B1mLdTLwJ+ffA2ghn1HPPuulTt63r1b1JHxUp3ZFAqDkPCUiFsGjsqoaTytKNrp6aYQ==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
