@@ -104,6 +104,19 @@ import * as geometry from "maath/geometry";
 
 #### 🪶 roundedPlaneGeometry(width = 1, height = 1, radius = 0.2, segments = 16)
 
+```js
+const geo = new RoundedPlaneGeometry();
+const mesh = new THREE.Mesh(geo, material);
+```
+
+#### 🪶 applyBoxUV(bufferGeometry)
+
+Applies box-projected UVs to a buffer geometry.
+
+#### 🪶 applySphereUV(bufferGeometry)
+
+Applies spherical UVs to a buffer geometry.
+
 ### Easing
 
 ```js
