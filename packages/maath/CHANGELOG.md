@@ -1,5 +1,11 @@
 # maath
 
+## 0.6.0
+
+### Minor Changes
+
+- uv gen
+
 ## 0.5.3
 
 ### Patch Changes
