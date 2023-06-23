@@ -1,5 +1,11 @@
 # maath
 
+## 0.7.0
+
+### Minor Changes
+
+- feat: applyCylindricalUV
+
 ## 0.6.0
 
 ### Minor Changes
