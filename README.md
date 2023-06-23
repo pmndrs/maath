@@ -117,6 +117,10 @@ Applies box-projected UVs to a buffer geometry.
 
 Applies spherical UVs to a buffer geometry.
 
+#### 🪶 applyCylindricalUV(bufferGeometry)
+
+Applies cylindrical-projected UVs to a buffer geometry.
+
 ### Easing
 
 ```js

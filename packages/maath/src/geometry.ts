@@ -82,6 +82,30 @@ export class RoundedPlaneGeometry extends THREE.BufferGeometry {
   }
 }
 
+// Author: https://stackoverflow.com/users/128511/gman
+// https://stackoverflow.com/questions/34958072/programmatically-generate-simple-uv-mapping-for-models
+
+export function applyCylindricalUV(bufferGeometry: THREE.BufferGeometry) {
+  const uvs = [];
+  for (
+    let i = 0;
+    i < bufferGeometry.attributes.position.array.length / 3;
+    i++
+  ) {
+    const x = bufferGeometry.attributes.position.array[i * 3 + 0];
+    const y = bufferGeometry.attributes.position.array[i * 3 + 1];
+    const z = bufferGeometry.attributes.position.array[i * 3 + 2];
+    uvs.push(
+      (Math.atan2(x, z) / Math.PI) * 0.5 + 0.5,
+      (y / Math.PI) * 0.5 + 0.5
+    );
+  }
+  if (bufferGeometry.attributes.uv) delete bufferGeometry.attributes.uv;
+  bufferGeometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  bufferGeometry.attributes.uv.needsUpdate = true;
+  return bufferGeometry;
+}
+
 // Author: https://stackoverflow.com/users/268905/knee-cola
 // https://stackoverflow.com/questions/20774648/three-js-generate-uv-coordinate
 
