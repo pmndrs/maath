@@ -1,5 +1,11 @@
 # maath
 
+## 0.8.1
+
+### Patch Changes
+
+- add linear
+
 ## 0.8.0
 
 ### Minor Changes
