@@ -23,6 +23,53 @@ export const rsqw = (t: number, delta = 0.01, a = 1, f = 1 / (2 * Math.PI)) =>
 export const exp = (t: number) =>
   1 / (1 + t + 0.48 * t * t + 0.235 * t * t * t);
 
+export const sine = {
+  in: (x: number) => 1 - Math.cos((x * Math.PI) / 2),
+  out: (x: number) => Math.sin((x * Math.PI) / 2),
+  inOut: (x: number) => -(Math.cos(Math.PI * x) - 1) / 2,
+};
+
+export const cubic = {
+  in: (x: number) => x * x * x,
+  out: (x: number) => 1 - Math.pow(1 - x, 3),
+  inOut: (x: number) =>
+    x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+};
+export const quint = {
+  in: (x: number) => x * x * x * x * x,
+  out: (x: number) => 1 - Math.pow(1 - x, 5),
+  inOut: (x: number) =>
+    x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2,
+};
+
+export const circ = {
+  in: (x: number) => 1 - Math.sqrt(1 - Math.pow(x, 2)),
+  out: (x: number) => Math.sqrt(1 - Math.pow(x - 1, 2)),
+  inOut: (x: number) =>
+    x < 0.5
+      ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
+      : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2,
+};
+
+export const quart = {
+  in: (t: number) => t * t * t * t,
+  out: (t: number) => 1 - --t * t * t * t,
+  inOut: (t: number) => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t),
+};
+
+export const expo = {
+  in: (x: number) => (x === 0 ? 0 : Math.pow(2, 10 * x - 10)),
+  out: (x: number) => (x === 1 ? 1 : 1 - Math.pow(2, -10 * x)),
+  inOut: (x: number) =>
+    x === 0
+      ? 0
+      : x === 1
+      ? 1
+      : x < 0.5
+      ? Math.pow(2, 20 * x - 10) / 2
+      : (2 - Math.pow(2, -20 * x + 10)) / 2,
+};
+
 /**
  * Damp, based on Game Programming Gems 4 Chapter 1.10
  *   Return value indicates whether the animation is still running.

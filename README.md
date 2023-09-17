@@ -186,6 +186,18 @@ function frameloop() {
   // dampS for Spherical
 ```
 
+#### 🪶 easing functions
+
+6 easing functions are available with in, out and inOut variants:
+
+```jsx
+import { sine, cubic, quint, circ, quart, expo } from "maath/easing";
+
+sine.in(t);
+sine.out(t);
+sine.inOut(t);
+```
+
 ### Matrix
 
 ```js
