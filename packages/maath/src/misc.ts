@@ -13,7 +13,7 @@ export function clamp(value: number, min: number, max: number) {
 }
 
 // Loops the value t, so that it is never larger than length and never smaller than 0.
-function repeat(t: number, length: number) {
+export function repeat(t: number, length: number) {
   return clamp(t - Math.floor(t / length) * length, 0, length);
 }
 

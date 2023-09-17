@@ -249,11 +249,38 @@ const minor = getMinor([1, 2, 1, 2, 1, 1, 3, 2, 3], 1, 1);
 
 ### Misc
 
-```js
-import * as misc from "maath/misc";
+```tsx
+// Clamps a value between a range.
+clamp(value: number, min: number, max: number): number
+// Loops the value t, so that it is never larger than length and never smaller than 0.
+repeat(t: number, length: number): number
+// Calculates the shortest difference between two given angles.
+deltaAngle(current: number, target: number): number
+// Converts degrees to radians.
+degToRad(degrees: number): number
+// Converts radians to degrees.
+radToDeg(radians: number): number
+// adapted from https://gist.github.com/stephanbogner/a5f50548a06bec723dcb0991dcbb0856 by https://twitter.com/st_phan
+fibonacciOnSphere(buffer: TypedArray, { radius = 1 }): void
+// Checks if vector a is equal to vector b, with tolerance
+vectorEquals(a, b, eps = Number.EPSILON): boolean
+/**
+ * Sorts vectors in lexicographic order, works with both v2 and v3
+ *
+ *  Use as:
+ *  const sorted = arrayOfVectors.sort(lexicographicOrder)
+ */
+// https://en.wikipedia.org/wiki/Lexicographic_order
+lexicographic(a: Vector2 | Vector3, b: Vector2 | Vector3): number
+/**
+ * Convex Hull
+ *
+ * Returns an array of 2D Vectors representing the convex hull of a set of 2D Vectors
+ */
+convexHull(_points: Vector2[]): Vector2[]
+// ...
+remap(x: number, [low1, high1]: number[], [low2, high2]: number[])
 ```
-
-TBD
 
 ### Random
 
