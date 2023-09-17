@@ -1,5 +1,11 @@
 # maath
 
+## 0.8.0
+
+### Minor Changes
+
+- add easings functions
+
 ## 0.7.0
 
 ### Minor Changes
