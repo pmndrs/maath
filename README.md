@@ -198,6 +198,19 @@ sine.out(t);
 sine.inOut(t);
 ```
 
+3 specific functions:
+
+```jsx
+import { rsqw, exp, linear } from "maath/easing";
+
+// rounded-square wave
+rsqw(t, delta);
+// unity smooth damping
+exp(t);
+// linear
+linear(t); // === t
+```
+
 ### Matrix
 
 ```js

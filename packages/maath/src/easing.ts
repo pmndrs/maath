@@ -11,17 +11,11 @@ import {
 } from "three";
 import { deltaAngle } from "./misc";
 
-/**
- * Rounded square wave easing
- */
 export const rsqw = (t: number, delta = 0.01, a = 1, f = 1 / (2 * Math.PI)) =>
   (a / Math.atan(1 / delta)) * Math.atan(Math.sin(2 * Math.PI * t * f) / delta);
-
-/**
- * Exponential easing
- */
 export const exp = (t: number) =>
   1 / (1 + t + 0.48 * t * t + 0.235 * t * t * t);
+export const linear = (t: number) => t;
 
 export const sine = {
   in: (x: number) => 1 - Math.cos((x * Math.PI) / 2),
