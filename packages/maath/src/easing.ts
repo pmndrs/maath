@@ -120,7 +120,62 @@ export function damp(
 }
 
 /**
- * DampAngle, based on Game Programming Gems 4 Chapter 1.10
+ * DampLookAt
+ */
+const isCamera = (v: any): v is THREE.Camera => v && v.isCamera;
+const isLight = (v: any): v is THREE.Light => v && v.isLight;
+const vl3d = /*@__PURE__*/ new Vector3();
+const _q1 = /*@__PURE__*/ new Quaternion();
+const _q2 = /*@__PURE__*/ new Quaternion();
+const _m1 = /*@__PURE__*/ new Matrix4();
+const _position = /*@__PURE__*/ new Vector3();
+export function dampLookAt(
+  current: THREE.Object3D,
+  target: number | [x: number, y: number, z: number] | Vector3,
+  smoothTime?: number,
+  delta?: number,
+  maxSpeed?: number,
+  easing?: (t: number) => number,
+  eps?: number
+) {
+  // This method does not support objects having non-uniformly-scaled parent(s)
+  if (typeof target === "number") vl3d.setScalar(target);
+  else if (Array.isArray(target)) vl3d.set(target[0], target[1], target[2]);
+  else vl3d.copy(target);
+
+  const parent = current.parent;
+  current.updateWorldMatrix(true, false);
+  _position.setFromMatrixPosition(current.matrixWorld);
+  if (isCamera(current) || isLight(current))
+    _m1.lookAt(_position, vl3d, current.up);
+  else _m1.lookAt(vl3d, _position, current.up);
+
+  dampQ(
+    current.quaternion,
+    _q2.setFromRotationMatrix(_m1),
+    smoothTime,
+    delta,
+    maxSpeed,
+    easing,
+    eps
+  );
+  if (parent) {
+    _m1.extractRotation(parent.matrixWorld);
+    _q1.setFromRotationMatrix(_m1);
+    dampQ(
+      current.quaternion,
+      _q2.copy(current.quaternion).premultiply(_q1.invert()),
+      smoothTime,
+      delta,
+      maxSpeed,
+      easing,
+      eps
+    );
+  }
+}
+
+/**
+ * DampAngle, with a shortest-path
  */
 export function dampAngle(
   current: { [key: string]: any },

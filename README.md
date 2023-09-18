@@ -175,6 +175,7 @@ function frameloop() {
   // dampC(mesh.material.color, [1, 0, 0], 0.25, delta)
   // dampC(mesh.material.color, { r: 1, g: 0, b: 0 }, 0.25, delta)
 
+  // Animates an euler with a shortest-path algorithm
   dampE(mesh.rotation, [Math.PI / 2, 0, 0], 0.25, delta)
   // Also takes eulers
   // dampE(mesh.rotation, new THREE.Euler(Math.PI / 2, 0, 0), 0.25, delta)
@@ -184,6 +185,17 @@ function frameloop() {
   // dampM for Matrix4
   // dampQ for Quaternion
   // dampS for Spherical
+```
+
+There are two special damping functions for angles and lookAt:
+
+```jsx
+import { dampAngle, dampLookAt } from "maath/easing";
+
+// Animates angle to targetAngle, with a shortest-path algorithm
+dampAngle(angle, targetAngle, 0.25, delta);
+// Animates a meshes look-up
+dampLookAt(mesh, focus, 0.25, delta);
 ```
 
 #### 🪶 easing functions
