@@ -1,5 +1,11 @@
 # maath
 
+## 0.9.0
+
+### Minor Changes
+
+- add damptLookAt
+
 ## 0.8.2
 
 ### Patch Changes
