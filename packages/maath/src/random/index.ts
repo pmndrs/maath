@@ -2,6 +2,81 @@ import type { TypedArray } from "../ctypes";
 
 const TAU = Math.PI * 2;
 
+export class FlashGen {
+  nextBurstTime = 0;
+  nextFlashEndTime = 0;
+  flashesDone = 0;
+  isFlashing = false;
+  currentCount = 0;
+  flashIntensity = 0;
+  isDecaying = false;
+  decaySpeed = 40;
+
+  minInterval = 5000;
+  maxInterval = 10000;
+  minDuration = 50;
+  maxDuration = 300;
+  count = 5;
+
+  constructor(props: {
+    decaySpeed?: number;
+    minInterval?: number;
+    maxInterval?: number;
+    minDuration?: number;
+    maxDuration?: number;
+    count?: number;
+  }) {
+    Object.assign(this, props);
+  }
+
+  scheduleNextBurst(currentTime: number) {
+    const burstInterval =
+      Math.random() * (this.maxInterval - this.minInterval) + this.minInterval;
+    this.nextBurstTime = currentTime + burstInterval / 1000;
+    this.flashesDone = 0;
+    this.isFlashing = false;
+  }
+
+  update(currentTime: number, delta: number) {
+    if (currentTime > this.nextBurstTime && this.currentCount === 0) {
+      this.currentCount = Math.floor(Math.random() * this.count) + 1;
+    }
+
+    if (
+      this.flashesDone < this.currentCount &&
+      currentTime > this.nextBurstTime
+    ) {
+      if (!this.isFlashing) {
+        this.isFlashing = true;
+        this.flashIntensity = 1;
+        const flashDuration =
+          Math.random() * (this.maxDuration - this.minDuration) +
+          this.minDuration;
+        this.nextFlashEndTime = currentTime + flashDuration / 1000;
+      } else if (this.isFlashing && currentTime > this.nextFlashEndTime) {
+        this.isFlashing = false;
+        this.isDecaying = true;
+        this.flashesDone++;
+        if (this.flashesDone >= this.currentCount) {
+          this.currentCount = 0;
+          this.scheduleNextBurst(currentTime);
+        }
+      }
+    }
+
+    if (this.isDecaying) {
+      this.flashIntensity -= delta * this.decaySpeed;
+      this.flashIntensity = Math.max(0, Math.min(1, this.flashIntensity));
+      if (this.flashIntensity <= 0) {
+        this.isDecaying = false;
+        this.flashIntensity = 0;
+      }
+    }
+
+    return this.flashIntensity;
+  }
+}
+
 // Credits @kchapelier https://github.com/kchapelier/wavefunctioncollapse/blob/master/example/lcg.js#L22-L30
 function normalizeSeed(seed: number | string) {
   if (typeof seed === "number") {
@@ -9,22 +84,18 @@ function normalizeSeed(seed: number | string) {
   } else if (typeof seed === "string") {
     const string = seed;
     seed = 0;
-
     for (let i = 0; i < string.length; i++) {
       seed = (seed + (i + 1) * (string.charCodeAt(i) % 96)) % 2147483647;
     }
   }
-
   if (seed === 0) {
     seed = 311;
   }
-
   return seed;
 }
 
 function lcgRandom(seed: number | string) {
   let state = normalizeSeed(seed);
-
   return function () {
     const result = (state * 48271) % 2147483647;
     state = result;
