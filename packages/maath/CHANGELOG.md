@@ -1,5 +1,11 @@
 # maath
 
+## 0.10.0
+
+### Minor Changes
+
+- feat: flashgen
+
 ## 0.9.0
 
 ### Minor Changes
