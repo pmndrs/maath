@@ -1,5 +1,11 @@
 # maath
 
+## 0.10.1
+
+### Patch Changes
+
+- manual burst flash gen
+
 ## 0.10.0
 
 ### Minor Changes
