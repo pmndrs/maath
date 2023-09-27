@@ -10,6 +10,7 @@ export class FlashGen {
   currentCount = 0;
   flashIntensity = 0;
   isDecaying = false;
+  manual = false;
   decaySpeed = 40;
 
   minInterval = 5000;
@@ -37,6 +38,14 @@ export class FlashGen {
     this.isFlashing = false;
   }
 
+  burst() {
+    const burstInterval =
+      Math.random() * (this.maxInterval - this.minInterval) + this.minInterval;
+    this.nextBurstTime = burstInterval / 1000;
+    this.flashesDone = 0;
+    this.isFlashing = false;
+  }
+
   update(currentTime: number, delta: number) {
     if (currentTime > this.nextBurstTime && this.currentCount === 0) {
       this.currentCount = Math.floor(Math.random() * this.count) + 1;
@@ -59,7 +68,7 @@ export class FlashGen {
         this.flashesDone++;
         if (this.flashesDone >= this.currentCount) {
           this.currentCount = 0;
-          this.scheduleNextBurst(currentTime);
+          if (this.manual) this.scheduleNextBurst(currentTime);
         }
       }
     }
