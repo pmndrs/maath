@@ -1,5 +1,11 @@
 # maath
 
+## 0.10.4
+
+### Patch Changes
+
+- up
+
 ## 0.10.3
 
 ### Patch Changes
