@@ -1,5 +1,11 @@
 # maath
 
+## 0.10.3
+
+### Patch Changes
+
+- fix publish
+
 ## 0.10.2
 
 ### Patch Changes
