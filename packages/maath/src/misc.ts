@@ -329,3 +329,25 @@ export function get2DFromIndex(index: number, columns: number): V2 {
 
   return [x, y];
 }
+
+/**
+ *
+ * Calculate binomial coefficients (n choose k)
+ *
+ * @param n possibilities
+ * @param k unordered outcome
+ * @returns k-subsets possible out of the set of n distinct items
+ */
+export function choose(n: number, k: number) {
+  let coeff = 1;
+
+  for (let x = n - k + 1; x <= n; x++) {
+    coeff *= x;
+  }
+
+  for (let x = 1; x <= k; x++) {
+    coeff /= x;
+  }
+
+  return coeff;
+}
