@@ -6,7 +6,7 @@
 
 import { Quaternion, Vector3 } from "three";
 import type { TypedArray, MyVector2, MyVector3 } from "./ctypes";
-import { lerp as _lerp } from "./misc";
+import { lerp as _lerp, lpi3 as _lpi3 } from "./misc";
 import * as v2 from "./vector2";
 import * as v3 from "./vector3";
 
@@ -81,6 +81,24 @@ export function lerp(
 ) {
   for (let i = 0; i < bufferA.length; i++) {
     final[i] = _lerp(bufferA[i], bufferB[i], t);
+  }
+}
+
+/**
+ *
+ * Interpolates using Lagrane Interpolation between three buffers, passed in as array into final
+ *
+ * @param buffers array of three buffers: bufferA, bufferB, bufferC
+ * @param final interpolation buffer (output)
+ * @param t time, reccomended
+ */
+export function lpi3(
+  buffers: [TypedArray, TypedArray, TypedArray],
+  final: TypedArray,
+  t: number
+) {
+  for (let i = 0; i < buffers[0].length; i++) {
+    final[i] = _lpi3([buffers[0][i], buffers[1][i], buffers[2][i]], t);
   }
 }
 

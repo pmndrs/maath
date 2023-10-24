@@ -176,6 +176,22 @@ export function fade(t: number) {
 
 /**
  *
+ * Returns the result of lagrange polynomial interpolation between A, B, and C by the time of t
+ *
+ * @param v array of three numbers to interpolate between
+ * @param t time
+ * @returns 3-point interpolation given pos of t
+ */
+export function lpi3(v: [number, number, number], t: number) {
+  return (
+    2 * (t - 1) * (t - 0.5) * v[0] -
+    4 * (t - 1) * t * v[1] +
+    2 * (t - 0.5) * t * v[2]
+  );
+}
+
+/**
+ *
  * Returns the result of linearly interpolating between input A and input B by input T.
  *
  * @param v0
