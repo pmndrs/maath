@@ -3,8 +3,20 @@
 import * as THREE from "three";
 
 export class RoundedPlaneGeometry extends THREE.BufferGeometry {
+  parameters: {
+    width: number;
+    height: number;
+    radius: number;
+    segments: number;
+  };
   constructor(width = 2, height = 1, radius = 0.2, segments = 16) {
     super();
+    this.parameters = {
+      width,
+      height,
+      radius,
+      segments,
+    };
 
     // helper const's
     const wi = width / 2 - radius; // inner width
