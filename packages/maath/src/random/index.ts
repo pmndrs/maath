@@ -143,11 +143,11 @@ const defaultSphere = {
 // random on surface of sphere
 // - https://twitter.com/fermatslibrary/status/1430932503578226688
 // - https://mathworld.wolfram.com/SpherePointPicking.html
-export function onSphere(
-  buffer: TypedArray,
+export function onSphere<T extends TypedArray>(
+  buffer: T,
   sphere?: Sphere,
   rng: Generator = defaultGen
-) {
+): T {
   const { radius, center } = {
     ...defaultSphere,
     ...sphere,
@@ -169,11 +169,11 @@ export function onSphere(
 }
 
 // from "Another Method" https://datagenetics.com/blog/january32020/index.html
-export function inSphere(
-  buffer: TypedArray,
+export function inSphere<T extends TypedArray>(
+  buffer: T,
   sphere?: Sphere,
   rng: Generator = defaultGen
-) {
+): T {
   const { radius, center } = {
     ...defaultSphere,
     ...sphere,
@@ -213,11 +213,11 @@ const defaultCircle = {
 };
 
 // random circle https://stackoverflow.com/a/50746409
-export function inCircle(
-  buffer: TypedArray,
+export function inCircle<T extends TypedArray>(
+  buffer: T,
   circle?: Circle,
   rng: Generator = defaultGen
-): TypedArray {
+): T {
   const { radius, center } = {
     ...defaultCircle,
     ...circle,
@@ -234,11 +234,11 @@ export function inCircle(
   return buffer;
 }
 
-export function onCircle(
-  buffer: TypedArray,
+export function onCircle<T extends TypedArray>(
+  buffer: T,
   circle?: Circle,
   rng: Generator = defaultGen
-) {
+): T {
   const { radius, center } = {
     ...defaultCircle,
     ...circle,
@@ -287,22 +287,22 @@ export function inRect<T extends TypedArray>(
   return buffer;
 }
 
-export function onRect(
-  buffer: TypedArray,
+export function onRect<T extends TypedArray>(
+  buffer: T,
   rect?: Rect,
   rng: Generator = defaultGen
-) {
+): T {
   return buffer;
 }
 
 /***
  * [3D] Box
  */
-export function inBox(
-  buffer: TypedArray,
+export function inBox<T extends TypedArray>(
+  buffer: T,
   box?: Box,
   rng: Generator = defaultGen
-) {
+): T {
   const { sides, center } = {
     ...defaultBox,
     ...box,
@@ -331,11 +331,11 @@ const defaultBox = {
   center: [0, 0, 0],
 };
 
-export function onBox(
-  buffer: TypedArray,
+export function onBox<T extends TypedArray>(
+  buffer: T,
   box?: Box,
   rng: Generator = defaultGen
-) {
+): T {
   const { sides, center } = {
     ...defaultBox,
     ...box,
