@@ -591,7 +591,7 @@ packages:
     engines: {node: '>= 16'}
 
   dashcat@https://codeload.github.com/isaac-mason/dashcat/tar.gz/303478bc4dd20cec56b0e4f2f58cfdc1a79e172d:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/isaac-mason/dashcat/tar.gz/303478bc4dd20cec56b0e4f2f58cfdc1a79e172d}
+    resolution: {gitHosted: true, integrity: sha512-NiG++g483ftuOcNV++b994irOPm0yA6b7y0lJagb8bO4FXFnxb5SnMGwX6gNFVFfVbSL7VctTIkJeMDagRc/3A==, tarball: https://codeload.github.com/isaac-mason/dashcat/tar.gz/303478bc4dd20cec56b0e4f2f58cfdc1a79e172d}
     version: 0.0.1-alpha.1
 
   debug@4.4.3:
@@ -669,7 +669,7 @@ packages:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
   gpucat@https://codeload.github.com/isaac-mason/gpucat/tar.gz/17fdd24630322bfb3a3f01719de0d3bea47909c4:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/isaac-mason/gpucat/tar.gz/17fdd24630322bfb3a3f01719de0d3bea47909c4}
+    resolution: {gitHosted: true, integrity: sha512-Qf9lXJuX27xz5cf8uhfx7j2wTtbWMz7RISlEw+31bXaenJzWFaCTKm1AVvVXNPH+wWD5CZci4GQLGPxji75uuw==, tarball: https://codeload.github.com/isaac-mason/gpucat/tar.gz/17fdd24630322bfb3a3f01719de0d3bea47909c4}
     version: 0.0.0-alpha.1
 
   hasown@2.0.4:
@@ -702,8 +702,8 @@ packages:
     resolution: {integrity: sha512-RCEsPjR+sr0x+AuYp601tKTkgFG4YEPLCzHST3cQ/fhlJkqAkz1L2/Qbp1j9qw5SBwQHFBoW8+hoN5xssOF0Tw==}
     hasBin: true
 
-  math@1.0.0-canary-dbc0c0c5-20260823:
-    resolution: {integrity: sha512-4jnPsuc9Y8+NXviArjI8QZPZbzhQvCn2a/B5JeZsFhoe1pwzMcWBHHeeWcNzD2Wbp7YTRXsMkktp4UCqYBE2mg==}
+  math@1.0.0-canary-872f3be9-20260816:
+    resolution: {integrity: sha512-VRuAlhGeSJVDAu18vs2o7FCTxVVP7wUMg3nLeS6XpTfAbezQgPsUgpfWbsAFpT5Gnpd1QKEDqNk9Gy2sKqvjew==}
 
   mdurl@2.1.0:
     resolution: {integrity: sha512-1+HBaOx0zi/dQWht8rNv9MYf9qqpqL/kxI0hXImU6Y547zM6Sni8BQibt7ifgMcYtQg41ao3Ivd6cnSM86inpg==}
@@ -1352,7 +1352,7 @@ snapshots:
 
   gpucat@https://codeload.github.com/isaac-mason/gpucat/tar.gz/17fdd24630322bfb3a3f01719de0d3bea47909c4:
     dependencies:
-      math: 1.0.0-canary-dbc0c0c5-20260823
+      math: 1.0.0-canary-872f3be9-20260816
 
   hasown@2.0.4:
     dependencies:
@@ -1387,7 +1387,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  math@1.0.0-canary-dbc0c0c5-20260823: {}
+  math@1.0.0-canary-872f3be9-20260816: {}
 
   mdurl@2.1.0: {}
 
