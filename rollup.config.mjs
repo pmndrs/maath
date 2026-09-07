@@ -18,7 +18,9 @@ export default {
         './src/noise/index.ts',
         './src/color/index.ts',
         './src/ik/index.ts',
+        './src/three/index.ts',
     ],
+    external: ['three'],
     output: {
         dir: 'dist',
         format: 'es',

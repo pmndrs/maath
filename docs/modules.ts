@@ -4,7 +4,7 @@ import { simplex3d } from 'math/noise'; // perlin / simplex noise
 import { mulberry32 } from 'math/random'; // seeded rng
 import { easing, spring } from 'math/time'; // easings & springs
 import { fabrik2, fabrik3 } from 'math/ik'; // inverse kinematics
-// also: math/color, math/geometry, math/shapes — import only what you use
+// Other modules: math/color, math/geometry, math/shapes and math/three.
 /* SNIPPET_END: modules */
 
 // referenced so this doc module type-checks; not shown in the snippet

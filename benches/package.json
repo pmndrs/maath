@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@pmndrs/labs": "^0.9.0"
+    "@pmndrs/labs": "^0.9.0",
+    "three": "0.185.1"
   },
   "devDependencies": {
+    "@types/three": "0.185.4",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite": "^7.3.6"
   }
 }
-  

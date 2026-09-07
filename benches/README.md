@@ -24,6 +24,9 @@ pnpm bench --no-save      # run without saving
   navigation/collision-style libraries, exercising many math functions together: funnel string
   pulling (`@nav`), frustum culling (`@culling`), closest-hit raycasting (`@raycast`), transform
   hierarchy propagation (`@scene`), and a full sphere physics step (`@physics`)
+- `three/` — the math + three.js bridge experiment (`@three`): the same frame of work written
+  with three's own API and with math writing into three's storage in place, outputs asserted
+  equal. See [three/README.md](./three/README.md)
 
 The composite benches run 100+ µs per iteration, which keeps them well above this machine's
 micro-bench noise floor — prefer them for regression comparisons; use the micro benches to

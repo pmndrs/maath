@@ -13,6 +13,7 @@ overview, installation, and examples, see the [README](./README.md).
 - [`math/noise`](#api-math-noise) — Perlin, simplex & worley noise, plus fractal helpers
 - [`math/color`](#api-math-color) — Color & colorspace utilities
 - [`math/ik`](#api-math-ik) — Inverse kinematics
+- [`math/three`](#api-math-three) — Zero-copy bridge to three.js: extend a scene so math drives its transforms
 
 ---
 
@@ -1603,3 +1604,37 @@ import { fabrik3 } from 'math/ik';
 - `fabrik3.getBoneDirection(out: Vec3, chain: Chain3, index: number): Vec3` — Writes the unit direction of bone `index`, from its start toward its end, into `out`.
 - `fabrik3.getBoneRotation(out: Quat, chain: Chain3, index: number, up: Vec3): Quat` — Writes the rotation taking `up` onto the direction of bone `index` into `out`.
 - `fabrik3.isReachable(chain: Chain3, target: Vec3): boolean` — Whether `target` is within reach of the chain's base, so a solve can place the effector exactly on it.
+
+<a id="api-math-three"></a>
+
+## `math/three`
+
+**Types**
+
+- `type Transform = { position: Vec3; rotation: Quat; scale: Vec3; local: Mat4; world: Mat4; }` — The math side of an extended object. Stable for as long as the object stays extended.
+
+**Create**
+
+- <a id="frustumfromcamera"></a>`frustumFromCamera(out: Frustum, camera: Camera): Frustum` — Extracts a frustum for a camera using WebGL depth in [-1, 1].
+
+**Operations**
+
+- <a id="extend"></a>`extend<T extends Object3D>(scene: T): T` — Extends every object under `scene` and makes the scene's own update entry points run the
+- <a id="extendobject"></a>`extendObject(object: Object3D): Transform` — Extends one object on its own, such as a camera outside the scene tree. Its own
+- <a id="propagate"></a>`propagate(scene: Object3D): void` — One flat pass over the scene: compose extended nodes from their records, propagate world matrices.
+- <a id="release"></a>`release(object: Object3D): void` — Gives an object its plain three transform back. An object that stays in an extended scene
+- <a id="unextend"></a>`unextend(scene: Object3D): void` — Undoes extend: every object under the scene gets plain transforms back, the scene its own methods.
+- <a id="claimtransform"></a>`claimTransform(object: Object3D): { local: Mat4; world: Mat4; }` — Disables automatic transform updates. The caller owns the local and world matrices
+- <a id="instancemat4views"></a>`instanceMat4Views(mesh: InstancedMesh): Mat4[]` — Allocates one Mat4 view per instance over the upload buffer. Call once at setup and set
+- <a id="mat4of"></a>`mat4Of(m: Matrix4): Mat4` — A three Matrix4's storage, usable as a math Mat4 with no cast and no copy
+- <a id="quatfromquaternion"></a>`quatFromQuaternion(out: Quat, q: Quaternion): Quat`
+- <a id="quattoquaternion"></a>`quatToQuaternion(out: Quaternion, q: Quat): Quaternion` — Fires the quaternion's change callback once. On an Object3D's quaternion that re-derives `rotation`.
+- <a id="spheretoworld"></a>`sphereToWorld(out: Sphere, local: ThreeSphere, world: Mat4): Sphere` — Transforms a local bounding sphere to world space. Scales the radius by the largest
+- <a id="vec3fromattribute"></a>`vec3FromAttribute(out: Vec3, attribute: BufferAttribute, index: number): Vec3` — Reads vertex `index` of a 3-component attribute into a Vec3, denormalizing like `getX` does.
+- <a id="vec3fromvector3"></a>`vec3FromVector3(out: Vec3, v: Vector3): Vec3`
+- <a id="vec3toattribute"></a>`vec3ToAttribute(attribute: BufferAttribute, a: Vec3, index: number): void` — Writes a Vec3 into vertex `index` of a 3-component attribute, normalizing like `setXYZ` does. Set `needsUpdate` afterwards.
+- <a id="vec3tovector3"></a>`vec3ToVector3(out: Vector3, a: Vec3): Vector3`
+
+**Transform**
+
+- <a id="transformof"></a>`transformOf(object: Object3D): Transform` — The Transform of an extended object. Throws for an object that is not extended.
