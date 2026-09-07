@@ -1,122 +1,124 @@
-// Measures the wasm SIMD kernel against the current JS mat4.multiply.
-// Run with: node bench.mjs
-import { readFileSync } from 'node:fs';
+// Tree matrix multiply, wasm SIMD against the equivalent JS.
+import { createTree, fmaSupported } from './tree.mjs';
 
-const wasm = new WebAssembly.Instance(
-  // sync instantiation, only legal on the main thread while the module stays under 4KB
-  new WebAssembly.Module(readFileSync(new URL('./mat4.wasm', import.meta.url))),
-  {},
-);
-const { memory, mul_batch, mul_broadcast, hierarchy, compose_batch } = wasm.exports;
-
-// exact transcription of src/core/mat4.ts multiply
-function jsMultiply(out, a, b) {
-  const a00=a[0],a01=a[1],a02=a[2],a03=a[3],a10=a[4],a11=a[5],a12=a[6],a13=a[7];
-  const a20=a[8],a21=a[9],a22=a[10],a23=a[11],a30=a[12],a31=a[13],a32=a[14],a33=a[15];
-  let b0=b[0],b1=b[1],b2=b[2],b3=b[3];
-  out[0]=b0*a00+b1*a10+b2*a20+b3*a30; out[1]=b0*a01+b1*a11+b2*a21+b3*a31;
-  out[2]=b0*a02+b1*a12+b2*a22+b3*a32; out[3]=b0*a03+b1*a13+b2*a23+b3*a33;
-  b0=b[4];b1=b[5];b2=b[6];b3=b[7];
-  out[4]=b0*a00+b1*a10+b2*a20+b3*a30; out[5]=b0*a01+b1*a11+b2*a21+b3*a31;
-  out[6]=b0*a02+b1*a12+b2*a22+b3*a32; out[7]=b0*a03+b1*a13+b2*a23+b3*a33;
-  b0=b[8];b1=b[9];b2=b[10];b3=b[11];
-  out[8]=b0*a00+b1*a10+b2*a20+b3*a30; out[9]=b0*a01+b1*a11+b2*a21+b3*a31;
-  out[10]=b0*a02+b1*a12+b2*a22+b3*a32; out[11]=b0*a03+b1*a13+b2*a23+b3*a33;
-  b0=b[12];b1=b[13];b2=b[14];b3=b[15];
-  out[12]=b0*a00+b1*a10+b2*a20+b3*a30; out[13]=b0*a01+b1*a11+b2*a21+b3*a31;
-  out[14]=b0*a02+b1*a12+b2*a22+b3*a32; out[15]=b0*a03+b1*a13+b2*a23+b3*a33;
-  return out;
+// world[i] = world[parent[i]] * local[i] using the library's multiply, on the
+// same flat buffers, so only the kernel differs
+function jsTree(world, local, parent, n) {
+    for (let i = 0; i < n; i++) {
+        const p = parent[i], L = i * 16, W = i * 16;
+        if (p < 0) { for (let j = 0; j < 16; j++) world[W + j] = local[L + j]; continue; }
+        const P = p * 16;
+        const a00=world[P],a01=world[P+1],a02=world[P+2],a03=world[P+3];
+        const a10=world[P+4],a11=world[P+5],a12=world[P+6],a13=world[P+7];
+        const a20=world[P+8],a21=world[P+9],a22=world[P+10],a23=world[P+11];
+        const a30=world[P+12],a31=world[P+13],a32=world[P+14],a33=world[P+15];
+        for (let j = 0; j < 4; j++) {
+            const b0=local[L+j*4],b1=local[L+j*4+1],b2=local[L+j*4+2],b3=local[L+j*4+3];
+            world[W+j*4]=b0*a00+b1*a10+b2*a20+b3*a30;
+            world[W+j*4+1]=b0*a01+b1*a11+b2*a21+b3*a31;
+            world[W+j*4+2]=b0*a02+b1*a12+b2*a22+b3*a32;
+            world[W+j*4+3]=b0*a03+b1*a13+b2*a23+b3*a33;
+        }
+    }
 }
 
-const MAX = 16384;
-const aPtr = 0;
-const bPtr = MAX * 64;
-const outPtr = MAX * 128;
-const parentPtr = MAX * 192;
-
-const heap = new Float32Array(memory.buffer);
-let seed = 7;
-const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
-for (let i = 0; i < MAX * 16; i++) {
-  heap[i] = rnd() * 2 - 1;
-  heap[MAX * 16 + i] = rnd() * 2 - 1;
+// the same tree over plain arrays, the representation the library uses today.
+// JS is faster on these than on a flat Float32Array, so this is the honest
+// baseline for whether wasm is worth it at all.
+function jsTreePlain(world, local, parent, n) {
+    for (let i = 0; i < n; i++) {
+        const p = parent[i], L = local[i], W = world[i];
+        if (p < 0) { for (let j = 0; j < 16; j++) W[j] = L[j]; continue; }
+        const A = world[p];
+        const a00=A[0],a01=A[1],a02=A[2],a03=A[3],a10=A[4],a11=A[5],a12=A[6],a13=A[7];
+        const a20=A[8],a21=A[9],a22=A[10],a23=A[11],a30=A[12],a31=A[13],a32=A[14],a33=A[15];
+        for (let j = 0; j < 4; j++) {
+            const b0=L[j*4],b1=L[j*4+1],b2=L[j*4+2],b3=L[j*4+3];
+            W[j*4]=b0*a00+b1*a10+b2*a20+b3*a30;
+            W[j*4+1]=b0*a01+b1*a11+b2*a21+b3*a31;
+            W[j*4+2]=b0*a02+b1*a12+b2*a22+b3*a32;
+            W[j*4+3]=b0*a03+b1*a13+b2*a23+b3*a33;
+        }
+    }
 }
 
-// plain array mirrors of the same data, the layout the library uses today
-const aArr = [], bArr = [], oArr = [];
-for (let i = 0; i < MAX; i++) {
-  const m = [], k = [];
-  for (let j = 0; j < 16; j++) { m.push(heap[i * 16 + j]); k.push(heap[MAX * 16 + i * 16 + j]); }
-  aArr.push(m); bArr.push(k); oArr.push(new Array(16).fill(0));
+function toPlain(flat, n) {
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(Array.from(flat.subarray(i * 16, i * 16 + 16)));
+    return out;
 }
 
-// ---- correctness ----
-mul_batch(outPtr, aPtr, bPtr, MAX);
-const scratch = new Array(16);
-let maxErr = 0;
-for (let i = 0; i < MAX; i++) {
-  jsMultiply(scratch, aArr[i], bArr[i]);
-  for (let j = 0; j < 16; j++)
-    maxErr = Math.max(maxErr, Math.abs(scratch[j] - heap[outPtr / 4 + i * 16 + j]));
-}
-console.log(`max abs error vs JS f64: ${maxErr.toExponential(3)}  (pure f32 rounding)\n`);
-
-// inner repetitions keep small N above timer resolution
 function time(fn, inner, outer, warm) {
-  for (let i = 0; i < warm; i++) fn();
-  const t0 = process.hrtime.bigint();
-  for (let o = 0; o < outer; o++) for (let i = 0; i < inner; i++) fn();
-  return Number(process.hrtime.bigint() - t0) / (outer * inner);
+    for (let i = 0; i < warm; i++) fn();
+    let best = Infinity;
+    for (let o = 0; o < outer; o++) {
+        const t0 = process.hrtime.bigint();
+        for (let i = 0; i < inner; i++) fn();
+        const dt = Number(process.hrtime.bigint() - t0) / inner;
+        if (dt < best) best = dt;
+    }
+    return best;
 }
 
-console.log(`JS -> wasm call overhead: ${time(() => mul_batch(outPtr, aPtr, bPtr, 0), 1000, 200, 20000).toFixed(1)} ns\n`);
+// tree shapes as parent arrays, parents always preceding children
+const shapes = {
+    '4-ary (scene graph)': (n) => { const p = new Int32Array(n); p[0] = -1; for (let i = 1; i < n; i++) p[i] = (i-1) >> 2; return p; },
+    'binary': (n) => { const p = new Int32Array(n); p[0] = -1; for (let i = 1; i < n; i++) p[i] = (i-1) >> 1; return p; },
+    'chains of 32 (skeleton)': (n) => { const p = new Int32Array(n); for (let i = 0; i < n; i++) p[i] = i % 32 === 0 ? -1 : i - 1; return p; },
+    'flat under one root': (n) => { const p = new Int32Array(n); p[0] = -1; for (let i = 1; i < n; i++) p[i] = 0; return p; },
+};
 
-console.log('resident buffers, per frame');
-console.log('      N      JS us    wasm us   speedup');
-for (const N of [1, 16, 64, 256, 1024, 4096, 16384]) {
-  const inner = N <= 64 ? 1000 : N <= 1024 ? 100 : 10;
-  const outer = N <= 64 ? 200 : N <= 1024 ? 100 : 40;
-  const js = time(() => { for (let i = 0; i < N; i++) jsMultiply(oArr[i], aArr[i], bArr[i]); }, inner, outer, 2000);
-  const wa = time(() => mul_batch(outPtr, aPtr, bPtr, N), inner, outer, 2000);
-  console.log(String(N).padStart(7), (js / 1000).toFixed(3).padStart(10),
-    (wa / 1000).toFixed(3).padStart(10), `${(js / wa).toFixed(2)}x`.padStart(9));
+function fill(tree, n) {
+    let s = 7; const rnd = () => ((s = (s*1664525+1013904223)>>>0) / 4294967296);
+    for (let i = 0; i < n; i++) {
+        const a = rnd() * 6.283, c = Math.cos(a), sn = Math.sin(a);
+        tree.local.set([c,sn,0,0, -sn,c,0,0, 0,0,1,0, rnd()*2-1, rnd()*2-1, rnd()*2-1, 1], i * 16);
+    }
 }
 
-// the cost that decides the whole design, marshalling plain arrays across the boundary
+console.log(`relaxed simd available: ${fmaSupported()}\n`);
+
 const N = 4096;
-const marshal = time(() => {
-  for (let i = 0; i < N; i++) {
-    const ai = aArr[i], bi = bArr[i];
-    for (let j = 0; j < 16; j++) { heap[i * 16 + j] = ai[j]; heap[MAX * 16 + i * 16 + j] = bi[j]; }
-  }
-  mul_batch(outPtr, aPtr, bPtr, N);
-  for (let i = 0; i < N; i++) {
-    const oi = oArr[i];
-    for (let j = 0; j < 16; j++) oi[j] = heap[outPtr / 4 + i * 16 + j];
-  }
-}, 10, 40, 200);
-const plain = time(() => { for (let i = 0; i < N; i++) jsMultiply(oArr[i], aArr[i], bArr[i]); }, 10, 40, 200);
-console.log(`\nN=4096 with marshalling: ${(marshal / 1000).toFixed(1)}us vs JS ${(plain / 1000).toFixed(1)}us -> ${(plain / marshal).toFixed(2)}x`);
+console.log(`N = ${N}, min of trials\n`);
+console.log('shape'.padEnd(25), 'JS flat'.padStart(9), 'JS plain'.padStart(9), 'wasm'.padStart(8), 'wasm+fma'.padStart(9), 'vs plain'.padStart(9), 'fma'.padStart(6));
+for (const [name, make] of Object.entries(shapes)) {
+    const strict = createTree(N);
+    const fma = fmaSupported() ? createTree(N, { fma: true }) : null;
+    const parent = make(N);
+    strict.parent.set(parent); fill(strict, N);
+    if (fma) { fma.parent.set(parent); fill(fma, N); }
 
-console.log('\nthree.js shaped workloads, N = 4096');
-const parents = new Int32Array(memory.buffer, parentPtr, N);
-parents[0] = -1;
-for (let i = 1; i < N; i++) parents[i] = (i - 1) >> 2;
-const parentArr = Array.from(parents);
+    const jsWorld = new Float32Array(N * 16);
+    jsTree(jsWorld, strict.local, parent, N);
+    strict.update();
+    let d = 0;
+    for (let i = 0; i < N * 16; i++) d = Math.max(d, Math.abs(jsWorld[i] - strict.world[i]) / Math.max(1, Math.abs(jsWorld[i])));
 
-const wH = time(() => hierarchy(outPtr, aPtr, parentPtr, N), 10, 40, 200);
-const jH = time(() => {
-  for (let i = 0; i < N; i++) {
-    const p = parentArr[i];
-    if (p < 0) { const o = oArr[i], a = aArr[i]; for (let j = 0; j < 16; j++) o[j] = a[j]; }
-    else jsMultiply(oArr[i], oArr[p], aArr[i]);
-  }
-}, 10, 40, 200);
-console.log(`hierarchy (updateMatrixWorld) JS ${(jH / 1000).toFixed(1)}us  wasm ${(wH / 1000).toFixed(1)}us  ${(jH / wH).toFixed(2)}x`);
+    const pLocal = toPlain(strict.local, N), pWorld = toPlain(jsWorld, N);
+    const tj = time(() => jsTree(jsWorld, strict.local, parent, N), 20, 50, 500);
+    const tp = time(() => jsTreePlain(pWorld, pLocal, parent, N), 20, 50, 500);
+    const tw = time(() => strict.update(), 20, 50, 500);
+    const tf = fma ? time(() => fma.update(), 20, 50, 500) : NaN;
+    console.log(name.padEnd(25), `${(tj/1000).toFixed(1)}us`.padStart(9), `${(tp/1000).toFixed(1)}us`.padStart(9),
+        `${(tw/1000).toFixed(1)}us`.padStart(8), `${(tf/1000).toFixed(1)}us`.padStart(9),
+        `${(tp/tw).toFixed(2)}x`.padStart(9), `${(tw/tf).toFixed(2)}x`.padStart(6));
+    if (d > 1e-4) console.log(`  WARNING rel delta vs JS ${d.toExponential(2)}`);
+}
 
-const wB = time(() => mul_broadcast(outPtr, aPtr, bPtr, N), 10, 40, 200);
-const jB = time(() => { for (let i = 0; i < N; i++) jsMultiply(oArr[i], aArr[0], bArr[i]); }, 10, 40, 200);
-console.log(`broadcast (viewProj * world)  JS ${(jB / 1000).toFixed(1)}us  wasm ${(wB / 1000).toFixed(1)}us  ${(jB / wB).toFixed(2)}x`);
-
-const wC = time(() => compose_batch(outPtr, parentPtr + 65536, parentPtr + 131072, parentPtr + 196608, N), 10, 40, 200);
-console.log(`compose TRS (instancing)      wasm ${(wC / 1000).toFixed(1)}us  (${(wC / N).toFixed(2)} ns/instance)`);
+console.log('\nscaling, 4-ary, ns per node');
+console.log('N'.padStart(9), 'JS flat'.padStart(8), 'JS plain'.padStart(9), 'wasm'.padStart(7), 'wasm+fma'.padStart(9), 'vs plain'.padStart(9));
+for (const n of [1024, 4096, 16384, 65536, 262144]) {
+    const strict = createTree(n);
+    const fma = fmaSupported() ? createTree(n, { fma: true }) : null;
+    const parent = shapes['4-ary (scene graph)'](n);
+    strict.parent.set(parent); fill(strict, n);
+    if (fma) { fma.parent.set(parent); fill(fma, n); }
+    const jsWorld = new Float32Array(n * 16);
+    const inner = n >= 65536 ? 3 : 20, outer = n >= 65536 ? 20 : 50, warm = n >= 65536 ? 30 : 400;
+    const pLocal = toPlain(strict.local, n), pWorld = toPlain(jsWorld, n);
+    const tj = time(() => jsTree(jsWorld, strict.local, parent, n), inner, outer, warm) / n;
+    const tp = time(() => jsTreePlain(pWorld, pLocal, parent, n), inner, outer, warm) / n;
+    const tw = time(() => strict.update(), inner, outer, warm) / n;
+    const tf = fma ? time(() => fma.update(), inner, outer, warm) / n : NaN;
+    console.log(String(n).padStart(9), tj.toFixed(2).padStart(8), tp.toFixed(2).padStart(9), tw.toFixed(2).padStart(7), tf.toFixed(2).padStart(9), `${(tp/tw).toFixed(2)}x`.padStart(9));
+}
