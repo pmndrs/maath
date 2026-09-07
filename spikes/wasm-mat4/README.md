@@ -6,29 +6,73 @@ that justify its shape. Exploratory. Nothing here is wired into `src/`.
 ```sh
 ./build.sh      # needs clang with the wasm32 target plus wasm-ld
 node bench.mjs  # mat4.wasm is committed, so this runs without clang
+node tiers.mjs  # residency tiers and the wasm-memory view cost
 ```
 
-## The constraint that decides everything
+## Residency is the whole game
 
-`Mat4` in this library is a plain JS array of 16 doubles. Wasm cannot read that.
-Every matrix has to be converted to f32 and stored into linear memory before a
-kernel can touch it, then read back out. That marshalling costs more than the
-multiply it enables.
+The skill already says state crossing a Wasm boundary lives in a typed array
+from the start, so residency is the house pattern rather than something this
+design has to work around. What the measurements add is that there are three
+tiers, not two, and the gap between the last two is larger than it looks.
 
-Measured at N=4096 on node 22, x86_64:
+Measured at N=4096 on node 22, x86_64, against the current JS `mat4.multiply`
+at 87.6us:
 
-| path | us/frame | vs current JS |
+| tier | us/frame | vs current JS |
 | --- | --- | --- |
-| JS plain arrays (current `mat4.multiply`) | 87.6 | 1.00x |
-| wasm SIMD, buffers already resident | 27.4 | **3.84x** |
-| wasm SIMD, marshal plain arrays in and out | 200.4 | **0.44x** |
+| plain `Mat4` tuples, element-wise marshal | 200.4 | 0.44x |
+| caller's own `Float32Array`, bulk `.set()` | 45.7 | 1.92x |
+| view onto wasm memory, zero copy | 27.0 | **3.24x** |
 
-Marshalling does not merely erase the win, it costs more than twice what doing
-nothing costs. A drop-in `mat4.multiply` backed by wasm would be a large
-regression. The only design that pays is one where the data already lives in
-wasm memory and stays there across frames.
+Tier 1 is the anti-pattern the skill already steers away from, and it is worth
+recording only because it is what a drop-in wasm `mat4.multiply` would be. It
+costs more than twice doing nothing.
 
-The JS to wasm call itself is cheap, about 8 ns. Copying is the entire problem.
+Tier 2 is what "back it with a `Float32Array` at creation" gets you if the array
+is allocated the ordinary way. The copy is a bulk memcpy of 768KB, no per element
+conversion, and it still costs about 70% on top of the kernel. It nearly halves
+the win.
+
+So the module should not merely accept resident buffers, it should be the thing
+that allocates them.
+
+## The allocator is the API
+
+A `Float32Array` view onto wasm memory costs JS nothing to touch compared to one
+on its own `ArrayBuffer`:
+
+| | own ArrayBuffer | wasm memory view |
+| --- | --- | --- |
+| read 64K floats | 47.1us | 48.0us |
+| write 64K floats | 59.9us | 60.5us |
+
+Within noise. There is no JS side tax for sourcing long-lived typed arrays from
+wasm memory, which means the skill's caller-owned-state pattern carries over
+unchanged with only the allocation source swapped:
+
+```ts
+export function createWorld(capacity: number) {
+    return {
+        capacity,
+        count: 0,
+        // same shape the skill prescribes, allocated so kernels read it in place
+        local: wasm.allocMat4(capacity),
+        world: wasm.allocMat4(capacity),
+    };
+}
+```
+
+Everything else the skill says still applies to that buffer. It is a flat buffer,
+so a single matrix marshals out at the edges the documented way, and
+`vec3.fromBuffer` / `quat.fromBuffer` work on it directly.
+
+**The memory must never grow.** `memory.grow` detaches every view, which would
+silently invalidate every `Float32Array` the caller is holding. That is a nasty
+footgun, and it is also exactly what the skill's "allocate at creation, never per
+call, preallocate to capacity" rule already forbids. So: size the memory once at
+creation, never grow, and report a count or status when full. The two rules line
+up, which is a good sign the shape is right.
 
 ## Where the speedup comes from
 
@@ -66,11 +110,11 @@ clear once the data is resident.
 pointer. A single matrix multiply through wasm measured 0.47x, so exposing one
 would only invite misuse.
 
-**The module owns the memory.** It exports its `WebAssembly.Memory` and the
-caller gets `Float32Array` views onto it. Callers keep their matrices there
-between frames. This still fits the library's data in, data out philosophy: the
-caller owns the buffer and its lifecycle, the module just says where it can live.
-Views must be rebuilt after any `memory.grow`, which detaches them.
+**The module allocates, the caller owns.** It exports its `WebAssembly.Memory`
+and hands out `Float32Array` views. The caller still owns the buffer and its
+lifecycle exactly as the skill describes, the module only decides where it lives.
+See the allocator section above for why accepting a foreign `Float32Array` is a
+supported fallback rather than the main path.
 
 **f32, deliberately.** Max error against the f64 JS path is 3.5e-7, pure f32
 rounding. For data headed to the GPU that is free, since it would be downcast at
@@ -122,9 +166,11 @@ adds no new toolchain.
 Ranked by payoff, driven entirely by whether the data is already a
 `Float32Array`:
 
-1. **InstancedMesh.** `instanceMatrix.array` is already a `Float32Array`. Back it
-   with a view into wasm memory and it is zero copy in both directions. Best
-   target by a wide margin, and `compose_batch` maps directly onto it.
+1. **InstancedMesh.** `instanceMatrix.array` is already a `Float32Array`, and
+   three does not care where it came from, so
+   `new InstancedBufferAttribute(wasm.allocMat4(count), 16)` puts it in tier 3
+   with no changes to three. Zero copy in both directions, and `compose_batch`
+   maps directly onto it. Best target by a wide margin.
 2. **Skinning.** `Skeleton.boneMatrices` is also a `Float32Array`. Same shape.
 3. **Frustum culling.** Big work per call and the result is a bitmask, so the
    crossing cost is negligible. Not a matrix multiply but the best work to
@@ -135,12 +181,18 @@ Ranked by payoff, driven entirely by whether the data is already a
    from flattening rather than from SIMD.
 
 The first two need no changes to three at all, only that the typed array is
-allocated from wasm memory.
+allocated from wasm memory rather than by three. Anything that hands you an
+array three already allocated is tier 2 at best, which is roughly half the win,
+so the integration point is always the constructor.
 
 ## Open questions
 
+- Does `math/wasm` want to be a separate entrypoint, or a separate package so the
+  core stays dependency and artifact free? The allocator makes this less obviously
+  separable, since it wants to be the source of long-lived buffers.
 - Is a flat SoA mirror of the scene graph acceptable in this library's scope, or
   does that belong in a consumer such as a renderer integration?
 - Committed `.wasm` artifact plus a checked in build, or build in CI?
-- Does `math/wasm` want to be a separate entrypoint, or a separate package so the
-  core stays dependency and artifact free?
+- `mat4` has no `fromBuffer` / `toBuffer` where `vec3` and `quat` do, so the skill
+  documents `buffer.set(m, i * 16)` instead. Worth closing that gap if buffer
+  resident matrices become a normal thing to hold.
