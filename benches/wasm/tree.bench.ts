@@ -71,7 +71,8 @@ group(`tree matrix multiply ${N} @wasm @tree`, () => {
         const world: Mat4[] = [];
         for (let i = 0; i < N; i++) world.push(mat4.create());
 
-        // the checksum is a snapshot, so it stays out of the timed work
+        // labs runs a snapshot outside the timed work, so the checksum it digests
+        // does not enter the measurement
         const sum = yield {
             bench: () => {
                 for (let i = 0; i < N; i++) {

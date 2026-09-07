@@ -5,10 +5,9 @@
 // broadcast lane l of v across all four lanes
 #define BC(v, l) wasm_i32x4_shuffle(v, v, l, l, l, l)
 
-// Relaxed madd fuses the multiply and add, removing 12 of the roughly 56 uops
-// this kernel issues per node. The kernel is issue bound, so that is the only
-// lever that moves it. Engines may or may not fuse, so results differ slightly
-// between them and this build is opt in.
+// Relaxed madd fuses the multiply and add into a single operation. Engines are
+// free to fuse or not, so the same input gives slightly different results on
+// different engines, which is why this build is opt in.
 #ifdef USE_FMA
 #define MADD(acc, x, y) __builtin_wasm_relaxed_madd_f32x4(x, y, acc)
 #else

@@ -38,9 +38,6 @@ export function fmaSupported() {
     return WebAssembly.validate(decode(WASM_FMA));
 }
 
-// wasm32 addresses 4GiB, and each node costs 132 bytes across the three buffers
-const MAX_CAPACITY = Math.floor((4294967296 - 65536) / 132);
-
 /**
  * Allocates a tree of `capacity` nodes resident in wasm memory.
  *
@@ -54,8 +51,9 @@ const MAX_CAPACITY = Math.floor((4294967296 - 65536) / 132);
 export function createTree(capacity, options) {
     if (!Number.isInteger(capacity) || capacity < 0)
         throw new RangeError(`capacity must be a non negative integer, got ${capacity}`);
-    if (capacity > MAX_CAPACITY)
-        throw new RangeError(`capacity ${capacity} exceeds the ${MAX_CAPACITY} a 4GiB wasm memory holds`);
+    // wasm32 addresses 4GiB, and a node costs 132 bytes across the three buffers
+    const max = Math.floor((4294967296 - 65536) / 132);
+    if (capacity > max) throw new RangeError(`capacity ${capacity} exceeds the ${max} a 4GiB wasm memory holds`);
 
     const fma = options?.fma === true;
     if (fma && !fmaSupported()) throw new Error('relaxed simd is unavailable on this engine');

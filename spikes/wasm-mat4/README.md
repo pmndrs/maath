@@ -20,14 +20,14 @@ pnpm bench "@tree"  # the head to head, from benches/wasm/tree.bench.ts
 pnpm test tst/unit/wasm
 ```
 
-`tree.mjs` is the whole deliverable at 5.3KB with both kernels inlined as
-base64. No fetch, no bundler plugin, no async, no dependencies.
+`tree.mjs` is the whole deliverable with both kernels inlined as base64, typed
+by `tree.d.mts`. No fetch, no bundler plugin, no async, no dependencies.
 
 | | bytes |
 | --- | --- |
 | `tree.wasm` | 394 |
 | `tree.fma.wasm` | 385 |
-| `tree.mjs`, both inlined | 5308 |
+| `tree.mjs`, both inlined | 5277 |
 
 ## Results
 

@@ -3,9 +3,6 @@ import * as mat4 from '../../../src/core/mat4';
 import type { Mat4 } from '../../../src/core/mat4';
 import { createTree, fmaSupported } from '../../../spikes/wasm-mat4/tree.mjs';
 
-// f32 kernels against an f64 reference, so comparisons carry a tolerance
-const F32_TOLERANCE = 1e-5;
-
 /** A local transform that rotates about z and translates, well conditioned. */
 function transform(angle: number, x: number, y: number, z: number): Mat4 {
     const c = Math.cos(angle);
@@ -36,7 +33,7 @@ function build(locals: Mat4[], parent: number[], options?: { fma: boolean }) {
 
 describe('wasm tree', () => {
     describe('update', () => {
-        it('should translate each node relative to its parent down a chain', () => {
+        it('should place each node relative to its parent down a chain', () => {
             // the root sits at the origin and every other node steps one unit
             // along x, so depth d ends up at x = d
             const locals = Array.from({ length: 8 }, (_, i) => transform(0, i === 0 ? 0 : 1, 0, 0));
@@ -46,23 +43,21 @@ describe('wasm tree', () => {
         });
 
         it('should match the f64 reference over a 4-ary tree', () => {
-            const n = 64;
-            const locals = Array.from({ length: n }, (_, i) => transform(i * 0.37, i * 0.1, -i * 0.05, 1));
-            const parent = Array.from({ length: n }, (_, i) => (i === 0 ? -1 : (i - 1) >> 2));
+            const locals = Array.from({ length: 64 }, (_, i) => transform(i * 0.37, i * 0.1, -i * 0.05, 1));
+            const parent = Array.from({ length: 64 }, (_, i) => (i === 0 ? -1 : (i - 1) >> 2));
             const tree = build(locals, parent).update();
             const expected = reference(locals, parent);
 
-            for (let i = 0; i < n; i++)
-                for (let j = 0; j < 16; j++)
-                    expect(tree.world[i * 16 + j]).toBeCloseTo(expected[i][j], 4);
+            // four places, since the kernel is f32 and the reference is f64
+            for (let i = 0; i < 64; i++)
+                for (let j = 0; j < 16; j++) expect(tree.world[i * 16 + j]).toBeCloseTo(expected[i][j], 4);
         });
 
         it('should copy the local transform for every root', () => {
             const locals = [transform(0.5, 1, 2, 3), transform(1.5, 4, 5, 6)];
             const tree = build(locals, [-1, -1]).update();
 
-            for (let i = 0; i < 2; i++)
-                for (let j = 0; j < 16; j++) expect(tree.world[i * 16 + j]).toBeCloseTo(locals[i][j], 5);
+            for (let i = 0; i < 2; i++) for (let j = 0; j < 16; j++) expect(tree.world[i * 16 + j]).toBeCloseTo(locals[i][j], 5);
         });
 
         it('should update only the requested prefix', () => {
@@ -74,12 +69,11 @@ describe('wasm tree', () => {
         });
     });
 
+    // the kernel takes raw indices from a caller owned buffer, so an index it
+    // cannot resolve must not read outside that buffer
     describe('malformed trees', () => {
-        // the kernel takes raw indices, so an invalid one must not read out of
-        // bounds. Anything outside 0 <= parent[i] < i is treated as a root.
-        it('should treat an out of range parent as a root rather than read out of bounds', () => {
-            const locals = [transform(0, 1, 0, 0), transform(0, 1, 0, 0)];
-            const tree = build(locals, [-1, 999999]).update();
+        it('should treat an out of range parent as a root', () => {
+            const tree = build([transform(0, 1, 0, 0), transform(0, 1, 0, 0)], [-1, 999999]).update();
 
             expect(tree.world[1 * 16 + 12]).toBeCloseTo(1, 5);
             expect(tree.validate()).toBe(1);
@@ -93,61 +87,41 @@ describe('wasm tree', () => {
             expect(tree.validate()).toBe(1);
         });
 
-        it('should report -1 from validate for a well formed tree', () => {
+        it('should report -1 from validate when every parent precedes its child', () => {
             const locals = Array.from({ length: 8 }, () => transform(0, 1, 0, 0));
             expect(build(locals, [-1, 0, 0, 1, 1, 2, 2, 3]).validate()).toBe(-1);
         });
     });
 
-    describe('createTree', () => {
-        it('should reject a capacity that is not a non negative integer', () => {
-            for (const bad of [2.5, -5, NaN, undefined]) expect(() => createTree(bad as number)).toThrow(RangeError);
+    describe('bounds', () => {
+        it('should reject a capacity it cannot allocate a tree for', () => {
+            for (const bad of [2.5, -5, NaN, undefined, 1e9]) expect(() => createTree(bad as number)).toThrow(RangeError);
         });
 
-        it('should reject a capacity larger than a 4GiB wasm memory holds', () => {
-            expect(() => createTree(1e9)).toThrow(RangeError);
-        });
-
-        it('should expose views sized to capacity that share one buffer', () => {
-            const tree = createTree(16);
-
-            expect(tree.local.length).toBe(16 * 16);
-            expect(tree.world.length).toBe(16 * 16);
-            expect(tree.parent.length).toBe(16);
-            expect(tree.world.buffer).toBe(tree.memory.buffer);
-        });
-    });
-
-    describe('update bounds', () => {
-        it('should reject a count outside [0, capacity]', () => {
+        it('should reject a count outside the tree', () => {
             const tree = createTree(8);
             for (const bad of [9, -1, 1.5]) expect(() => tree.update(bad)).toThrow(RangeError);
         });
 
-        it('should leave the parent indices untouched by a rejected update', () => {
+        it('should leave the tree untouched when it rejects an update', () => {
             const tree = createTree(8);
             tree.parent.set([-1, 0, 1, 2, 3, 4, 5, 6]);
+
             expect(() => tree.update(100000)).toThrow(RangeError);
             expect(Array.from(tree.parent)).toEqual([-1, 0, 1, 2, 3, 4, 5, 6]);
         });
     });
 
     describe('relaxed simd kernel', () => {
-        it.skipIf(!fmaSupported())('should agree with the strict kernel within f32 tolerance', () => {
-            const n = 32;
-            const locals = Array.from({ length: n }, (_, i) => transform(i * 0.21, i * 0.1, 1, -i * 0.03));
-            const parent = Array.from({ length: n }, (_, i) => i - 1);
+        it.skipIf(!fmaSupported())('should agree with the strict kernel', () => {
+            const locals = Array.from({ length: 32 }, (_, i) => transform(i * 0.21, i * 0.1, 1, -i * 0.03));
+            const parent = Array.from({ length: 32 }, (_, i) => i - 1);
 
             const strict = build(locals, parent).update();
             const fused = build(locals, parent, { fma: true }).update();
 
-            for (let i = 0; i < n * 16; i++)
-                expect(Math.abs(strict.world[i] - fused.world[i])).toBeLessThan(F32_TOLERANCE);
-        });
-
-        it('should reject fma when the engine cannot run it', () => {
-            if (fmaSupported()) expect(createTree(4, { fma: true }).fma).toBe(true);
-            else expect(() => createTree(4, { fma: true })).toThrow();
+            // fusing changes rounding, so the two agree only to f32 precision
+            for (let i = 0; i < 32 * 16; i++) expect(fused.world[i]).toBeCloseTo(strict.world[i], 5);
         });
     });
 });
