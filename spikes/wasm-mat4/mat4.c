@@ -2,6 +2,9 @@
 
 #define EXPORT __attribute__((visibility("default")))
 
+// broadcast lane l of v across all four lanes
+#define BC(v, l) wasm_i32x4_shuffle(v, v, l, l, l, l)
+
 // column major 4x4, out_col_j = sum_k a_col_k * b[j*4+k]
 static inline void mul4(float *out, const float *a, const float *b) {
     v128_t a0 = wasm_v128_load(a);
@@ -9,13 +12,12 @@ static inline void mul4(float *out, const float *a, const float *b) {
     v128_t a2 = wasm_v128_load(a + 8);
     v128_t a3 = wasm_v128_load(a + 12);
 
+    // tree reduction, two dependent adds rather than three
     for (int j = 0; j < 4; j++) {
         v128_t bj = wasm_v128_load(b + j * 4);
-        v128_t r = wasm_f32x4_mul(a0, wasm_i32x4_shuffle(bj, bj, 0, 0, 0, 0));
-        r = wasm_f32x4_add(r, wasm_f32x4_mul(a1, wasm_i32x4_shuffle(bj, bj, 1, 1, 1, 1)));
-        r = wasm_f32x4_add(r, wasm_f32x4_mul(a2, wasm_i32x4_shuffle(bj, bj, 2, 2, 2, 2)));
-        r = wasm_f32x4_add(r, wasm_f32x4_mul(a3, wasm_i32x4_shuffle(bj, bj, 3, 3, 3, 3)));
-        wasm_v128_store(out + j * 4, r);
+        v128_t lo = wasm_f32x4_add(wasm_f32x4_mul(a0, BC(bj, 0)), wasm_f32x4_mul(a1, BC(bj, 1)));
+        v128_t hi = wasm_f32x4_add(wasm_f32x4_mul(a2, BC(bj, 2)), wasm_f32x4_mul(a3, BC(bj, 3)));
+        wasm_v128_store(out + j * 4, wasm_f32x4_add(lo, hi));
     }
 }
 
@@ -36,11 +38,9 @@ EXPORT void mul_broadcast(float *out, const float *m, const float *a, int n) {
         float *o = out + i * 16;
         for (int j = 0; j < 4; j++) {
             v128_t aj = wasm_v128_load(a_i + j * 4);
-            v128_t r = wasm_f32x4_mul(m0, wasm_i32x4_shuffle(aj, aj, 0, 0, 0, 0));
-            r = wasm_f32x4_add(r, wasm_f32x4_mul(m1, wasm_i32x4_shuffle(aj, aj, 1, 1, 1, 1)));
-            r = wasm_f32x4_add(r, wasm_f32x4_mul(m2, wasm_i32x4_shuffle(aj, aj, 2, 2, 2, 2)));
-            r = wasm_f32x4_add(r, wasm_f32x4_mul(m3, wasm_i32x4_shuffle(aj, aj, 3, 3, 3, 3)));
-            wasm_v128_store(o + j * 4, r);
+            v128_t lo = wasm_f32x4_add(wasm_f32x4_mul(m0, BC(aj, 0)), wasm_f32x4_mul(m1, BC(aj, 1)));
+            v128_t hi = wasm_f32x4_add(wasm_f32x4_mul(m2, BC(aj, 2)), wasm_f32x4_mul(m3, BC(aj, 3)));
+            wasm_v128_store(o + j * 4, wasm_f32x4_add(lo, hi));
         }
     }
 }

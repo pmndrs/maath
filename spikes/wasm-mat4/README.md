@@ -3,11 +3,19 @@
 A minimal SIMD wasm module for batched 4x4 matrix work, and the measurements
 that justify its shape. Exploratory. Nothing here is wired into `src/`.
 
+The assumed layout is a **flat array of matrices**: one contiguous
+`Float32Array`, 16 floats per matrix, column major, resident in wasm memory.
+That is what `instanceMatrix.array` and `Skeleton.boneMatrices` already are.
+
 ```sh
-./build.sh      # needs clang with the wasm32 target plus wasm-ld
-node bench.mjs  # mat4.wasm is committed, so this runs without clang
-node tiers.mjs  # residency tiers and the wasm-memory view cost
+./build.sh        # needs clang with the wasm32 target plus wasm-ld
+node example.mjs  # the API, end to end
+node bench.mjs    # mat4.wasm is committed, so these run without clang
+node tiers.mjs    # residency tiers and the wasm-memory view cost
 ```
+
+`mat4.mjs` is the whole deliverable at 5.4KB, wasm inlined as base64. No fetch,
+no bundler plugin, no async, no dependencies.
 
 ## Residency is the whole game
 
@@ -73,6 +81,61 @@ footgun, and it is also exactly what the skill's "allocate at creation, never pe
 call, preallocate to capacity" rule already forbids. So: size the memory once at
 creation, never grow, and report a count or status when full. The two rules line
 up, which is a good sign the shape is right.
+
+## The layout is not a compromise
+
+Flat AoS is required for GPU interop, so the question was how much it costs
+against a structure of arrays layout that needs no lane broadcasts. It costs
+nothing. It is 5.5x faster.
+
+Min of many trials, since a single timed run puts v1 and v2 anywhere between
+0.97x and 1.15x of each other:
+
+| kernel | us/frame | ns/matrix | vs v1 |
+| --- | --- | --- | --- |
+| v1 AoS, serial add chain | 18.8 | 4.58 | 1.00x |
+| v2 AoS, tree reduction | 18.8 | 4.59 | 1.00x |
+| v3 AoS, tree plus 2x unroll | 20.6 | 5.02 | 0.91x |
+| v4 SoA, 4 wide, no broadcasts | 107.8 | 26.31 | **0.17x** |
+
+One matrix in AoS is exactly one 64 byte cache line, and a multiply touches
+three of them contiguously. The SoA kernel needs 16 planes each for a, b and
+out, so at N=4096 that is 48 concurrent streams over 768KB and it thrashes L2.
+The 16 lane broadcasts per matrix that SoA saves are far cheaper than the
+locality it gives up.
+
+Tree reduction measures as exactly neutral, so the shorter dependency chain is
+not what limits this kernel and LLVM was likely already reassociating it. It is
+in the shipped kernel only because it reads no worse. Unrolling to two matrices
+per iteration is reliably slower, so there is no instruction level parallelism
+left to extract and the loop should stay simple.
+
+Only the layout result is large enough to act on. The two microoptimisations are
+noise and a regression respectively.
+
+## API
+
+The public functions take the views themselves and derive pointers from
+`byteOffset`, so callers never see a pointer, and a buffer that is not resident
+is rejected rather than silently misread.
+
+```js
+import { createMat4Wasm } from './mat4.mjs';
+
+const wasm = createMat4Wasm(4096 * 4);   // sized once, never grows
+
+const local = wasm.allocMat4(4096);      // Float32Array view, 4096 * 16
+const world = wasm.allocMat4(4096);
+const parent = wasm.allocIndex(4096);    // Int32Array, negative meaning root
+
+wasm.compose(local, pos, rot, scl);      // TRS compose, per instance
+wasm.hierarchy(world, local, parent);    // world[i] = world[parent[i]] * local[i]
+wasm.multiplyBroadcast(out, viewProj, world);
+```
+
+`count` defaults to `view.length / 16`, so the common call passes only buffers.
+`supported()` validates the real module rather than a stand in probe, so the
+check cannot drift from the features the kernels actually use.
 
 ## Where the speedup comes from
 
@@ -190,8 +253,9 @@ so the integration point is always the constructor.
 - Does `math/wasm` want to be a separate entrypoint, or a separate package so the
   core stays dependency and artifact free? The allocator makes this less obviously
   separable, since it wants to be the source of long-lived buffers.
-- Is a flat SoA mirror of the scene graph acceptable in this library's scope, or
-  does that belong in a consumer such as a renderer integration?
+- `hierarchy` needs parents to precede children. Producing that flat order from
+  a three `Object3D` graph means maintaining a mirror. In this library's scope,
+  or a renderer integration's?
 - Committed `.wasm` artifact plus a checked in build, or build in CI?
 - `mat4` has no `fromBuffer` / `toBuffer` where `vec3` and `quat` do, so the skill
   documents `buffer.set(m, i * 16)` instead. Worth closing that gap if buffer
