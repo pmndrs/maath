@@ -534,22 +534,50 @@ describe('fabrik3', () => {
     });
 
     describe('local hinge frame', () => {
-        // A LOCAL_HINGE reads its axes in the frame of the bone before it, and that frame comes from
-        // mat3.fromDirection, which puts the PARENT'S OWN DIRECTION on local +Z. That makes local +X
-        // an axis the child can actually swing about and local +Z the "straight on" reference - the
-        // configuration a real elbow wants. These pin that convention down, because a change to
-        // fromDirection's axis convention would otherwise silently turn every local hinge into
-        // something else.
+        // A LOCAL_HINGE reads its axes in the frame of the bone before it, and that frame puts the
+        // PARENT'S OWN DIRECTION on local +Z. That makes local +X an axis the child can actually
+        // swing about and local +Z the "straight on" reference - the configuration a real elbow
+        // wants. These pin the convention down, because changing it would silently turn every local
+        // hinge into something else.
         const HINGE_AXIS: Vec3 = [1, 0, 0];
         const STRAIGHT: Vec3 = [0, 0, 1];
         const BEND = (Math.PI * 5) / 6;
 
         const basis: Mat3 = mat3.create();
 
+        /**
+         * The same basis the solver builds, implemented independently here (Frisvad) so the test
+         * cross-checks the convention rather than reusing the solver's own code.
+         */
+        const basisFromDirection = (out: Mat3, d: Vec3): Mat3 => {
+            const [x, y, z] = d;
+            if (z < -0.9999999) {
+                out[0] = 0;
+                out[1] = -1;
+                out[2] = 0;
+                out[3] = -1;
+                out[4] = 0;
+                out[5] = 0;
+            } else {
+                const a = 1 / (1 + z);
+                const b = -x * y * a;
+                out[0] = 1 - x * x * a;
+                out[1] = b;
+                out[2] = -x;
+                out[3] = b;
+                out[4] = 1 - y * y * a;
+                out[5] = -y;
+            }
+            out[6] = x;
+            out[7] = y;
+            out[8] = z;
+            return out;
+        };
+
         /** The child bone's swing away from straight, measured about the resolved world hinge axis. */
         const bendAt = (chain: fabrik3.Chain3, index: number): number => {
             const parent = direction(chain, index - 1);
-            mat3.fromDirection(basis, parent);
+            basisFromDirection(basis, parent);
 
             const axis: Vec3 = [0, 0, 0];
             vec3.transformMat3(axis, HINGE_AXIS, basis);
@@ -566,7 +594,7 @@ describe('fabrik3', () => {
             fabrik3.straighten(chain, [0.6, 0.8, 0]);
 
             const parent = direction(chain, 0);
-            mat3.fromDirection(basis, parent);
+            basisFromDirection(basis, parent);
 
             const localZ: Vec3 = [0, 0, 0];
             vec3.transformMat3(localZ, [0, 0, 1], basis);

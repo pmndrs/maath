@@ -779,68 +779,6 @@ export function angle(a: Vec3, b: Vec3): number {
 }
 
 /**
- * Projects a vector onto another vector.
- *
- * If `b` is the zero vector the projection is undefined and `out` is set to zero.
- *
- * @param out the receiving vector
- * @param a the vector to project
- * @param b the vector to project onto
- * @returns out
- */
-export function projectOnVector(out: Vec3, a: Vec3, b: Vec3): Vec3 {
-    const bx = b[0];
-    const by = b[1];
-    const bz = b[2];
-
-    const sqrLen = bx * bx + by * by + bz * bz;
-
-    if (sqrLen === 0) {
-        out[0] = 0;
-        out[1] = 0;
-        out[2] = 0;
-        return out;
-    }
-
-    const s = (a[0] * bx + a[1] * by + a[2] * bz) / sqrLen;
-
-    out[0] = bx * s;
-    out[1] = by * s;
-    out[2] = bz * s;
-
-    return out;
-}
-
-/**
- * Projects a vector onto the plane through the origin with the given normal.
- *
- * The result is the component of `a` perpendicular to `planeNormal`. It is not re-normalized,
- * and is the zero vector when `a` is parallel to `planeNormal` - check its length before
- * normalizing if the input direction is not known to be off-axis.
- *
- * @param out the receiving vector
- * @param a the vector to project
- * @param planeNormal the plane normal, assumed to be unit length
- * @returns out
- */
-export function projectOnPlane(out: Vec3, a: Vec3, planeNormal: Vec3): Vec3 {
-    const ax = a[0];
-    const ay = a[1];
-    const az = a[2];
-    const nx = planeNormal[0];
-    const ny = planeNormal[1];
-    const nz = planeNormal[2];
-
-    const d = ax * nx + ay * ny + az * nz;
-
-    out[0] = ax - nx * d;
-    out[1] = ay - ny * d;
-    out[2] = az - nz * d;
-
-    return out;
-}
-
-/**
  * Get the signed angle from `a` to `b` measured about `axis`, in the range (-PI, PI].
  *
  * Positive is counter-clockwise when `axis` points toward the viewer. Only the components of

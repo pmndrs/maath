@@ -504,60 +504,6 @@ describe('vec3', () => {
         });
     });
 
-    describe('projectOnVector', () => {
-        it('projects onto an axis', () => {
-            const out: Vec3 = [0, 0, 0];
-            vec3.projectOnVector(out, [2, 3, 4], [1, 0, 0]);
-            expect(out).toEqual([2, 0, 0]);
-        });
-
-        it('handles a non-unit target', () => {
-            const out: Vec3 = [0, 0, 0];
-            vec3.projectOnVector(out, [2, 2, 0], [5, 0, 0]);
-            expect(out).toEqual([2, 0, 0]);
-        });
-
-        it('returns zero when projecting onto the zero vector', () => {
-            const out: Vec3 = [9, 9, 9];
-            vec3.projectOnVector(out, [2, 3, 4], [0, 0, 0]);
-            expect(out).toEqual([0, 0, 0]);
-        });
-
-        it('is safe when out aliases an input', () => {
-            const v: Vec3 = [2, 3, 4];
-            vec3.projectOnVector(v, v, [1, 0, 0]);
-            expect(v).toEqual([2, 0, 0]);
-        });
-    });
-
-    describe('projectOnPlane', () => {
-        it('drops the component along the normal', () => {
-            const out: Vec3 = [0, 0, 0];
-            vec3.projectOnPlane(out, [1, 2, 3], [0, 1, 0]);
-            expect(out).toEqual([1, 0, 3]);
-        });
-
-        it('returns zero for a vector parallel to the normal', () => {
-            const out: Vec3 = [0, 0, 0];
-            vec3.projectOnPlane(out, [0, 5, 0], [0, 1, 0]);
-            expect(out[0]).toBeCloseTo(0);
-            expect(out[1]).toBeCloseTo(0);
-            expect(out[2]).toBeCloseTo(0);
-        });
-
-        it('leaves an in-plane vector untouched', () => {
-            const out: Vec3 = [0, 0, 0];
-            vec3.projectOnPlane(out, [1, 0, 3], [0, 1, 0]);
-            expect(out).toEqual([1, 0, 3]);
-        });
-
-        it('is safe when out aliases an input', () => {
-            const v: Vec3 = [1, 2, 3];
-            vec3.projectOnPlane(v, v, [0, 1, 0]);
-            expect(v).toEqual([1, 0, 3]);
-        });
-    });
-
     describe('signedAngle', () => {
         it('is positive for a counter-clockwise turn about the axis', () => {
             expect(vec3.signedAngle([1, 0, 0], [0, 1, 0], [0, 0, 1])).toBeCloseTo(Math.PI / 2);
@@ -642,6 +588,49 @@ describe('vec3', () => {
             vec3.rotateTowards(v, v, [0, 1, 0], Math.PI / 4);
             expect(v[0]).toBeCloseTo(Math.SQRT1_2);
             expect(v[1]).toBeCloseTo(Math.SQRT1_2);
+        });
+
+        // The two tests below pin down why this exists rather than being a slerp call. For ordinary
+        // inputs the two agree, so the interesting behaviour is the case where slerp cannot help.
+        const viaSlerp = (out: Vec3, from: Vec3, to: Vec3, maxAngle: number): Vec3 => {
+            const angle = vec3.angle(from, to);
+            if (angle <= maxAngle) return vec3.copy(out, to);
+            return vec3.slerp(out, from, to, maxAngle / angle);
+        };
+
+        it('matches a slerp along the same arc for ordinary inputs', () => {
+            const mine: Vec3 = [0, 0, 0];
+            const slerped: Vec3 = [0, 0, 0];
+            const from: Vec3 = [0, 0, 0];
+            const to: Vec3 = [0, 0, 0];
+
+            for (let i = 0; i < 200; i++) {
+                const a = i * 0.31;
+                const b = i * 0.77;
+                vec3.normalize(from, [Math.cos(a), Math.sin(a) * Math.cos(b), Math.sin(b) + 0.3]);
+                vec3.normalize(to, [Math.sin(b), Math.cos(a * 1.3), Math.cos(b) - 0.2]);
+
+                for (const limit of [0.1, 0.5, 1, 2.5]) {
+                    vec3.rotateTowards(mine, from, to, limit);
+                    viaSlerp(slerped, from, to, limit);
+                    expect(vec3.distance(mine, slerped)).toBeLessThan(1e-9);
+                }
+            }
+        });
+
+        it('still rotates when the two vectors are antiparallel, where a slerp cannot', () => {
+            // slerp divides by sin(angle), which collapses at PI - it returns `from` unrotated
+            // rather than erroring, so the caller silently gets no rotation at all
+            const from: Vec3 = [0, 1, 0];
+            const to: Vec3 = [0, -1, 0];
+
+            const mine: Vec3 = [0, 0, 0];
+            vec3.rotateTowards(mine, from, to, 0.5);
+            expect(vec3.angle(from, mine)).toBeCloseTo(0.5);
+
+            const slerped: Vec3 = [0, 0, 0];
+            viaSlerp(slerped, from, to, 0.5);
+            expect(vec3.angle(from, slerped)).toBeCloseTo(0);
         });
     });
 

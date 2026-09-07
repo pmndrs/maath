@@ -471,26 +471,6 @@ describe('vec2', () => {
         });
     });
 
-    describe('projectOnVector', () => {
-        it('projects onto an axis', () => {
-            const out: Vec2 = [0, 0];
-            vec2.projectOnVector(out, [2, 3], [1, 0]);
-            expect(out).toEqual([2, 0]);
-        });
-
-        it('returns zero when projecting onto the zero vector', () => {
-            const out: Vec2 = [9, 9];
-            vec2.projectOnVector(out, [2, 3], [0, 0]);
-            expect(out).toEqual([0, 0]);
-        });
-
-        it('is safe when out aliases an input', () => {
-            const v: Vec2 = [2, 3];
-            vec2.projectOnVector(v, v, [1, 0]);
-            expect(v).toEqual([2, 0]);
-        });
-    });
-
     describe('signedAngle', () => {
         it('is positive for a counter-clockwise turn', () => {
             expect(vec2.signedAngle([1, 0], [0, 1])).toBeCloseTo(Math.PI / 2);
@@ -508,49 +488,6 @@ describe('vec2', () => {
             const a: Vec2 = [1, 0];
             const b: Vec2 = [-0.5, 0.5];
             expect(Math.abs(vec2.signedAngle(a, b))).toBeCloseTo(vec2.angle(a, b));
-        });
-    });
-
-    describe('rotateTowards', () => {
-        it('copies the target when it is already within the limit', () => {
-            const out: Vec2 = [0, 0];
-            vec2.rotateTowards(out, [1, 0], [0, 1], Math.PI);
-            expect(out).toEqual([0, 1]);
-        });
-
-        it('clamps to exactly the limit when the target is beyond it', () => {
-            const out: Vec2 = [0, 0];
-            vec2.rotateTowards(out, [1, 0], [0, 1], Math.PI / 4);
-            expect(out[0]).toBeCloseTo(Math.SQRT1_2);
-            expect(out[1]).toBeCloseTo(Math.SQRT1_2);
-            expect(vec2.length(out)).toBeCloseTo(1);
-        });
-
-        it('clamps clockwise for a clockwise target', () => {
-            const out: Vec2 = [0, 0];
-            vec2.rotateTowards(out, [1, 0], [0, -1], Math.PI / 4);
-            expect(out[0]).toBeCloseTo(Math.SQRT1_2);
-            expect(out[1]).toBeCloseTo(-Math.SQRT1_2);
-        });
-
-        it('treats a negative limit as zero', () => {
-            const out: Vec2 = [0, 0];
-            vec2.rotateTowards(out, [1, 0], [0, 1], -1);
-            expect(out[0]).toBeCloseTo(1);
-            expect(out[1]).toBeCloseTo(0);
-        });
-
-        it('turns counter-clockwise for antiparallel inputs', () => {
-            const out: Vec2 = [0, 0];
-            vec2.rotateTowards(out, [1, 0], [-1, 0], 0.5);
-            expect(vec2.signedAngle([1, 0], out)).toBeCloseTo(0.5);
-        });
-
-        it('is safe when out aliases an input', () => {
-            const v: Vec2 = [1, 0];
-            vec2.rotateTowards(v, v, [0, 1], Math.PI / 4);
-            expect(v[0]).toBeCloseTo(Math.SQRT1_2);
-            expect(v[1]).toBeCloseTo(Math.SQRT1_2);
         });
     });
 });

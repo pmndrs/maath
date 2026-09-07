@@ -106,7 +106,6 @@ import { vec2 } from 'math';
 - `vec2.cross(out: Vec3, a: Vec2, b: Vec2): Vec3` — Computes the cross product of two vec2's
 - `vec2.lerp(out: Vec2, a: Vec2, b: Vec2, t: number): Vec2` — Performs a linear interpolation between two vec2's
 - `vec2.lagrange(out: Vec2, a: Vec2, b: Vec2, c: Vec2, t: number): Vec2` — Quadratic interpolation through three vectors using Lagrange interpolation.
-- `vec2.projectOnVector(out: Vec2, a: Vec2, b: Vec2): Vec2` — Projects a vector onto another vector.
 - `vec2.signedAngle(a: Vec2, b: Vec2): number` — Get the signed angle from `a` to `b`, in the range (-PI, PI].
 
 **Transform**
@@ -116,7 +115,6 @@ import { vec2 } from 'math';
 - `vec2.transformMat3(out: Vec2, a: Vec2, m: Mat3): Vec2` — Transforms the vec2 with a mat3
 - `vec2.transformMat4(out: Vec2, a: Vec2, m: Mat4): Vec2` — Transforms the vec2 with a mat4
 - `vec2.rotate(out: Vec2, a: Vec2, b: Vec2, rad: number): Vec2` — Rotate a 2D vector
-- `vec2.rotateTowards(out: Vec2, from: Vec2, to: Vec2, maxAngle: number): Vec2` — Rotates the unit vector `from` toward the unit vector `to` by at most `maxAngle` radians.
 
 **Query**
 
@@ -186,8 +184,6 @@ import { vec3 } from 'math';
 - `vec3.slerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3` — Performs a spherical linear interpolation between two vec3's
 - `vec3.hermite(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3` — Performs a hermite interpolation with two control points
 - `vec3.bezier(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3` — Performs a bezier interpolation with two control points
-- `vec3.projectOnVector(out: Vec3, a: Vec3, b: Vec3): Vec3` — Projects a vector onto another vector.
-- `vec3.projectOnPlane(out: Vec3, a: Vec3, planeNormal: Vec3): Vec3` — Projects a vector onto the plane through the origin with the given normal.
 - `vec3.signedAngle(a: Vec3, b: Vec3, axis: Vec3): number` — Get the signed angle from `a` to `b` measured about `axis`, in the range (-PI, PI].
 
 **Transform**
@@ -553,7 +549,6 @@ import { mat3 } from 'math';
 - `mat3.fromRotation(out: Mat3, rad: number): Mat3` — Creates a matrix from a given angle
 - `mat3.fromScaling(out: Mat3, v: Vec2): Mat3` — Creates a matrix from a vector scaling
 - `mat3.fromMat2d(out: Mat3, a: Mat2d): Mat3` — Copies the values from a mat2d into a mat3
-- `mat3.fromDirection(out: Mat3, direction: Vec3): Mat3` — Builds an orthonormal basis with `direction` as its Z axis.
 - `mat3.fromQuat(out: Mat3, q: Quat): Mat3` — Calculates a 3x3 matrix from the given quaternion
 - `mat3.projection(out: Mat3, width: number, height: number): Mat3` — Generates a 2D projection matrix with the given bounds
 - `mat3.str(a: Mat3): string` — Returns a string representation of a mat3

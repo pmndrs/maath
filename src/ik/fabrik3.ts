@@ -866,7 +866,7 @@ export function solveStructure(structure: Structure3, target: Vec3): void {
             if (type === BaseboneConstraintType.LOCAL_ROTOR || type === BaseboneConstraintType.LOCAL_HINGE) {
                 // the constraint is expressed in the host bone's frame, so rotate it into the world
                 getBoneDirection(_structure_direction, host, connection.hostBone);
-                mat3.fromDirection(_structure_basis, _structure_direction);
+                basisFromDirection(_structure_basis, _structure_direction);
 
                 vec3.transformMat3(chain.baseboneWorldAxis, chain.baseboneAxis, _structure_basis);
                 vec3.normalize(chain.baseboneWorldAxis, chain.baseboneWorldAxis);
@@ -903,7 +903,8 @@ function clampAngle(radians: number): number {
 
 /** Writes the component of `a` perpendicular to the unit vector `axis`, normalized. */
 function orthonormalize(out: Vec3, a: Vec3, axis: Vec3): Vec3 {
-    vec3.projectOnPlane(out, a, axis);
+    // the component of `a` perpendicular to `axis`
+    vec3.scaleAndAdd(out, a, axis, -vec3.dot(a, axis));
 
     if (!hasDirection(vec3.squaredLength(out))) {
         // `a` is parallel to `axis`, so it names no direction in the plane - any will do
@@ -986,10 +987,62 @@ function constrainHinge(
     }
 }
 
+/**
+ * Builds an orthonormal basis with `direction` as its Z axis, into `out`.
+ *
+ * Used to express a joint axis relative to the bone it hangs off. The X and Y axes are picked
+ * arbitrarily but deterministically (the Frisvad method), because a bone frame has no meaningful
+ * "up" to anchor them to - unlike a look-at matrix, which takes one and fails when the direction is
+ * parallel to it.
+ *
+ * No choice of X and Y varies continuously over the whole sphere. This one is continuous everywhere
+ * except at `direction` = (0, 0, -1), where the basis flips, so a local hinge whose parent swings
+ * through there will pop.
+ */
+function basisFromDirection(out: Mat3, direction: Vec3): Mat3 {
+    const x = direction[0];
+    const y = direction[1];
+    const z = direction[2];
+
+    if (z < -0.9999999) {
+        // the antipode, where the construction below divides by zero
+        out[0] = 0;
+        out[1] = -1;
+        out[2] = 0;
+        out[3] = -1;
+        out[4] = 0;
+        out[5] = 0;
+        out[6] = x;
+        out[7] = y;
+        out[8] = z;
+        return out;
+    }
+
+    const a = 1 / (1 + z);
+    const b = -x * y * a;
+
+    // column 0 - the X axis
+    out[0] = 1 - x * x * a;
+    out[1] = b;
+    out[2] = -x;
+
+    // column 1 - the Y axis
+    out[3] = b;
+    out[4] = 1 - y * y * a;
+    out[5] = -y;
+
+    // column 2 - the Z axis, which is `direction` itself
+    out[6] = x;
+    out[7] = y;
+    out[8] = z;
+
+    return out;
+}
+
 /** Resolves a local hinge's axes into world space through the frame of bone `index - 1`. */
 function resolveLocalHinge(chain: Chain3, index: number, joint: Joint3): void {
     getBoneDirection(_constrain_axis, chain, index - 1);
-    mat3.fromDirection(_constrain_basis, _constrain_axis);
+    basisFromDirection(_constrain_basis, _constrain_axis);
 
     vec3.transformMat3(_constrain_axis, joint.rotationAxis, _constrain_basis);
     vec3.normalize(_constrain_axis, _constrain_axis);
