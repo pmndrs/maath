@@ -38,7 +38,7 @@ export enum JointType {
  * How the first bone in a chain is constrained.
  *
  * The first bone has no bone before it to be constrained against, so it is constrained against a
- * direction held on the chain instead. `GLOBAL_` types read that direction as world space;
+ * direction held on the chain instead. `GLOBAL_` types read that direction as world space, while
  * `LOCAL_` types read it relative to the bone this chain is connected to, and so only mean
  * anything for a chain in a {@link Structure3}, where {@link solveStructure} resolves them.
  *
@@ -193,7 +193,7 @@ const DEFAULT_MAX_ITERATIONS = 20;
 const DEFAULT_SOLVE_DISTANCE_THRESHOLD = 0.01;
 
 // how little an iteration may improve the solve distance before it counts as stalled. a constrained
-// chain can reach a pose no further iteration improves on while still short of the threshold;
+// chain can reach a pose no further iteration improves on while still short of the threshold, and
 // without this it would burn every remaining iteration going nowhere. two orders of magnitude below
 // the distance threshold, so a solve still closing in on the target is never mistaken for a stalled
 // one
@@ -272,7 +272,7 @@ export function createChain3(): Chain3 {
  * @param chain the chain to append to
  * @param start the bone's start point
  * @param end the bone's end point
- * @param joint the bone's joint; a fresh unconstrained joint if omitted
+ * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
 export function addBone(chain: Chain3, start: Vec3, end: Vec3, joint: Joint3 = createJoint3()): Bone3 {
@@ -304,7 +304,7 @@ export function addBone(chain: Chain3, start: Vec3, end: Vec3, joint: Joint3 = c
  * @param chain the chain to append to, which must already have at least one bone
  * @param direction the direction to extend in, assumed to be unit length
  * @param length the length of the new bone
- * @param joint the bone's joint; a fresh unconstrained joint if omitted
+ * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
 export function addConsecutiveBone(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
@@ -330,7 +330,7 @@ const _addConsecutive_end: Vec3 = [0, 0, 0];
  * @param chain the chain to prepend to, which must already have at least one bone
  * @param direction the direction the new bone points, from its own start toward the existing chain. Assumed to be unit length
  * @param length the length of the new bone
- * @param joint the joint for the junction this creates; a fresh unconstrained joint if omitted
+ * @param joint the joint for the junction this creates, or a fresh unconstrained one if omitted
  * @returns the prepended bone
  */
 export function addBoneAtBase(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
@@ -569,7 +569,7 @@ export function forward(chain: Chain3, target: Vec3): Chain3 {
     // a non-finite target would be written straight into the effector and spread down the chain
     if (!Number.isFinite(target[0]) || !Number.isFinite(target[1]) || !Number.isFinite(target[2])) return chain;
 
-    // snap the effector onto the target; the rest of the pass follows from it
+    // snap the effector onto the target. the rest of the pass follows from it
     const effector = bones[count - 1];
     effector.end[0] = target[0];
     effector.end[1] = target[1];
@@ -721,7 +721,7 @@ export function backward(chain: Chain3, base: Vec3): Chain3 {
 
 /**
  * One full FABRIK iteration - {@link forward} then {@link backward}. Often enough on its own for an
- * unconstrained chain reaching a nearby target; use {@link solve} to iterate to a tolerance.
+ * unconstrained chain reaching a nearby target. use {@link solve} to iterate to a tolerance.
  *
  * @param chain the chain to move, mutated in place
  * @param target where the end effector should go
@@ -925,9 +925,8 @@ function normalizeOr(out: Vec3, fallback: Vec3): Vec3 {
 /**
  * Flattens a direction into a hinge's plane.
  *
- * A direction parallel to the hinge axis projects to nothing and has no in-plane direction to keep;
- * Caliko and its ports normalize the projection unguarded and produce NaN here. Fall back to the
- * hinge's reference axis, which lies in the plane by construction.
+ * A direction parallel to the hinge axis projects to nothing, leaving no in-plane direction to
+ * normalize. Fall back to the hinge's reference axis, which lies in the plane by construction.
  */
 function projectOntoHinge(out: Vec3, x: number, y: number, z: number, axis: Vec3, referenceAxis: Vec3): Vec3 {
     const d = x * axis[0] + y * axis[1] + z * axis[2];
@@ -1054,16 +1053,18 @@ function resolveLocalHinge(chain: Chain3, index: number, joint: Joint3): void {
 /**
  * Constrains a bone's outer-to-inner direction during the forward pass.
  *
- * Two joints limit it: this bone's own hinge confines it to a plane, and the rotor bounding its bend
- * away from the bone further out belongs to the joint between them - the next bone's, not this one's.
+ * Two joints limit it. This bone's own hinge confines it to a plane. The rotor bounding its bend
+ * away from the bone further out belongs to the joint between the two, which is the next bone's, so
+ * a rotor means the same angle on both passes.
  *
- * Hinge reference-axis limits are left to the backward pass; clamping on both lands on worse poses.
+ * Hinge reference-axis limits are left to the backward pass, because clamping on both lands on
+ * worse poses.
  *
  * Writes the result into `_pass_direction`, which starts out holding the unconstrained direction,
  * so a branch that does not apply can simply return.
  */
 function constrainForward(chain: Chain3, index: number, x: number, y: number, z: number, hasReference: boolean): void {
-    // start from the unconstrained direction; each branch below narrows it if it applies
+    // start from the unconstrained direction. each branch below narrows it if it applies
     _pass_direction[0] = x;
     _pass_direction[1] = y;
     _pass_direction[2] = z;
@@ -1114,7 +1115,7 @@ function constrainForward(chain: Chain3, index: number, x: number, y: number, z:
  * so a branch that does not apply can simply return.
  */
 function constrainBackward(chain: Chain3, index: number, x: number, y: number, z: number, hasReference: boolean): void {
-    // start from the unconstrained direction; each branch below narrows it if it applies
+    // start from the unconstrained direction. each branch below narrows it if it applies
     _pass_direction[0] = x;
     _pass_direction[1] = y;
     _pass_direction[2] = z;

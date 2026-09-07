@@ -2,7 +2,7 @@ import { bench, group } from '@pmndrs/labs';
 import type { Vec2 } from '../../src/core/vec2';
 import * as fabrik2 from '../../src/ik/fabrik2';
 
-// FABRIK inverse kinematics in 2D — a chain re-solved every frame, which is how
+// FABRIK inverse kinematics in 2D. A chain re-solved every frame, which is how
 // a tail, rope or jointed arm is driven. Covers the shapes the solver actually
 // runs in: a single forward pass (a follower, no base pin), a full converging
 // solve, and solves with joint limits, where the per-joint wedge clamp is the
@@ -21,7 +21,7 @@ function makeChain(joint?: () => fabrik2.Joint2): fabrik2.Chain2 {
     const chain = fabrik2.createChain2();
     fabrik2.addBone(chain, [0, 0], [0, BONE_LENGTH]);
     for (let i = 1; i < BONES; i++) {
-        // a hair off straight; a dead-straight chain is the solver's worst start
+        // a hair off straight, because a dead-straight chain is the solver's worst start
         fabrik2.addConsecutiveBone(chain, [0.035, 0.999], BONE_LENGTH, joint?.());
     }
     return chain;

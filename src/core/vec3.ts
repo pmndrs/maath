@@ -826,7 +826,7 @@ const _rotateTowards_axis: Vec3 = [0, 0, 0];
  * cone clamp: the result is `to`, limited to lie within `maxAngle` of `from`. That is the form
  * a rotor joint limit and a per-frame turn rate both want.
  *
- * Both inputs are assumed to be unit length; the result is unit length. `maxAngle` is treated
+ * Both inputs are assumed to be unit length, and the result is unit length. `maxAngle` is treated
  * as 0 if negative. When the inputs are exactly antiparallel the rotation plane is undefined
  * and an arbitrary perpendicular is used.
  *

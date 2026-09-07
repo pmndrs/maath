@@ -162,7 +162,7 @@ const DEFAULT_MAX_ITERATIONS = 20;
 const DEFAULT_SOLVE_DISTANCE_THRESHOLD = 0.01;
 
 // how little an iteration may improve the solve distance before it counts as stalled. a constrained
-// chain can reach a pose no further iteration improves on while still short of the threshold;
+// chain can reach a pose no further iteration improves on while still short of the threshold, and
 // without this it would burn every remaining iteration going nowhere. two orders of magnitude below
 // the distance threshold, so a solve still closing in on the target is never mistaken for a stalled
 // one
@@ -236,7 +236,7 @@ export function createChain2(): Chain2 {
  * @param chain the chain to append to
  * @param start the bone's start point
  * @param end the bone's end point
- * @param joint the bone's joint; a fresh unconstrained joint if omitted
+ * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
 export function addBone(chain: Chain2, start: Vec2, end: Vec2, joint: Joint2 = createJoint2()): Bone2 {
@@ -269,7 +269,7 @@ const _addConsecutive_end: Vec2 = [0, 0];
  * @param chain the chain to append to, which must already have at least one bone
  * @param direction the direction to extend in, assumed to be unit length
  * @param length the length of the new bone
- * @param joint the bone's joint; a fresh unconstrained joint if omitted
+ * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
 export function addConsecutiveBone(chain: Chain2, direction: Vec2, length: number, joint: Joint2 = createJoint2()): Bone2 {
@@ -292,7 +292,7 @@ export function addConsecutiveBone(chain: Chain2, direction: Vec2, length: numbe
  * @param chain the chain to prepend to, which must already have at least one bone
  * @param direction the direction the new bone points, from its own start toward the existing chain. Assumed to be unit length
  * @param length the length of the new bone
- * @param joint the joint for the junction this creates; a fresh unconstrained joint if omitted
+ * @param joint the joint for the junction this creates, or a fresh unconstrained one if omitted
  * @returns the prepended bone
  */
 export function addBoneAtBase(chain: Chain2, direction: Vec2, length: number, joint: Joint2 = createJoint2()): Bone2 {
@@ -476,7 +476,7 @@ export function forward(chain: Chain2, target: Vec2): Chain2 {
     // a non-finite target would be written straight into the effector and spread down the chain
     if (!Number.isFinite(target[0]) || !Number.isFinite(target[1])) return chain;
 
-    // snap the effector onto the target; the rest of the pass follows from it
+    // snap the effector onto the target. the rest of the pass follows from it
     const effector = bones[count - 1];
     effector.end[0] = target[0];
     effector.end[1] = target[1];
@@ -803,7 +803,7 @@ function constrainToWedge(x: number, y: number, baseline: Vec2, clockwise: numbe
  * Constrains a bone's outer-to-inner direction during the forward pass.
  *
  * A `GLOBAL` joint pins this bone's own heading. A `LOCAL` joint limits the bend between two bones,
- * and that angle belongs to the joint between them - walking inward, that is the next bone's.
+ * and that angle belongs to the joint between the two, which walking inward is the next bone's.
  *
  * The effector needs none of its own: its pair is clamped when the bone behind it is processed.
  *
@@ -811,7 +811,7 @@ function constrainToWedge(x: number, y: number, baseline: Vec2, clockwise: numbe
  * so a branch that does not apply can simply return.
  */
 function constrainForward(chain: Chain2, index: number, x: number, y: number, hasReference: boolean): void {
-    // start from the unconstrained direction; each branch below narrows it if it applies
+    // start from the unconstrained direction. each branch below narrows it if it applies
     _pass_direction[0] = x;
     _pass_direction[1] = y;
 
@@ -848,7 +848,7 @@ function constrainForward(chain: Chain2, index: number, x: number, y: number, ha
  * so a branch that does not apply can simply return.
  */
 function constrainBackward(chain: Chain2, index: number, x: number, y: number): void {
-    // start from the unconstrained direction; each branch below narrows it if it applies
+    // start from the unconstrained direction. each branch below narrows it if it applies
     _pass_direction[0] = x;
     _pass_direction[1] = y;
 

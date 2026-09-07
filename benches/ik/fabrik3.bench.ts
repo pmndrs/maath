@@ -2,7 +2,7 @@ import { bench, group } from '@pmndrs/labs';
 import type { Vec3 } from '../../src/core/vec3';
 import * as fabrik3 from '../../src/ik/fabrik3';
 
-// FABRIK inverse kinematics — an IK chain re-solved every frame, which is how a
+// FABRIK inverse kinematics. An IK chain re-solved every frame, which is how a
 // limb, tentacle or robot arm is driven. Covers the three shapes the solver
 // actually runs in: a single forward pass (a follower, no base pin), a full
 // converging solve, and a solve with joint constraints, where the per-joint
@@ -77,7 +77,7 @@ group('fabrik3', () => {
 });
 
 group('fabrik3 structure', () => {
-    // a body with six legs, each reaching for its own foothold — the shape a
+    // a body with six legs, each reaching for its own foothold, the shape a
     // walker's rig takes
     const structure = fabrik3.createStructure3();
 

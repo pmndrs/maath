@@ -242,8 +242,8 @@ describe('fabrik3', () => {
         });
 
         it('survives a bone pointing straight down its own hinge axis', () => {
-            // the projection onto the hinge plane vanishes here; caliko and its ports normalize it
-            // unguarded and produce NaN
+            // the projection onto the hinge plane vanishes here, so there is no in-plane direction
+            // to normalize and the solver must fall back to the reference axis
             const chain = fabrik3.createChain3();
             fabrik3.addBone(chain, [0, 0, 0], [0, 1, 0]);
             fabrik3.addConsecutiveBone(
@@ -394,7 +394,7 @@ describe('fabrik3', () => {
 
     describe('structures', () => {
         it('keeps a connected chain pinned to its host even if fixedBase was cleared', () => {
-            // being connected is what fixes the base; a free base would just drift off the host
+            // being connected is what fixes the base, because a free base would just drift off the host
             const structure = fabrik3.createStructure3();
             const host = chainOf(2);
             fabrik3.addChain(structure, host);

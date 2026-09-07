@@ -66,10 +66,7 @@ function unproject(clientX: number, clientY: number, out: [number, number]): voi
 // per-vertex coloured, unlit fill — each convex piece bakes its own hue in.
 const fillPos = g.attribute('position', d.vec3f);
 const fillCol = g.attribute('color', d.vec3f);
-const fillClip = g.mul(
-    g.cameraProjectionMatrix,
-    g.mul(g.cameraViewMatrix, g.mul(g.modelWorldMatrix, g.vec4(fillPos, g.f32(1)))),
-);
+const fillClip = g.mul(g.cameraProjectionMatrix, g.mul(g.cameraViewMatrix, g.mul(g.modelWorldMatrix, g.vec4(fillPos, g.f32(1)))));
 const fillMaterial = new g.Material({
     vertex: fillClip,
     fragment: g.vec4(g.varying(fillCol, 'v_fill'), g.f32(1)),

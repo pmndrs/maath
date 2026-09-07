@@ -11,7 +11,7 @@ import { createRenderer } from './common/renderer';
 // FABRIK paper, and the thing math/ik's constraint model is modelled on.
 //
 // Pick a scenario in the panel. Every one solves the same way, with fabrik3.solveStructure against
-// the orbiting white target; the only thing that changes is how the joints are constrained.
+// the orbiting white target. The only thing that changes is how the joints are constrained.
 //
 //   Unconstrained            free ball joints - the chain reaches, but any which way
 //   Ball joint rotors        each bone held within a cone of the one before it
