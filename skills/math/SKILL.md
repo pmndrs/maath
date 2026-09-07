@@ -66,36 +66,75 @@ Marshal in, compute, marshal out — and allocate on neither crossing. Keep the 
 
 ### three.js
 
-`Vector3`, `Quaternion`, `Matrix4`, and `Euler` all marshal through `toArray(target)` and `fromArray(source)`, and the component order matches `math`'s in every case. Always pass your scratch to `toArray` — called bare, it allocates a fresh array. Writing `object.matrix` directly needs `object.matrixAutoUpdate = false` and `object.matrixWorldNeedsUpdate = true`; otherwise marshal back through `position` / `quaternion` / `scale` and let three compose.
+`Vector3`, `Quaternion`, `Matrix4`, and `Euler` all marshal through `toArray(target)` and `fromArray(source)`, and the component order matches `math`'s in every case. Always pass your scratch to `toArray` — called bare, it allocates a fresh array.
+
+**Orbit camera.** The camera's state is a `Spherical` and a target the caller owns; three only ever sees the resulting position.
 
 ```ts
-import { mat4, vec3, type Vec3 } from 'math';
+import { spherical, vec3 } from 'math';
+import type { Camera } from 'three';
+
+const MIN_RADIUS = 1;
+const MAX_RADIUS = 100;
+
+export function createOrbit() {
+    return { target: vec3.create(), orbit: spherical.fromValues(10, 0, Math.PI / 3) };
+}
+export type Orbit = ReturnType<typeof createOrbit>;
+
+const _orbit_position = vec3.create();
+
+/** Apply a drag in radians and a zoom factor, then place the camera. */
+export function updateOrbit(camera: Camera, orbit: Orbit, dragX: number, dragY: number, zoom: number): void {
+    const s = orbit.orbit;
+
+    s[0] = Math.min(MAX_RADIUS, Math.max(MIN_RADIUS, s[0] * zoom));
+    s[1] -= dragX;
+    s[2] -= dragY;
+    spherical.makeSafe(s, s); // keeps phi off the poles, where the frame degenerates
+
+    vec3.add(_orbit_position, spherical.toVec3(_orbit_position, s), orbit.target);
+
+    camera.position.fromArray(_orbit_position);
+    camera.lookAt(orbit.target[0], orbit.target[1], orbit.target[2]);
+}
+```
+
+**Camera-relative character move.** Takes the yaw straight from that orbit state, so stick-forward means away-from-camera.
+
+```ts
+import { quat, vec3, type Vec3 } from 'math';
 import type { Object3D } from 'three';
 
-// scratch allocated once, at module scope
-const _steer_position = vec3.create();
-const _steer_target = vec3.create();
-const _steer_direction = vec3.create();
-const _steer_matrix = mat4.create();
-
 const UP: Vec3 = [0, 1, 0];
-const ARRIVED_SQ = 1e-6;
+const TURN_RATE = 15;
+const DEADZONE_SQ = 0.01;
 
-/** Move `object` toward `target`, facing the direction of travel. Set `object.matrixAutoUpdate = false` first. */
-export function steer(object: Object3D, target: Object3D, speed: number, delta: number): void {
-    // in — three writes into our arrays
-    object.position.toArray(_steer_position);
-    target.position.toArray(_steer_target);
+const _move_yaw = quat.create();
+const _move_facing = quat.create();
+const _move_rotation = quat.create();
+const _move_position = vec3.create();
+const _move_direction = vec3.create();
 
-    // compute — plain math, every result in place
-    vec3.subtract(_steer_direction, _steer_target, _steer_position);
-    if (vec3.squaredLength(_steer_direction) < ARRIVED_SQ) return;
-    vec3.normalize(_steer_direction, _steer_direction);
-    vec3.scaleAndAdd(_steer_position, _steer_position, _steer_direction, speed * delta);
-    mat4.targetTo(_steer_matrix, _steer_position, _steer_target, UP);
+/** Move `character` by `inputX` / `inputZ` (a stick, in [-1, 1]) relative to a camera at `yaw`. */
+export function moveCharacter(character: Object3D, inputX: number, inputZ: number, yaw: number, speed: number, delta: number): void {
+    vec3.set(_move_direction, inputX, 0, inputZ);
+    if (vec3.squaredLength(_move_direction) < DEADZONE_SQ) return; // idle: leave the facing alone
 
-    // out — three reads from our array
-    object.matrix.fromArray(_steer_matrix);
-    object.matrixWorldNeedsUpdate = true;
+    // swing the stick into camera space, then step along it
+    quat.setAxisAngle(_move_yaw, UP, yaw);
+    vec3.transformQuat(_move_direction, _move_direction, _move_yaw);
+    vec3.normalize(_move_direction, _move_direction);
+
+    character.position.toArray(_move_position);
+    vec3.scaleAndAdd(_move_position, _move_position, _move_direction, speed * delta);
+
+    // turn toward travel, rather than snapping
+    character.quaternion.toArray(_move_rotation);
+    quat.setAxisAngle(_move_facing, UP, Math.atan2(_move_direction[0], _move_direction[2]));
+    quat.slerp(_move_rotation, _move_rotation, _move_facing, 1 - TURN_RATE ** -delta);
+
+    character.position.fromArray(_move_position);
+    character.quaternion.fromArray(_move_rotation);
 }
 ```
