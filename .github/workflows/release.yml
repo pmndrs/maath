@@ -50,8 +50,5 @@ jobs:
       - name: Publish canary
         run: npm publish --tag canary --access public
 
-      - name: Tag as latest
-        run: npm dist-tag add "math@${{ steps.version.outputs.version }}" latest
-
       - name: Add release summary
-        run: echo "Published math@${{ steps.version.outputs.version }} with the canary and latest tags." >> "${GITHUB_STEP_SUMMARY}"
+        run: echo "Published math@${{ steps.version.outputs.version }} with the canary tag." >> "${GITHUB_STEP_SUMMARY}"
