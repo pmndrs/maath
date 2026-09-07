@@ -19,3 +19,6 @@ clang --target=wasm32 -Oz -flto -nostdlib -ffreestanding \
   -Wl,--strip-all -Wl,--lto-O3 -o tree.scalar.wasm tree.scalar.c
 
 for f in tree.wasm tree.fma.wasm tree.scalar.wasm; do echo "$f $(stat -c%s $f) bytes"; done
+
+# keep the inlined base64 in tree.mjs in step with the binaries
+node ./embed.mjs

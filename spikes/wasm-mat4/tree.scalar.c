@@ -4,10 +4,13 @@
 
 EXPORT void tree(float *world, const float *local, const int *parent, int n) {
     for (int i = 0; i < n; i++) {
-        int p = parent[i];
+        unsigned p = (unsigned)parent[i];
         const float *L = local + i * 16;
         float *W = world + i * 16;
-        if (p < 0) {
+        // one unsigned compare rejects a root (negative), a forward reference and
+        // an out of range index at once. Anything invalid is treated as a root,
+        // so p < i < n always holds below and the read cannot leave the buffer.
+        if (p >= (unsigned)i) {
             for (int j = 0; j < 16; j++) W[j] = L[j];
             continue;
         }

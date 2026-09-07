@@ -19,6 +19,8 @@
  * world[i] = world[parent[i]] * local[i], with a negative parent meaning root.
  *
  * Parents must precede children, so one forward pass resolves the whole tree.
+ * An index that does not satisfy 0 <= parent[i] < i is treated as a root, which
+ * keeps every read inside the buffer whatever the caller passes.
  * Column major, so out column j is the sum over k of parent column k scaled by
  * local[j * 4 + k].
  *
@@ -27,11 +29,14 @@
  */
 EXPORT void tree(float *world, const float *local, const int *parent, int n) {
     for (int i = 0; i < n; i++) {
-        int p = parent[i];
+        unsigned p = (unsigned)parent[i];
         const float *L = local + i * 16;
         float *W = world + i * 16;
 
-        if (p < 0) {
+        // one unsigned compare rejects a root (negative), a forward reference and
+        // an out of range index at once. Anything invalid is treated as a root,
+        // so p < i < n always holds below and the read cannot leave the buffer.
+        if (p >= (unsigned)i) {
             for (int j = 0; j < 4; j++) wasm_v128_store(W + j * 4, wasm_v128_load(L + j * 4));
             continue;
         }
