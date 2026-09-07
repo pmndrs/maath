@@ -3,6 +3,7 @@ import type { Mat2d } from './mat2d';
 import type { Mat4 } from './mat4';
 import type { Quat } from './quat';
 import type { Vec2 } from './vec2';
+import type { Vec3 } from './vec3';
 
 /** A 3x3 matrix */
 export type Mat3 = [e1: number, e2: number, e3: number, e4: number, e5: number, e6: number, e7: number, e8: number, e9: number];
@@ -534,6 +535,63 @@ export function fromMat2d(out: Mat3, a: Mat2d): Mat3 {
     out[6] = a[4];
     out[7] = a[5];
     out[8] = 1;
+    return out;
+}
+
+/**
+ * Builds an orthonormal basis with `direction` as its Z axis.
+ *
+ * The X and Y axes are chosen arbitrarily but deterministically, using the Frisvad method -
+ * branchless apart from the antipode, and no trigonometry or normalization. Use it to move a
+ * vector into or out of the frame of a direction, for example expressing a joint axis relative
+ * to the bone it hangs off.
+ *
+ * Note that no choice of X and Y can vary continuously over the whole sphere. This one is
+ * continuous everywhere except at `direction` = (0, 0, -1), where the basis flips. If you spin
+ * a direction through that point the frame will pop; orient your data so the singularity sits
+ * somewhere the direction does not go.
+ *
+ * @param out mat3 receiving operation result
+ * @param direction the Z axis of the basis, assumed to be unit length
+ * @returns out
+ */
+export function fromDirection(out: Mat3, direction: Vec3): Mat3 {
+    const x = direction[0];
+    const y = direction[1];
+    const z = direction[2];
+
+    if (z < -0.9999999) {
+        // the antipode, where the construction below divides by zero
+        out[0] = 0;
+        out[1] = -1;
+        out[2] = 0;
+        out[3] = -1;
+        out[4] = 0;
+        out[5] = 0;
+        out[6] = x;
+        out[7] = y;
+        out[8] = z;
+        return out;
+    }
+
+    const a = 1 / (1 + z);
+    const b = -x * y * a;
+
+    // column 0 - the X axis
+    out[0] = 1 - x * x * a;
+    out[1] = b;
+    out[2] = -x;
+
+    // column 1 - the Y axis
+    out[3] = b;
+    out[4] = 1 - y * y * a;
+    out[5] = -y;
+
+    // column 2 - the Z axis, which is `direction` itself
+    out[6] = x;
+    out[7] = y;
+    out[8] = z;
+
     return out;
 }
 

@@ -47,6 +47,24 @@
     "tags": ["circumcircle", "geometry", "vec2", "easing"],
     "category": "geometry"
   },
+  "example-fabrik-2d": {
+    "title": "FABRIK 2D",
+    "description": "A gallery of 2D inverse-kinematics setups solved with math's fabrik2, following the scenarios in Caliko's own demo app. Move the pointer to lead the chain. Every scenario runs the full solver — forward pass, backward pass, pinned base — through free joints, wedge limits, world-space headings, a trunk with branches wired into a Structure2, and a row of chains each reaching a target of its own.",
+    "tags": ["fabrik", "ik", "fabrik2", "constraints", "structures", "vec2"],
+    "category": "ik"
+  },
+  "example-fabrik-2d-snek": {
+    "title": "FABRIK 2D Snek",
+    "description": "A snake led by the pointer, driven by one half of math's FABRIK solver — fabrik2.forward alone, which snaps the head onto the target and drags the body after it. No backward pass and no pinned base, so it follows rather than solves; per-joint bend limits keep the body reading as a spine. Eat a pellet and the tail grows at the base end.",
+    "tags": ["fabrik", "ik", "fabrik2", "vec2"],
+    "category": "ik"
+  },
+  "example-fabrik-3d": {
+    "title": "FABRIK 3D",
+    "description": "A gallery of 3D inverse-kinematics setups solved with math's fabrik3, following the scenarios in Caliko's own demo app — the reference implementation behind the FABRIK paper. Switch between free ball joints, cone rotors, global and local hinges with reference-axis limits, and connected chains whose base rides on a bone of another chain, one of them reaching for a target of its own.",
+    "tags": ["fabrik", "ik", "fabrik3", "constraints", "structures", "vec3"],
+    "category": "ik"
+  },
   "example-flow-field": {
     "title": "Flow Field",
     "description": "Hundreds of particles advected along an angle field from math's simplex2d noise, leaving flowing rainbow trails.",

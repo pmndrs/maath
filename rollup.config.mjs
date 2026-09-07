@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript';
 // stays a native namespace re-export instead of being materialised into a
 // getter-based namespace object (which taxes hot-loop calls like
 // `mat4.multiply`). All entry points are fed in so every subtree — the root and
-// the /shapes, /geometry, /time, /random, /noise, /color subpaths — is emitted.
+// the /shapes, /geometry, /time, /random, /noise, /color, /ik subpaths — is emitted.
 //
 // Declarations are handled separately by `build:dts` (tsc), unchanged.
 export default {
@@ -17,6 +17,7 @@ export default {
         './src/random/index.ts',
         './src/noise/index.ts',
         './src/color/index.ts',
+        './src/ik/index.ts',
     ],
     output: {
         dir: 'dist',

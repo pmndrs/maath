@@ -12,6 +12,7 @@ overview, installation, and examples, see the [README](./README.md).
 - [`math/random`](#api-math-random) — Seeded random number generators
 - [`math/noise`](#api-math-noise) — Perlin, simplex & worley noise, plus fractal helpers
 - [`math/color`](#api-math-color) — Color & colorspace utilities
+- [`math/ik`](#api-math-ik) — Inverse kinematics
 
 ---
 
@@ -105,6 +106,8 @@ import { vec2 } from 'math';
 - `vec2.cross(out: Vec3, a: Vec2, b: Vec2): Vec3` — Computes the cross product of two vec2's
 - `vec2.lerp(out: Vec2, a: Vec2, b: Vec2, t: number): Vec2` — Performs a linear interpolation between two vec2's
 - `vec2.lagrange(out: Vec2, a: Vec2, b: Vec2, c: Vec2, t: number): Vec2` — Quadratic interpolation through three vectors using Lagrange interpolation.
+- `vec2.projectOnVector(out: Vec2, a: Vec2, b: Vec2): Vec2` — Projects a vector onto another vector.
+- `vec2.signedAngle(a: Vec2, b: Vec2): number` — Get the signed angle from `a` to `b`, in the range (-PI, PI].
 
 **Transform**
 
@@ -113,6 +116,7 @@ import { vec2 } from 'math';
 - `vec2.transformMat3(out: Vec2, a: Vec2, m: Mat3): Vec2` — Transforms the vec2 with a mat3
 - `vec2.transformMat4(out: Vec2, a: Vec2, m: Mat4): Vec2` — Transforms the vec2 with a mat4
 - `vec2.rotate(out: Vec2, a: Vec2, b: Vec2, rad: number): Vec2` — Rotate a 2D vector
+- `vec2.rotateTowards(out: Vec2, from: Vec2, to: Vec2, maxAngle: number): Vec2` — Rotates the unit vector `from` toward the unit vector `to` by at most `maxAngle` radians.
 
 **Query**
 
@@ -182,6 +186,9 @@ import { vec3 } from 'math';
 - `vec3.slerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3` — Performs a spherical linear interpolation between two vec3's
 - `vec3.hermite(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3` — Performs a hermite interpolation with two control points
 - `vec3.bezier(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3` — Performs a bezier interpolation with two control points
+- `vec3.projectOnVector(out: Vec3, a: Vec3, b: Vec3): Vec3` — Projects a vector onto another vector.
+- `vec3.projectOnPlane(out: Vec3, a: Vec3, planeNormal: Vec3): Vec3` — Projects a vector onto the plane through the origin with the given normal.
+- `vec3.signedAngle(a: Vec3, b: Vec3, axis: Vec3): number` — Get the signed angle from `a` to `b` measured about `axis`, in the range (-PI, PI].
 
 **Transform**
 
@@ -191,6 +198,7 @@ import { vec3 } from 'math';
 - `vec3.rotateX(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3` — Rotate a 3D vector around the x-axis
 - `vec3.rotateY(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3` — Rotate a 3D vector around the y-axis
 - `vec3.rotateZ(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3` — Rotate a 3D vector around the z-axis
+- `vec3.rotateTowards(out: Vec3, from: Vec3, to: Vec3, maxAngle: number): Vec3` — Rotates the unit vector `from` toward the unit vector `to` by at most `maxAngle` radians.
 
 **Query**
 
@@ -545,6 +553,7 @@ import { mat3 } from 'math';
 - `mat3.fromRotation(out: Mat3, rad: number): Mat3` — Creates a matrix from a given angle
 - `mat3.fromScaling(out: Mat3, v: Vec2): Mat3` — Creates a matrix from a vector scaling
 - `mat3.fromMat2d(out: Mat3, a: Mat2d): Mat3` — Copies the values from a mat2d into a mat3
+- `mat3.fromDirection(out: Mat3, direction: Vec3): Mat3` — Builds an orthonormal basis with `direction` as its Z axis.
 - `mat3.fromQuat(out: Mat3, q: Quat): Mat3` — Calculates a 3x3 matrix from the given quaternion
 - `mat3.projection(out: Mat3, width: number, height: number): Mat3` — Generates a 2D projection matrix with the given bounds
 - `mat3.str(a: Mat3): string` — Returns a string representation of a mat3
@@ -1494,3 +1503,108 @@ import { hsl } from 'math/color';
 
 - `hsl.lerp(out: HSL, a: HSL, b: HSL, t: number): HSL` — Interpolate from `a` to `b` by `t` into `out`, taking the shortest path around
 - `hsl.offset(out: HSL, a: HSL, dh: number, ds: number, dl: number): HSL` — Offset `a` by (dh, ds, dl) into `out`: hue wraps into [0, 1), saturation and
+
+<a id="api-math-ik"></a>
+
+## `math/ik`
+
+<a id="api-math-ik-fabrik2"></a>
+
+### `fabrik2`
+
+```ts
+import { fabrik2 } from 'math/ik';
+```
+
+**Types**
+
+- `enum ConstraintCoordinateSystem = LOCAL | GLOBAL` — What a joint's clockwise and anticlockwise limits are measured from.
+- `enum BaseboneConstraintType = NONE | GLOBAL_ABSOLUTE | LOCAL_RELATIVE | LOCAL_ABSOLUTE` — How the first bone in a chain is constrained.
+- `enum BoneConnectionPoint = START | END` — Which end of a host bone a connected chain hangs off.
+- `type Joint2 = { clockwise: number; anticlockwise: number; coordinateSystem: ConstraintCoordinateSystem; globalAxis: Vec2; }` — A joint's rotational limits: a wedge about a baseline.
+- `type Bone2 = { start: Vec2; end: Vec2; length: number; joint: Joint2; }` — A single bone: two points, the fixed distance between them, and how it may rotate.
+- `type Chain2 = { bones: Bone2[]; length: number; base: Vec2; fixedBase: boolean; baseboneConstraintType: BaseboneConstraintType; baseboneAxis: Vec2; baseboneWorldAxis: Vec2; baseboneClockwise: number; baseboneAnticlockwise: number; embeddedTarget: Vec2; useEmbeddedTarget: boolean; maxIterations: number; solveDistanceThreshold: number; minIterationChange: number; solveDistance: number; bestSolution: number[]; }` — A chain of bones, from the base (index 0) to the end effector (the last bone's `end`).
+- `type Connection = { hostChain: number; hostBone: number; point: BoneConnectionPoint; }` — A chain's attachment to a bone in another chain of the same structure.
+- `type Structure2 = { chains: Chain2[]; connections: Connection[]; }` — A set of chains, each optionally hanging off a bone of another.
+
+**Create**
+
+- `fabrik2.setLocalJoint(joint: Joint2, clockwise: number, anticlockwise: number): Joint2` — Sets a joint's limits relative to the previous bone's direction, which is the usual case.
+- `fabrik2.setGlobalJoint(joint: Joint2, axis: Vec2, clockwise: number, anticlockwise: number): Joint2` — Sets a joint's limits relative to a fixed world direction, pinning the bone's absolute heading
+- `fabrik2.setBaseboneConstraint(chain: Chain2, type: BaseboneConstraintType, axis: Vec2, clockwise: number, anticlockwise: number): Chain2` — Constrains the first bone to a wedge about `axis`.
+- `fabrik2.setBaseLocation(chain: Chain2, base: Vec2): Chain2` — Moves the chain's pinned base, without moving the bones.
+
+**Operations**
+
+- `fabrik2.createJoint2(): Joint2` — Creates an unconstrained joint.
+- `fabrik2.createChain2(): Chain2` — Creates an empty chain with a fixed base at the origin and no basebone constraint.
+- `fabrik2.addBone(chain: Chain2, start: Vec2, end: Vec2, joint: Joint2 = createJoint2()): Bone2` — Appends a bone spanning `start` to `end`, copying both.
+- `fabrik2.addConsecutiveBone(chain: Chain2, direction: Vec2, length: number, joint: Joint2 = createJoint2()): Bone2` — Appends a bone starting where the chain currently ends, running `length` along `direction`.
+- `fabrik2.addBoneAtBase(chain: Chain2, direction: Vec2, length: number, joint: Joint2 = createJoint2()): Bone2` — Prepends a bone at the base end, extending the chain backward.
+- `fabrik2.straighten(chain: Chain2, direction: Vec2): Chain2` — Lays the chain out straight from its base along `direction`, discarding the current pose.
+- `fabrik2.forward(chain: Chain2, target: Vec2): Chain2` — The forward pass: snaps the end effector onto `target` and drags the rest of the chain after it.
+- `fabrik2.backward(chain: Chain2, base: Vec2): Chain2` — The backward pass: pins the base and pushes each bone outward from it. The basebone constraint
+- `fabrik2.iterate(chain: Chain2, target: Vec2): number` — One full FABRIK iteration - forward then backward.
+- `fabrik2.solve(chain: Chain2, target: Vec2): number` — Solves the chain for `target`, iterating until it is close enough, stops improving, or runs out
+- `fabrik2.createStructure2(): Structure2` — Creates an empty structure.
+- `fabrik2.addChain(structure: Structure2, chain: Chain2): number` — Adds a chain that hangs off nothing, solving directly for the structure's target.
+- `fabrik2.connectChain(structure: Structure2, chain: Chain2, hostChain: number, hostBone: number, point: BoneConnectionPoint): number` — Adds a chain whose base is pinned to one end of a bone in a chain already in the structure.
+- `fabrik2.solveStructure(structure: Structure2, target: Vec2): void` — Solves every chain in the structure.
+
+**Query**
+
+- `fabrik2.getEffector(out: Vec2, chain: Chain2): Vec2` — Writes the end effector's position - the last bone's end - into `out`.
+- `fabrik2.getBoneDirection(out: Vec2, chain: Chain2, index: number): Vec2` — Writes the unit direction of bone `index`, from its start toward its end, into `out`.
+- `fabrik2.getBoneAngle(chain: Chain2, index: number): number` — The angle of bone `index`, in radians, measured counter-clockwise from the +X axis.
+- `fabrik2.isReachable(chain: Chain2, target: Vec2): boolean` — Whether `target` is within reach of the chain's base, so a solve can place the effector exactly on it.
+
+<a id="api-math-ik-fabrik3"></a>
+
+### `fabrik3`
+
+```ts
+import { fabrik3 } from 'math/ik';
+```
+
+**Types**
+
+- `enum JointType = BALL | GLOBAL_HINGE | LOCAL_HINGE` — How a joint may rotate relative to the bone before it.
+- `enum BaseboneConstraintType = NONE | GLOBAL_ROTOR | LOCAL_ROTOR | GLOBAL_HINGE | LOCAL_HINGE` — How the first bone in a chain is constrained.
+- `enum BoneConnectionPoint = START | END` — Which end of a host bone a connected chain hangs off.
+- `type Joint3 = { type: JointType; rotor: number; clockwise: number; anticlockwise: number; rotationAxis: Vec3; referenceAxis: Vec3; }` — A joint's rotational limits.
+- `type Bone3 = { start: Vec3; end: Vec3; length: number; joint: Joint3; }` — A single bone: two points, the fixed distance between them, and how it may rotate.
+- `type Chain3 = { bones: Bone3[]; length: number; base: Vec3; fixedBase: boolean; baseboneConstraintType: BaseboneConstraintType; baseboneAxis: Vec3; baseboneReferenceAxis: Vec3; baseboneWorldAxis: Vec3; baseboneWorldReferenceAxis: Vec3; baseboneRotor: number; baseboneClockwise: number; baseboneAnticlockwise: number; embeddedTarget: Vec3; useEmbeddedTarget: boolean; maxIterations: number; solveDistanceThreshold: number; minIterationChange: number; solveDistance: number; bestSolution: number[]; }` — A chain of bones, from the base (index 0) to the end effector (the last bone's `end`).
+- `type Connection = { hostChain: number; hostBone: number; point: BoneConnectionPoint; }` — A chain's attachment to a bone in another chain of the same structure.
+- `type Structure3 = { chains: Chain3[]; connections: Connection[]; }` — A set of chains, each optionally hanging off a bone of another.
+
+**Create**
+
+- `fabrik3.setBallJoint(joint: Joint3, rotor: number): Joint3` — Sets a ball-joint constraint: the bone may rotate within a cone of `rotor` radians about the
+- `fabrik3.setHingeJoint(joint: Joint3, type: JointType.GLOBAL_HINGE | JointType.LOCAL_HINGE, rotationAxis: Vec3, clockwise: number, anticlockwise: number, referenceAxis: Vec3): Joint3` — Sets a hinge constraint: the bone may only rotate in the plane perpendicular to `rotationAxis`
+- `fabrik3.setBaseboneRotorConstraint(chain: Chain3, type: BaseboneConstraintType.GLOBAL_ROTOR | BaseboneConstraintType.LOCAL_ROTOR, axis: Vec3, rotor: number): Chain3` — Confines the first bone to a cone of `rotor` radians about `axis`.
+- `fabrik3.setBaseboneHingeConstraint(chain: Chain3, type: BaseboneConstraintType.GLOBAL_HINGE | BaseboneConstraintType.LOCAL_HINGE, rotationAxis: Vec3, clockwise: number, anticlockwise: number, referenceAxis: Vec3): Chain3` — Confines the first bone to the plane perpendicular to `rotationAxis`, within `clockwise` /
+- `fabrik3.setBaseLocation(chain: Chain3, base: Vec3): Chain3` — Moves the chain's pinned base, without moving the bones.
+
+**Operations**
+
+- `fabrik3.createJoint3(): Joint3` — Creates an unconstrained joint.
+- `fabrik3.createChain3(): Chain3` — Creates an empty chain with a fixed base at the origin and no basebone constraint.
+- `fabrik3.addBone(chain: Chain3, start: Vec3, end: Vec3, joint: Joint3 = createJoint3()): Bone3` — Appends a bone spanning `start` to `end`, copying both.
+- `fabrik3.addConsecutiveBone(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3` — Appends a bone starting where the chain currently ends, running `length` along `direction`.
+- `fabrik3.addBoneAtBase(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3` — Prepends a bone at the base end, extending the chain backward.
+- `fabrik3.straighten(chain: Chain3, direction: Vec3): Chain3` — Lays the chain out straight from its base along `direction`, discarding the current pose.
+- `fabrik3.forward(chain: Chain3, target: Vec3): Chain3` — The forward pass: snaps the end effector onto `target` and drags the rest of the chain after it.
+- `fabrik3.backward(chain: Chain3, base: Vec3): Chain3` — The backward pass: pins the base and pushes each bone outward from it.
+- `fabrik3.iterate(chain: Chain3, target: Vec3): number` — One full FABRIK iteration - forward then backward. Often enough on its own for an
+- `fabrik3.solve(chain: Chain3, target: Vec3): number` — Solves the chain for `target`, iterating until it is close enough, stops improving, or runs out
+- `fabrik3.createStructure3(): Structure3` — Creates an empty structure.
+- `fabrik3.addChain(structure: Structure3, chain: Chain3): number` — Adds a chain that hangs off nothing, solving directly for the structure's target.
+- `fabrik3.connectChain(structure: Structure3, chain: Chain3, hostChain: number, hostBone: number, point: BoneConnectionPoint): number` — Adds a chain whose base is pinned to one end of a bone in a chain already in the structure.
+- `fabrik3.solveStructure(structure: Structure3, target: Vec3): void` — Solves every chain in the structure.
+
+**Query**
+
+- `fabrik3.getEffector(out: Vec3, chain: Chain3): Vec3` — Writes the end effector's position - the last bone's end - into `out`.
+- `fabrik3.getBoneDirection(out: Vec3, chain: Chain3, index: number): Vec3` — Writes the unit direction of bone `index`, from its start toward its end, into `out`.
+- `fabrik3.getBoneRotation(out: Quat, chain: Chain3, index: number, up: Vec3): Quat` — Writes the rotation taking `up` onto the direction of bone `index` into `out`.
+- `fabrik3.isReachable(chain: Chain3, target: Vec3): boolean` — Whether `target` is within reach of the chain's base, so a solve can place the effector exactly on it.

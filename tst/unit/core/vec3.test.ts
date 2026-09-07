@@ -503,4 +503,169 @@ describe('vec3', () => {
             expect(vec3.isScaleInsideOut([0, -1, -1])).toBe(false);
         });
     });
+
+    describe('projectOnVector', () => {
+        it('projects onto an axis', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.projectOnVector(out, [2, 3, 4], [1, 0, 0]);
+            expect(out).toEqual([2, 0, 0]);
+        });
+
+        it('handles a non-unit target', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.projectOnVector(out, [2, 2, 0], [5, 0, 0]);
+            expect(out).toEqual([2, 0, 0]);
+        });
+
+        it('returns zero when projecting onto the zero vector', () => {
+            const out: Vec3 = [9, 9, 9];
+            vec3.projectOnVector(out, [2, 3, 4], [0, 0, 0]);
+            expect(out).toEqual([0, 0, 0]);
+        });
+
+        it('is safe when out aliases an input', () => {
+            const v: Vec3 = [2, 3, 4];
+            vec3.projectOnVector(v, v, [1, 0, 0]);
+            expect(v).toEqual([2, 0, 0]);
+        });
+    });
+
+    describe('projectOnPlane', () => {
+        it('drops the component along the normal', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.projectOnPlane(out, [1, 2, 3], [0, 1, 0]);
+            expect(out).toEqual([1, 0, 3]);
+        });
+
+        it('returns zero for a vector parallel to the normal', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.projectOnPlane(out, [0, 5, 0], [0, 1, 0]);
+            expect(out[0]).toBeCloseTo(0);
+            expect(out[1]).toBeCloseTo(0);
+            expect(out[2]).toBeCloseTo(0);
+        });
+
+        it('leaves an in-plane vector untouched', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.projectOnPlane(out, [1, 0, 3], [0, 1, 0]);
+            expect(out).toEqual([1, 0, 3]);
+        });
+
+        it('is safe when out aliases an input', () => {
+            const v: Vec3 = [1, 2, 3];
+            vec3.projectOnPlane(v, v, [0, 1, 0]);
+            expect(v).toEqual([1, 0, 3]);
+        });
+    });
+
+    describe('signedAngle', () => {
+        it('is positive for a counter-clockwise turn about the axis', () => {
+            expect(vec3.signedAngle([1, 0, 0], [0, 1, 0], [0, 0, 1])).toBeCloseTo(Math.PI / 2);
+        });
+
+        it('is negative for a clockwise turn about the axis', () => {
+            expect(vec3.signedAngle([0, 1, 0], [1, 0, 0], [0, 0, 1])).toBeCloseTo(-Math.PI / 2);
+        });
+
+        it('negates when the axis is flipped', () => {
+            const positive = vec3.signedAngle([1, 0, 0], [0, 1, 0], [0, 0, 1]);
+            const negative = vec3.signedAngle([1, 0, 0], [0, 1, 0], [0, 0, -1]);
+            expect(negative).toBeCloseTo(-positive);
+        });
+
+        it('ignores the components along the axis', () => {
+            const flat = vec3.signedAngle([1, 0, 0], [0, 1, 0], [0, 0, 1]);
+            const tilted = vec3.signedAngle([1, 0, 7], [0, 1, -3], [0, 0, 1]);
+            expect(tilted).toBeCloseTo(flat);
+        });
+
+        it('returns zero for identical vectors', () => {
+            expect(vec3.signedAngle([0, 0, 1], [0, 0, 1], [0, 0, 1])).toBe(0);
+        });
+
+        it('agrees with angle in magnitude for in-plane vectors', () => {
+            const a: Vec3 = [1, 0, 0];
+            const b: Vec3 = [-0.5, 0.5, 0];
+            const axis: Vec3 = [0, 0, 1];
+            expect(Math.abs(vec3.signedAngle(a, b, axis))).toBeCloseTo(vec3.angle(a, b));
+        });
+    });
+
+    describe('rotateTowards', () => {
+        it('copies the target when it is already within the limit', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.rotateTowards(out, [1, 0, 0], [0, 1, 0], Math.PI);
+            expect(out).toEqual([0, 1, 0]);
+        });
+
+        it('clamps to exactly the limit when the target is beyond it', () => {
+            const out: Vec3 = [0, 0, 0];
+            const from: Vec3 = [1, 0, 0];
+            vec3.rotateTowards(out, from, [0, 1, 0], Math.PI / 4);
+            expect(vec3.angle(from, out)).toBeCloseTo(Math.PI / 4);
+            expect(vec3.length(out)).toBeCloseTo(1);
+        });
+
+        it('rotates in the plane of the two vectors', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.rotateTowards(out, [1, 0, 0], [0, 1, 0], Math.PI / 4);
+            expect(out[0]).toBeCloseTo(Math.SQRT1_2);
+            expect(out[1]).toBeCloseTo(Math.SQRT1_2);
+            expect(out[2]).toBeCloseTo(0);
+        });
+
+        it('returns from when the limit is zero', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.rotateTowards(out, [1, 0, 0], [0, 1, 0], 0);
+            expect(out[0]).toBeCloseTo(1);
+            expect(out[1]).toBeCloseTo(0);
+        });
+
+        it('treats a negative limit as zero', () => {
+            const out: Vec3 = [0, 0, 0];
+            vec3.rotateTowards(out, [1, 0, 0], [0, 1, 0], -1);
+            expect(out[0]).toBeCloseTo(1);
+            expect(out[1]).toBeCloseTo(0);
+        });
+
+        it('picks an arbitrary plane for antiparallel inputs', () => {
+            const out: Vec3 = [0, 0, 0];
+            const from: Vec3 = [0, 1, 0];
+            vec3.rotateTowards(out, from, [0, -1, 0], 0.5);
+            expect(out.every(Number.isFinite)).toBe(true);
+            expect(vec3.length(out)).toBeCloseTo(1);
+            expect(vec3.angle(from, out)).toBeCloseTo(0.5);
+        });
+
+        it('is safe when out aliases an input', () => {
+            const v: Vec3 = [1, 0, 0];
+            vec3.rotateTowards(v, v, [0, 1, 0], Math.PI / 4);
+            expect(v[0]).toBeCloseTo(Math.SQRT1_2);
+            expect(v[1]).toBeCloseTo(Math.SQRT1_2);
+        });
+    });
+
+    describe('perpendicular', () => {
+        it('returns a unit vector perpendicular to the input', () => {
+            const out: Vec3 = [0, 0, 0];
+            for (const v of [
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [0.3, -0.5, 0.81],
+            ] as Vec3[]) {
+                vec3.perpendicular(out, v);
+                expect(vec3.length(out)).toBeCloseTo(1);
+                expect(vec3.dot(out, v)).toBeCloseTo(0);
+            }
+        });
+
+        it('returns an axis rather than NaN for the zero vector', () => {
+            // every direction is perpendicular to the zero vector, so there is nothing to divide by
+            const out: Vec3 = [0, 0, 0];
+            vec3.perpendicular(out, [0, 0, 0]);
+            expect(out.every(Number.isFinite)).toBe(true);
+            expect(vec3.length(out)).toBeCloseTo(1);
+        });
+    });
 });

@@ -540,6 +540,102 @@ export function angle(a: Vec2, b: Vec2): number {
 }
 
 /**
+ * Projects a vector onto another vector.
+ *
+ * If `b` is the zero vector the projection is undefined and `out` is set to zero.
+ *
+ * @param out the receiving vector
+ * @param a the vector to project
+ * @param b the vector to project onto
+ * @returns out
+ */
+export function projectOnVector(out: Vec2, a: Vec2, b: Vec2): Vec2 {
+    const bx = b[0];
+    const by = b[1];
+
+    const sqrLen = bx * bx + by * by;
+
+    if (sqrLen === 0) {
+        out[0] = 0;
+        out[1] = 0;
+        return out;
+    }
+
+    const s = (a[0] * bx + a[1] * by) / sqrLen;
+
+    out[0] = bx * s;
+    out[1] = by * s;
+
+    return out;
+}
+
+/**
+ * Get the signed angle from `a` to `b`, in the range (-PI, PI].
+ *
+ * Positive is counter-clockwise. Returns 0 if either vector is zero length.
+ *
+ * Unlike {@link angle}, this distinguishes the two directions of rotation, which is what
+ * joint limits and turn directions need.
+ *
+ * @param a the first operand
+ * @param b the second operand
+ * @returns the signed angle in radians
+ */
+export function signedAngle(a: Vec2, b: Vec2): number {
+    const ax = a[0];
+    const ay = a[1];
+    const bx = b[0];
+    const by = b[1];
+
+    // the 2D cross product is |a||b|sin(theta), the dot product is |a||b|cos(theta)
+    return Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
+}
+
+/**
+ * Rotates the unit vector `from` toward the unit vector `to` by at most `maxAngle` radians.
+ *
+ * When the two are already within `maxAngle` this copies `to`, so the function doubles as a
+ * limit: the result is `to`, clamped to lie within `maxAngle` of `from`. That is the form a
+ * joint limit and a per-frame turn rate both want.
+ *
+ * Both inputs are assumed to be unit length; the result is unit length. `maxAngle` is treated
+ * as 0 if negative. When the inputs are exactly antiparallel the turn direction is arbitrary
+ * and counter-clockwise is used.
+ *
+ * @param out the receiving vector
+ * @param from the unit vector to rotate away from
+ * @param to the unit vector to rotate toward
+ * @param maxAngle the maximum rotation, in radians
+ * @returns out
+ */
+export function rotateTowards(out: Vec2, from: Vec2, to: Vec2, maxAngle: number): Vec2 {
+    const fx = from[0];
+    const fy = from[1];
+    const tx = to[0];
+    const ty = to[1];
+
+    const delta = Math.atan2(fx * ty - fy * tx, fx * tx + fy * ty);
+
+    const limit = maxAngle > 0 ? maxAngle : 0;
+
+    if (Math.abs(delta) <= limit) {
+        out[0] = tx;
+        out[1] = ty;
+        return out;
+    }
+
+    // atan2 returns PI, not -PI, for the antiparallel case, so this turns counter-clockwise
+    const rotation = delta > 0 ? limit : -limit;
+    const c = Math.cos(rotation);
+    const s = Math.sin(rotation);
+
+    out[0] = fx * c - fy * s;
+    out[1] = fx * s + fy * c;
+
+    return out;
+}
+
+/**
  * Set the components of a vec2 to zero
  *
  * @param out the receiving vector

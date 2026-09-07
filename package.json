@@ -50,6 +50,10 @@
     "./color": {
       "import": "./dist/color/index.js",
       "types": "./dist/src/color/index.d.ts"
+    },
+    "./ik": {
+      "import": "./dist/ik/index.js",
+      "types": "./dist/src/ik/index.d.ts"
     }
   },
   "files": [
@@ -72,7 +76,7 @@
     "bench": "pnpm --filter benches exec labs",
     "typecheck-docs": "tsc --project docs/tsconfig.json --noEmit",
     "docs": "(cd docs && node ./build.js)",
-    "typedoc": "typedoc --tsconfig ./tsconfig.json --name \"math docs\" --out ./dist-typedoc ./src/index.ts ./src/shapes/index.ts ./src/geometry/index.ts ./src/time/index.ts ./src/random/index.ts ./src/noise/index.ts ./src/color/index.ts",
+    "typedoc": "typedoc --tsconfig ./tsconfig.json --name \"math docs\" --out ./dist-typedoc ./src/index.ts ./src/shapes/index.ts ./src/geometry/index.ts ./src/time/index.ts ./src/random/index.ts ./src/noise/index.ts ./src/color/index.ts ./src/ik/index.ts",
     "build:docs": "pnpm run docs && pnpm run typedoc",
     "release": "pnpm run build && pnpm run test && pnpm run build:examples && pnpm run build:docs && pnpm run build:website"
   },

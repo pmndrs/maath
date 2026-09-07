@@ -442,6 +442,9 @@ export function cross(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * Calculates a normalized perpendicular vector to the given vector.
  * Useful for finding an arbitrary orthogonal basis vector.
  *
+ * The zero vector has no unique perpendicular - every direction qualifies - so it returns the X
+ * axis rather than NaN.
+ *
  * @param out the receiving vector
  * @param a the source vector
  * @returns the out vector
@@ -455,6 +458,16 @@ export function perpendicular(out: Vec3, a: Vec3): Vec3 {
         out[2] = -a[0] * invLen;
     } else {
         const len = Math.sqrt(a[1] * a[1] + a[2] * a[2]);
+
+        if (len === 0) {
+            // the zero vector, the only input that reaches here with no length. every direction is
+            // perpendicular to it, so return one rather than dividing by zero into NaN
+            out[0] = 1;
+            out[1] = 0;
+            out[2] = 0;
+            return out;
+        }
+
         const invLen = 1.0 / len;
         out[0] = 0;
         out[1] = a[2] * invLen;
@@ -763,6 +776,176 @@ export function angle(a: Vec3, b: Vec3): number {
     const mag = Math.sqrt((ax * ax + ay * ay + az * az) * (bx * bx + by * by + bz * bz));
     const cosine = mag && dot(a, b) / mag;
     return Math.acos(Math.min(Math.max(cosine, -1), 1));
+}
+
+/**
+ * Projects a vector onto another vector.
+ *
+ * If `b` is the zero vector the projection is undefined and `out` is set to zero.
+ *
+ * @param out the receiving vector
+ * @param a the vector to project
+ * @param b the vector to project onto
+ * @returns out
+ */
+export function projectOnVector(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+    const bx = b[0];
+    const by = b[1];
+    const bz = b[2];
+
+    const sqrLen = bx * bx + by * by + bz * bz;
+
+    if (sqrLen === 0) {
+        out[0] = 0;
+        out[1] = 0;
+        out[2] = 0;
+        return out;
+    }
+
+    const s = (a[0] * bx + a[1] * by + a[2] * bz) / sqrLen;
+
+    out[0] = bx * s;
+    out[1] = by * s;
+    out[2] = bz * s;
+
+    return out;
+}
+
+/**
+ * Projects a vector onto the plane through the origin with the given normal.
+ *
+ * The result is the component of `a` perpendicular to `planeNormal`. It is not re-normalized,
+ * and is the zero vector when `a` is parallel to `planeNormal` - check its length before
+ * normalizing if the input direction is not known to be off-axis.
+ *
+ * @param out the receiving vector
+ * @param a the vector to project
+ * @param planeNormal the plane normal, assumed to be unit length
+ * @returns out
+ */
+export function projectOnPlane(out: Vec3, a: Vec3, planeNormal: Vec3): Vec3 {
+    const ax = a[0];
+    const ay = a[1];
+    const az = a[2];
+    const nx = planeNormal[0];
+    const ny = planeNormal[1];
+    const nz = planeNormal[2];
+
+    const d = ax * nx + ay * ny + az * nz;
+
+    out[0] = ax - nx * d;
+    out[1] = ay - ny * d;
+    out[2] = az - nz * d;
+
+    return out;
+}
+
+/**
+ * Get the signed angle from `a` to `b` measured about `axis`, in the range (-PI, PI].
+ *
+ * Positive is counter-clockwise when `axis` points toward the viewer. Only the components of
+ * `a` and `b` in the plane perpendicular to `axis` contribute, so they need not be
+ * perpendicular to it. Returns 0 if either projects to the zero vector.
+ *
+ * Unlike {@link angle}, this distinguishes the two directions of rotation, which is what
+ * hinge limits and turn directions need.
+ *
+ * @param a the first operand
+ * @param b the second operand
+ * @param axis the axis to measure the rotation about, assumed to be unit length
+ * @returns the signed angle in radians
+ */
+export function signedAngle(a: Vec3, b: Vec3, axis: Vec3): number {
+    const nx = axis[0];
+    const ny = axis[1];
+    const nz = axis[2];
+
+    // drop the components along the axis - they carry no signed angle
+    const ad = a[0] * nx + a[1] * ny + a[2] * nz;
+    const ax = a[0] - nx * ad;
+    const ay = a[1] - ny * ad;
+    const az = a[2] - nz * ad;
+
+    const bd = b[0] * nx + b[1] * ny + b[2] * nz;
+    const bx = b[0] - nx * bd;
+    const by = b[1] - ny * bd;
+    const bz = b[2] - nz * bd;
+
+    // (a x b) . axis is |a||b|sin(theta), a . b is |a||b|cos(theta)
+    const cx = ay * bz - az * by;
+    const cy = az * bx - ax * bz;
+    const cz = ax * by - ay * bx;
+
+    return Math.atan2(cx * nx + cy * ny + cz * nz, ax * bx + ay * by + az * bz);
+}
+
+const _rotateTowards_axis: Vec3 = [0, 0, 0];
+
+/**
+ * Rotates the unit vector `from` toward the unit vector `to` by at most `maxAngle` radians.
+ *
+ * When the two are already within `maxAngle` this copies `to`, so the function doubles as a
+ * cone clamp: the result is `to`, limited to lie within `maxAngle` of `from`. That is the form
+ * a rotor joint limit and a per-frame turn rate both want.
+ *
+ * Both inputs are assumed to be unit length; the result is unit length. `maxAngle` is treated
+ * as 0 if negative. When the inputs are exactly antiparallel the rotation plane is undefined
+ * and an arbitrary perpendicular is used.
+ *
+ * @param out the receiving vector
+ * @param from the unit vector to rotate away from
+ * @param to the unit vector to rotate toward
+ * @param maxAngle the maximum rotation, in radians
+ * @returns out
+ */
+export function rotateTowards(out: Vec3, from: Vec3, to: Vec3, maxAngle: number): Vec3 {
+    const fx = from[0];
+    const fy = from[1];
+    const fz = from[2];
+    const tx = to[0];
+    const ty = to[1];
+    const tz = to[2];
+
+    const cosine = Math.min(Math.max(fx * tx + fy * ty + fz * tz, -1), 1);
+
+    const limit = maxAngle > 0 ? maxAngle : 0;
+
+    if (Math.acos(cosine) <= limit) {
+        out[0] = tx;
+        out[1] = ty;
+        out[2] = tz;
+        return out;
+    }
+
+    // the rotation plane is spanned by the two vectors, so its normal is their cross product
+    let axisX = fy * tz - fz * ty;
+    let axisY = fz * tx - fx * tz;
+    let axisZ = fx * ty - fy * tx;
+    const axisLength = Math.sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ);
+
+    if (axisLength < 1e-8) {
+        // antiparallel: every plane containing `from` is equally valid, so pick one
+        perpendicular(_rotateTowards_axis, from);
+        axisX = _rotateTowards_axis[0];
+        axisY = _rotateTowards_axis[1];
+        axisZ = _rotateTowards_axis[2];
+    } else {
+        const inverseLength = 1 / axisLength;
+        axisX *= inverseLength;
+        axisY *= inverseLength;
+        axisZ *= inverseLength;
+    }
+
+    // rodrigues rotation of `from` about `axis`
+    const c = Math.cos(limit);
+    const s = Math.sin(limit);
+    const d = (axisX * fx + axisY * fy + axisZ * fz) * (1 - c);
+
+    out[0] = fx * c + (axisY * fz - axisZ * fy) * s + axisX * d;
+    out[1] = fy * c + (axisZ * fx - axisX * fz) * s + axisY * d;
+    out[2] = fz * c + (axisX * fy - axisY * fx) * s + axisZ * d;
+
+    return out;
 }
 
 /**

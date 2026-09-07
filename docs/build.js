@@ -103,7 +103,8 @@ function getExportedMembers(file) {
     } else if (
       (ts.isTypeAliasDeclaration(node) ||
         ts.isInterfaceDeclaration(node) ||
-        ts.isClassDeclaration(node)) &&
+        ts.isClassDeclaration(node) ||
+        ts.isEnumDeclaration(node)) &&
       node.name &&
       hasExport(node)
     ) {
@@ -227,6 +228,7 @@ const API_GROUP_DESCRIPTIONS = {
   "math/random": "Seeded random number generators",
   "math/noise": "Perlin, simplex & worley noise, plus fractal helpers",
   "math/color": "Color & colorspace utilities",
+  "math/ik": "Inverse kinematics",
 };
 
 // the generated full reference lives in a separate file so the README stays a
@@ -511,6 +513,21 @@ function getCompactMember(name, file) {
           };
         }
       }
+    } else if (
+      ts.isEnumDeclaration(node) &&
+      node.name?.text === name &&
+      hasExport(node)
+    ) {
+      // an enum's members are the whole point of it - a bare `enum JointType` tells a reader
+      // nothing, so list them the way a type alias lists its fields
+      const members = node.members
+        .map((m) => m.name.getText(sf))
+        .join(" | ");
+      found = {
+        kind: "type",
+        signature: `enum ${name} = ${members}`,
+        summary: summaryOf(node),
+      };
     } else if (
       (ts.isTypeAliasDeclaration(node) ||
         ts.isInterfaceDeclaration(node) ||

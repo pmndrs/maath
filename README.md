@@ -22,6 +22,7 @@ math is a collection of math helpers for graphics and simulations.
 | [`math/random`](API.md#api-math-random) | Seeded random number generators | [`isaac32`](API.md#api-math-random-isaac32) [`isaac64`](API.md#api-math-random-isaac64) [`mulberry32`](API.md#api-math-random-mulberry32) [`random`](API.md#api-math-random-random) |
 | [`math/noise`](API.md#api-math-noise) | Perlin, simplex & worley noise, plus fractal helpers | [`perlin2d`](API.md#api-math-noise-perlin2d) [`perlin3d`](API.md#api-math-noise-perlin3d) [`simplex2d`](API.md#api-math-noise-simplex2d) [`simplex3d`](API.md#api-math-noise-simplex3d) [`simplex4d`](API.md#api-math-noise-simplex4d) [`worley2d`](API.md#api-math-noise-worley2d) [`worley3d`](API.md#api-math-noise-worley3d) [`fbm`](API.md#fbm) [`ridged`](API.md#ridged) [`billow`](API.md#billow) [`domainWarp2`](API.md#domainwarp2) [`domainWarp3`](API.md#domainwarp3) [`curl2`](API.md#curl2) [`curl3`](API.md#curl3) |
 | [`math/color`](API.md#api-math-color) | Color & colorspace utilities | [`color`](API.md#api-math-color-color) [`colorspace`](API.md#api-math-color-colorspace) [`hsl`](API.md#api-math-color-hsl) |
+| [`math/ik`](API.md#api-math-ik) | Inverse kinematics | [`fabrik2`](API.md#api-math-ik-fabrik2) [`fabrik3`](API.md#api-math-ik-fabrik3) |
 
 
 ## Quick Start
@@ -46,6 +47,7 @@ import { mat4, quat, vec3 } from 'math'; // core: vectors, quats, matrices
 import { simplex3d } from 'math/noise'; // perlin / simplex noise
 import { mulberry32 } from 'math/random'; // seeded rng
 import { easing, spring } from 'math/time'; // easings & springs
+import { fabrik2, fabrik3 } from 'math/ik'; // inverse kinematics
 // also: math/color, math/geometry, math/shapes — import only what you use
 ```
 
@@ -103,6 +105,26 @@ import { easing, spring } from 'math/time'; // easings & springs
       <a href="https://pmndrs.github.io/math/examples/#example-circumcircle">
         <img src="./examples/public/screenshots/example-circumcircle.png" width="180" height="120" style="object-fit:cover;"/><br/>
         Circumcircle
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://pmndrs.github.io/math/examples/#example-fabrik-2d">
+        <img src="./examples/public/screenshots/example-fabrik-2d.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        FABRIK 2D
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://pmndrs.github.io/math/examples/#example-fabrik-2d-snek">
+        <img src="./examples/public/screenshots/example-fabrik-2d-snek.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        FABRIK 2D Snek
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://pmndrs.github.io/math/examples/#example-fabrik-3d">
+        <img src="./examples/public/screenshots/example-fabrik-3d.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        FABRIK 3D
       </a>
     </td>
     <td align="center">

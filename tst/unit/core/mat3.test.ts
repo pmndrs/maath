@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Mat2d, Mat3, Mat4, Vec2 } from '../../../src';
-import { mat3, mat4, quat } from '../../../src';
+import type { Mat2d, Mat3, Mat4, Vec2, Vec3 } from '../../../src';
+import { mat3, mat4, quat, vec3 } from '../../../src';
 
 describe('mat3', () => {
     describe('create', () => {
@@ -449,6 +449,76 @@ describe('mat3', () => {
 
             // Should preserve homogeneous coordinate
             expect(composed[8]).toBe(1);
+        });
+    });
+
+    describe('fromDirection', () => {
+        const columns = (m: Mat3): [Vec3, Vec3, Vec3] => [
+            [m[0], m[1], m[2]],
+            [m[3], m[4], m[5]],
+            [m[6], m[7], m[8]],
+        ];
+
+        // a spread of directions including both poles and the antipode branch
+        const directions: Vec3[] = [
+            [0, 0, 1],
+            [0, 0, -1],
+            [1, 0, 0],
+            [0, 1, 0],
+            [-1, 0, 0],
+            [0, -1, 0],
+            [0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
+            [-0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
+        ];
+
+        it('uses the given direction as its Z axis', () => {
+            const out: Mat3 = mat3.create();
+            for (const direction of directions) {
+                mat3.fromDirection(out, direction);
+                const [, , z] = columns(out);
+                expect(vec3.distance(z, direction)).toBeCloseTo(0);
+            }
+        });
+
+        it('produces an orthonormal basis', () => {
+            const out: Mat3 = mat3.create();
+            for (const direction of directions) {
+                mat3.fromDirection(out, direction);
+                const [x, y, z] = columns(out);
+                expect(vec3.length(x)).toBeCloseTo(1);
+                expect(vec3.length(y)).toBeCloseTo(1);
+                expect(vec3.dot(x, y)).toBeCloseTo(0);
+                expect(vec3.dot(x, z)).toBeCloseTo(0);
+                expect(vec3.dot(y, z)).toBeCloseTo(0);
+            }
+        });
+
+        it('is right-handed, so X cross Y is Z', () => {
+            const out: Mat3 = mat3.create();
+            const cross: Vec3 = [0, 0, 0];
+            for (const direction of directions) {
+                mat3.fromDirection(out, direction);
+                const [x, y, z] = columns(out);
+                vec3.cross(cross, x, y);
+                expect(vec3.distance(cross, z)).toBeCloseTo(0);
+                expect(mat3.determinant(out)).toBeCloseTo(1);
+            }
+        });
+
+        it('stays finite at the antipode, where the general construction divides by zero', () => {
+            const out: Mat3 = mat3.create();
+            mat3.fromDirection(out, [0, 0, -1]);
+            expect(out.every(Number.isFinite)).toBe(true);
+        });
+
+        it('transforms the Z axis onto the direction', () => {
+            const out: Mat3 = mat3.create();
+            const transformed: Vec3 = [0, 0, 0];
+            for (const direction of directions) {
+                mat3.fromDirection(out, direction);
+                vec3.transformMat3(transformed, [0, 0, 1], out);
+                expect(vec3.distance(transformed, direction)).toBeCloseTo(0);
+            }
         });
     });
 });
