@@ -1,4 +1,4 @@
-import type { Color } from './color';
+import type { Color, RColor } from './color';
 
 // Color-space conversions (pure functions — no global working-space state).
 //
@@ -21,7 +21,7 @@ export function linearToSrgb(c: number): number {
  * Convert a linear-sRGB Color to linear Display-P3 primaries, into `out`. Returns `out`.
  * (Both spaces share the sRGB transfer curve; this changes only the primaries.)
  */
-export function linearSrgbToLinearDisplayP3(out: Color, c: Color): Color {
+export function linearSrgbToLinearDisplayP3(out: Color, c: RColor): Color {
     const r = c[0];
     const g = c[1];
     const b = c[2];
@@ -35,7 +35,7 @@ export function linearSrgbToLinearDisplayP3(out: Color, c: Color): Color {
  * Convert a linear Display-P3 Color to linear-sRGB primaries, into `out`. Returns `out`.
  * Colors outside the sRGB gamut yield channels outside [0, 1] — clamp if needed.
  */
-export function linearDisplayP3ToLinearSrgb(out: Color, c: Color): Color {
+export function linearDisplayP3ToLinearSrgb(out: Color, c: RColor): Color {
     const r = c[0];
     const g = c[1];
     const b = c[2];

@@ -1,4 +1,4 @@
-import type { Color } from './color';
+import type { Color, RColor } from './color';
 import { linearToSrgb, srgbToLinear } from './colorspace';
 
 /** A hue-saturation-lightness color: [h, s, l], all in [0, 1] (hue wraps). */
@@ -36,7 +36,7 @@ export function set(out: HSL, h: number, s: number, l: number): HSL {
 }
 
 /** Write the HSL of a linear Color into `out`. Returns `out`. */
-export function fromColor(out: HSL, c: Color): HSL {
+export function fromColor(out: HSL, c: RColor): HSL {
     // linear -> sRGB gamma; HSL is defined on gamma-encoded sRGB
     const r = linearToSrgb(c[0]);
     const g = linearToSrgb(c[1]);
