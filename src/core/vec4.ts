@@ -1,6 +1,6 @@
 import type { MutableArrayLike } from './arrays';
-import type { Mat4 } from './mat4';
-import type { Quat } from './quat';
+import type { RMat4 } from './mat4';
+import type { RQuat } from './quat';
 import * as scalar from './scalar';
 
 /** A 4D vector */
@@ -480,7 +480,7 @@ export function lagrange(out: Vec4, a: RVec4, b: RVec4, c: RVec4, t: number): Ve
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat4(out: Vec4, a: RVec4, m: Mat4): Vec4 {
+export function transformMat4(out: Vec4, a: RVec4, m: RMat4): Vec4 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -500,7 +500,7 @@ export function transformMat4(out: Vec4, a: RVec4, m: Mat4): Vec4 {
  * @param q quaternion to transform with
  * @returns out
  */
-export function transformQuat(out: Vec4, a: RVec4, q: Quat): Vec4 {
+export function transformQuat(out: Vec4, a: RVec4, q: RQuat): Vec4 {
     const x = a[0];
     const y = a[1];
     const z = a[2];

@@ -1,6 +1,6 @@
 import { EPSILON } from './scalar';
 import type { RMat2d } from './mat2d';
-import type { Mat4 } from './mat4';
+import type { RMat4 } from './mat4';
 import type { RQuat } from './quat';
 import type { RVec2 } from './vec2';
 
@@ -26,7 +26,7 @@ export function create(): Mat3 {
  * @param a   the source 4x4 matrix
  * @returns out
  */
-export function fromMat4(out: Mat3, a: Mat4): Mat3 {
+export function fromMat4(out: Mat3, a: RMat4): Mat3 {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -590,7 +590,7 @@ export function fromQuat(out: Mat3, q: RQuat): Mat3 {
  *
  * @returns out
  */
-export function normalFromMat4(out: Mat3, a: Mat4): Mat3 | null {
+export function normalFromMat4(out: Mat3, a: RMat4): Mat3 | null {
     const a00 = a[0];
     const a01 = a[1];
     const a02 = a[2];

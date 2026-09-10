@@ -1,7 +1,7 @@
 import type { MutableArrayLike } from './arrays';
-import type { Mat3 } from './mat3';
-import type { Mat4 } from './mat4';
-import type { Quat } from './quat';
+import type { RMat3 } from './mat3';
+import type { RMat4 } from './mat4';
+import type { RQuat } from './quat';
 import * as scalar from './scalar';
 
 /** A 3D vector */
@@ -602,7 +602,7 @@ export function bezier(out: Vec3, a: RVec3, b: RVec3, c: RVec3, d: RVec3, t: num
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat4(out: Vec3, a: RVec3, m: Mat4): Vec3 {
+export function transformMat4(out: Vec3, a: RVec3, m: RMat4): Vec3 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -622,7 +622,7 @@ export function transformMat4(out: Vec3, a: RVec3, m: Mat4): Vec3 {
  * @param m the 3x3 matrix to transform with
  * @returns out
  */
-export function transformMat3(out: Vec3, a: RVec3, m: Mat3): Vec3 {
+export function transformMat3(out: Vec3, a: RVec3, m: RMat3): Vec3 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -641,7 +641,7 @@ export function transformMat3(out: Vec3, a: RVec3, m: Mat3): Vec3 {
  * @param q quaternion to transform with
  * @returns out
  */
-export function transformQuat(out: Vec3, a: RVec3, q: Quat): Vec3 {
+export function transformQuat(out: Vec3, a: RVec3, q: RQuat): Vec3 {
     // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
     const qx = q[0];
     const qy = q[1];

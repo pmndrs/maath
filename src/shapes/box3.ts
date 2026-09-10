@@ -1,8 +1,8 @@
 import { EPSILON } from '../core/scalar';
 import type { RMat4 } from '../core/mat4';
 import type { RVec3, Vec3 } from '../core/vec3';
-import type { Plane3 } from './plane3';
-import type { Sphere } from './sphere';
+import type { RPlane3 } from './plane3';
+import type { RSphere } from './sphere';
 
 /** A box in 3D space */
 export type Box3 = [minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number];
@@ -577,7 +577,7 @@ export function intersectsTriangle3(box: RBox3, a: RVec3, b: RVec3, c: RVec3): b
 /**
  * Test intersection between axis-aligned bounding box and a sphere.
  */
-export function intersectsSphere(box: RBox3, sphere: Sphere): boolean {
+export function intersectsSphere(box: RBox3, sphere: RSphere): boolean {
     const { center, radius } = sphere;
     const cx = center[0];
     const cy = center[1];
@@ -592,7 +592,7 @@ export function intersectsSphere(box: RBox3, sphere: Sphere): boolean {
 /**
  * Test intersection between axis-aligned bounding box and plane.
  */
-export function intersectsPlane3(box: RBox3, plane: Plane3): boolean {
+export function intersectsPlane3(box: RBox3, plane: RPlane3): boolean {
     const { normal, constant } = plane;
     const nx = normal[0];
     const ny = normal[1];

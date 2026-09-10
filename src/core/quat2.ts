@@ -1,4 +1,4 @@
-import type { Mat4 } from './mat4';
+import type { RMat4 } from './mat4';
 import type { Quat, RQuat } from './quat';
 import { EPSILON } from './scalar';
 import type { RVec3, Vec3 } from './vec3';
@@ -172,7 +172,7 @@ export function fromRotation(out: Quat2, q: RQuat): Quat2 {
  * @param a the matrix
  * @returns dual quat receiving operation result
  */
-export function fromMat4(out: Quat2, a: Mat4): Quat2 {
+export function fromMat4(out: Quat2, a: RMat4): Quat2 {
     // Rotation: extract the quaternion from the (possibly scaled) upper-3x3.
     // Inlined from mat4.getRotation/getScaling so no scratch quat or Vec3 is allocated.
     const is1 = 1 / Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);

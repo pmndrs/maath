@@ -1,8 +1,8 @@
 import type { MutableArrayLike } from './arrays';
 import type { Euler, EulerOrder, REuler } from './euler';
-import type { Mat3 } from './mat3';
+import type { RMat3 } from './mat3';
 import * as mat3 from './mat3';
-import type { Mat4 } from './mat4';
+import type { RMat4 } from './mat4';
 import { EPSILON } from './scalar';
 import type { RVec3, Vec3 } from './vec3';
 import * as vec3 from './vec3';
@@ -428,7 +428,7 @@ export function conjugate(out: Quat, a: RQuat): Quat {
  * @param m rotation matrix
  * @returns out
  */
-export function fromMat3(out: Quat, m: Mat3): Quat {
+export function fromMat3(out: Quat, m: RMat3): Quat {
     // Algorithm in Ken Shoemake's article in 1987 SIGGRAPH course notes
     // article "Quaternion Calculus and Fast Animation".
     const fTrace = m[0] + m[4] + m[8];
@@ -469,7 +469,7 @@ export function fromMat3(out: Quat, m: Mat3): Quat {
  * @param m rotation matrix
  * @returns out
  */
-export function fromMat4(out: Quat, m: Mat4): Quat {
+export function fromMat4(out: Quat, m: RMat4): Quat {
     const m3 = mat3.create();
     mat3.fromMat4(m3, m);
     return fromMat3(out, m3);

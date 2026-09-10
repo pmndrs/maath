@@ -1,8 +1,8 @@
 import type { MutableArrayLike } from './arrays';
-import type { Mat2 } from './mat2';
-import type { Mat2d } from './mat2d';
-import type { Mat3 } from './mat3';
-import type { Mat4 } from './mat4';
+import type { RMat2 } from './mat2';
+import type { RMat2d } from './mat2d';
+import type { RMat3 } from './mat3';
+import type { RMat4 } from './mat4';
 import * as scalar from './scalar';
 import type { Vec3 } from './vec3';
 
@@ -442,7 +442,7 @@ export function lagrange(out: Vec2, a: RVec2, b: RVec2, c: RVec2, t: number): Ve
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat2(out: Vec2, a: RVec2, m: Mat2): Vec2 {
+export function transformMat2(out: Vec2, a: RVec2, m: RMat2): Vec2 {
     const x = a[0];
     const y = a[1];
     out[0] = m[0] * x + m[2] * y;
@@ -458,7 +458,7 @@ export function transformMat2(out: Vec2, a: RVec2, m: Mat2): Vec2 {
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat2d(out: Vec2, a: RVec2, m: Mat2d): Vec2 {
+export function transformMat2d(out: Vec2, a: RVec2, m: RMat2d): Vec2 {
     const x = a[0];
     const y = a[1];
     out[0] = m[0] * x + m[2] * y + m[4];
@@ -475,7 +475,7 @@ export function transformMat2d(out: Vec2, a: RVec2, m: Mat2d): Vec2 {
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat3(out: Vec2, a: RVec2, m: Mat3): Vec2 {
+export function transformMat3(out: Vec2, a: RVec2, m: RMat3): Vec2 {
     const x = a[0];
     const y = a[1];
     out[0] = m[0] * x + m[3] * y + m[6];
@@ -493,7 +493,7 @@ export function transformMat3(out: Vec2, a: RVec2, m: Mat3): Vec2 {
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat4(out: Vec2, a: RVec2, m: Mat4): Vec2 {
+export function transformMat4(out: Vec2, a: RVec2, m: RMat4): Vec2 {
     const x = a[0];
     const y = a[1];
     out[0] = m[0] * x + m[4] * y + m[12];
