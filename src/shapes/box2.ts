@@ -1,6 +1,6 @@
 import { EPSILON } from '../core/scalar';
 import type { RVec2, Vec2 } from '../core/vec2';
-import type { Circle } from './circle';
+import type { RCircle } from './circle';
 
 /** An axis-aligned box in 2D space, as [minX, minY, maxX, maxY] */
 export type Box2 = [minX: number, minY: number, maxX: number, maxY: number];
@@ -323,7 +323,7 @@ export function intersectsBox2(boxA: RBox2, boxB: RBox2): boolean {
 /**
  * Test intersection between an axis-aligned bounding box and a circle.
  */
-export function intersectsCircle(box: RBox2, circle: Circle): boolean {
+export function intersectsCircle(box: RBox2, circle: RCircle): boolean {
     const { center, radius } = circle;
     const cx = center[0];
     const cy = center[1];

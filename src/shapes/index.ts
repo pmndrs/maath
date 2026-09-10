@@ -18,7 +18,7 @@ export * as sphere from './sphere';
 export type { RSphere, Sphere } from './sphere';
 
 export * as circle from './circle';
-export type { Circle } from './circle';
+export type { Circle, RCircle } from './circle';
 
 export * as segment2 from './segment2';
 
