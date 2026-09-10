@@ -1,9 +1,9 @@
-import type { Mat4 } from '../core/mat4';
-import type { Vec3 } from '../core/vec3';
-import type { Box3 } from './box3';
-import type { Plane3 } from './plane3';
+import type { RMat4 } from '../core/mat4';
+import type { RVec3, Vec3 } from '../core/vec3';
+import type { RBox3 } from './box3';
+import type { Plane3, RPlane3 } from './plane3';
 import * as plane3 from './plane3';
-import type { Sphere } from './sphere';
+import type { RSphere } from './sphere';
 
 /**
  * A view frustum, represented as the six bounding planes of a camera's view volume.
@@ -12,12 +12,18 @@ import type { Sphere } from './sphere';
  */
 export type Frustum = [Plane3, Plane3, Plane3, Plane3, Plane3, Plane3];
 
+/** A read-only view frustum */
+export type RFrustum = readonly [RPlane3, RPlane3, RPlane3, RPlane3, RPlane3, RPlane3];
+
 /**
  * The eight corners of a frustum, as returned by [[corners]].
  * Ordered near bottom-left, near top-left, near top-right, near bottom-right,
  * then the same four in the far plane.
  */
 export type FrustumCorners = [Vec3, Vec3, Vec3, Vec3, Vec3, Vec3, Vec3, Vec3];
+
+/** The eight read-only corners of a frustum */
+export type RFrustumCorners = readonly [RVec3, RVec3, RVec3, RVec3, RVec3, RVec3, RVec3, RVec3];
 
 /**
  * Creates a new frustum of zeroed planes.
@@ -39,7 +45,7 @@ export function create(): Frustum {
  * @param f - The frustum to clone
  * @returns A new frustum
  */
-export function clone(f: Frustum): Frustum {
+export function clone(f: RFrustum): Frustum {
     const p0 = f[0];
     const p1 = f[1];
     const p2 = f[2];
@@ -62,7 +68,7 @@ export function clone(f: Frustum): Frustum {
  * @param f - The source frustum
  * @returns The output frustum
  */
-export function copy(out: Frustum, f: Frustum): Frustum {
+export function copy(out: Frustum, f: RFrustum): Frustum {
     plane3.copy(out[0], f[0]);
     plane3.copy(out[1], f[1]);
     plane3.copy(out[2], f[2]);
@@ -83,7 +89,7 @@ export function copy(out: Frustum, f: Frustum): Frustum {
  * @param view - The view matrix
  * @returns The output frustum
  */
-export function setFromViewProjectionMatrixNO(out: Frustum, proj: Mat4, view: Mat4): Frustum {
+export function setFromViewProjectionMatrixNO(out: Frustum, proj: RMat4, view: RMat4): Frustum {
     const p0 = proj[0];
     const p1 = proj[1];
     const p2 = proj[2];
@@ -225,7 +231,7 @@ export function setFromViewProjectionMatrixNO(out: Frustum, proj: Mat4, view: Ma
  * @param view - The view matrix
  * @returns The output frustum
  */
-export function setFromViewProjectionMatrixZO(out: Frustum, proj: Mat4, view: Mat4): Frustum {
+export function setFromViewProjectionMatrixZO(out: Frustum, proj: RMat4, view: RMat4): Frustum {
     const p0 = proj[0];
     const p1 = proj[1];
     const p2 = proj[2];
@@ -370,7 +376,7 @@ export function setFromViewProjectionMatrixZO(out: Frustum, proj: Mat4, view: Ma
  * @param view - The view matrix
  * @returns The output frustum
  */
-export function setFromViewProjectionMatrixSides(out: Frustum, proj: Mat4, view: Mat4): Frustum {
+export function setFromViewProjectionMatrixSides(out: Frustum, proj: RMat4, view: RMat4): Frustum {
     // row2 (near/far) coefficients are not needed, so skip p2, p6, p10, p14
     const p0 = proj[0];
     const p1 = proj[1];
@@ -475,7 +481,7 @@ export function setFromViewProjectionMatrixSides(out: Frustum, proj: Mat4, view:
  * @param s - The sphere
  * @returns True if the sphere intersects or is inside the frustum
  */
-export function intersectsSphere(f: Frustum, s: Sphere): boolean {
+export function intersectsSphere(f: RFrustum, s: RSphere): boolean {
     const cx = s.center[0];
     const cy = s.center[1];
     const cz = s.center[2];
@@ -493,7 +499,7 @@ export function intersectsSphere(f: Frustum, s: Sphere): boolean {
  * @param s - The sphere
  * @returns True if the sphere intersects or is inside the frustum's sides
  */
-export function sidesIntersectsSphere(f: Frustum, s: Sphere): boolean {
+export function sidesIntersectsSphere(f: RFrustum, s: RSphere): boolean {
     const cx = s.center[0];
     const cy = s.center[1];
     const cz = s.center[2];
@@ -511,7 +517,7 @@ export function sidesIntersectsSphere(f: Frustum, s: Sphere): boolean {
  * @param box - The box
  * @returns True if the box intersects or is inside the frustum
  */
-export function intersectsBox3(f: Frustum, box: Box3): boolean {
+export function intersectsBox3(f: RFrustum, box: RBox3): boolean {
     const minX = box[0];
     const minY = box[1];
     const minZ = box[2];
@@ -537,7 +543,7 @@ export function intersectsBox3(f: Frustum, box: Box3): boolean {
  * @param box - The box
  * @returns True if the box intersects or is inside the frustum's sides
  */
-export function sidesIntersectsBox3(f: Frustum, box: Box3): boolean {
+export function sidesIntersectsBox3(f: RFrustum, box: RBox3): boolean {
     const minX = box[0];
     const minY = box[1];
     const minZ = box[2];
@@ -562,7 +568,7 @@ export function sidesIntersectsBox3(f: Frustum, box: Box3): boolean {
  * @param p - The point
  * @returns True if the point is inside or on the boundary of the frustum
  */
-export function containsPoint(f: Frustum, p: Vec3): boolean {
+export function containsPoint(f: RFrustum, p: RVec3): boolean {
     const x = p[0];
     const y = p[1];
     const z = p[2];
@@ -579,7 +585,7 @@ export function containsPoint(f: Frustum, p: Vec3): boolean {
  * @param p - The point
  * @returns True if the point is inside or on the boundary of the frustum's sides
  */
-export function sidesContainsPoint(f: Frustum, p: Vec3): boolean {
+export function sidesContainsPoint(f: RFrustum, p: RVec3): boolean {
     const x = p[0];
     const y = p[1];
     const z = p[2];
@@ -598,7 +604,7 @@ export function sidesContainsPoint(f: Frustum, p: Vec3): boolean {
  * @param direction - Ray direction (need not be normalized)
  * @returns True if the ray intersects the frustum
  */
-export function intersectsRay(f: Frustum, origin: Vec3, direction: Vec3): boolean {
+export function intersectsRay(f: RFrustum, origin: RVec3, direction: RVec3): boolean {
     const ox = origin[0];
     const oy = origin[1];
     const oz = origin[2];
@@ -636,7 +642,7 @@ export function intersectsRay(f: Frustum, origin: Vec3, direction: Vec3): boolea
  * @param direction - Ray direction (need not be normalized)
  * @returns True if the ray intersects the frustum's sides
  */
-export function sidesIntersectsRay(f: Frustum, origin: Vec3, direction: Vec3): boolean {
+export function sidesIntersectsRay(f: RFrustum, origin: RVec3, direction: RVec3): boolean {
     const ox = origin[0];
     const oy = origin[1];
     const oz = origin[2];
@@ -677,7 +683,7 @@ export function sidesIntersectsRay(f: Frustum, origin: Vec3, direction: Vec3): b
  * @param f - The frustum
  * @returns The output corners
  */
-export function corners(out: FrustumCorners, f: Frustum): FrustumCorners {
+export function corners(out: FrustumCorners, f: RFrustum): FrustumCorners {
     // near = f[4], far = f[5], left = f[0], right = f[1], bottom = f[2], top = f[3]
     plane3.intersect(out[0], f[4], f[0], f[2]);
     plane3.intersect(out[1], f[4], f[0], f[3]);
