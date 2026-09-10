@@ -27,7 +27,7 @@ export * as mat2d from './mat2d';
 export type { Mat2d, RMat2d } from './mat2d';
 
 export * as mat3 from './mat3';
-export type { Mat3 } from './mat3';
+export type { Mat3, RMat3 } from './mat3';
 
 export * as mat4 from './mat4';
 export type { Mat4 } from './mat4';
