@@ -30,7 +30,7 @@ export * as mat3 from './mat3';
 export type { Mat3, RMat3 } from './mat3';
 
 export * as mat4 from './mat4';
-export type { Mat4 } from './mat4';
+export type { Mat4, RMat4 } from './mat4';
 
 export * as spherical from './spherical';
 export type { Spherical } from './spherical';
