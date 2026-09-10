@@ -12,7 +12,7 @@ export * as obb3 from './obb3';
 export type { OBB3 } from './obb3';
 
 export * as plane3 from './plane3';
-export type { Plane3 } from './plane3';
+export type { Plane3, RPlane3 } from './plane3';
 
 export * as sphere from './sphere';
 export type { RSphere, Sphere } from './sphere';

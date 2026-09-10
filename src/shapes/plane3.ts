@@ -1,7 +1,7 @@
-import type { Mat4 } from '../core/mat4';
-import type { Vec3 } from '../core/vec3';
+import type { RMat4 } from '../core/mat4';
+import type { RVec3, Vec3 } from '../core/vec3';
 import * as vec3 from '../core/vec3';
-import type { Sphere } from './sphere';
+import type { RSphere } from './sphere';
 
 /**
  * A plane in 3D space
@@ -9,6 +9,9 @@ import type { Sphere } from './sphere';
  * constant - the signed distance from the origin to the plane.
  */
 export type Plane3 = { normal: Vec3; constant: number };
+
+/** A read-only plane in 3D space */
+export type RPlane3 = { readonly normal: RVec3; readonly constant: number };
 
 /**
  * Creates a new plane with normal (0, 1, 0) and constant 0
@@ -25,7 +28,7 @@ export function create(): Plane3 {
  * @param constant - The signed distance from origin
  * @returns The output plane
  */
-export function fromNormalAndConstant(out: Plane3, normal: Vec3, constant: number): Plane3 {
+export function fromNormalAndConstant(out: Plane3, normal: RVec3, constant: number): Plane3 {
     vec3.copy(out.normal, normal);
     out.constant = constant;
     return out;
@@ -38,7 +41,7 @@ export function fromNormalAndConstant(out: Plane3, normal: Vec3, constant: numbe
  * @param point - A point on the plane
  * @returns The output plane
  */
-export function fromNormalAndPoint(out: Plane3, normal: Vec3, point: Vec3): Plane3 {
+export function fromNormalAndPoint(out: Plane3, normal: RVec3, point: RVec3): Plane3 {
     vec3.copy(out.normal, normal);
     out.constant = -vec3.dot(normal, point);
     return out;
@@ -52,7 +55,7 @@ export function fromNormalAndPoint(out: Plane3, normal: Vec3, point: Vec3): Plan
  * @param c - Third point
  * @returns The output plane
  */
-export function fromCoplanarPoints(out: Plane3, a: Vec3, b: Vec3, c: Vec3): Plane3 {
+export function fromCoplanarPoints(out: Plane3, a: RVec3, b: RVec3, c: RVec3): Plane3 {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -90,7 +93,7 @@ export function fromCoplanarPoints(out: Plane3, a: Vec3, b: Vec3, c: Vec3): Plan
  * @param plane - The plane to clone
  * @returns A new plane
  */
-export function clone(plane: Plane3): Plane3 {
+export function clone(plane: RPlane3): Plane3 {
     return {
         normal: vec3.clone(plane.normal),
         constant: plane.constant,
@@ -103,7 +106,7 @@ export function clone(plane: Plane3): Plane3 {
  * @param plane - The source plane
  * @returns The output plane
  */
-export function copy(out: Plane3, plane: Plane3): Plane3 {
+export function copy(out: Plane3, plane: RPlane3): Plane3 {
     vec3.copy(out.normal, plane.normal);
     out.constant = plane.constant;
     return out;
@@ -115,7 +118,7 @@ export function copy(out: Plane3, plane: Plane3): Plane3 {
  * @param plane - The input plane
  * @returns The normalized plane
  */
-export function normalize(out: Plane3, plane: Plane3): Plane3 {
+export function normalize(out: Plane3, plane: RPlane3): Plane3 {
     const invMagnitude = 1.0 / vec3.length(plane.normal);
     vec3.scale(out.normal, plane.normal, invMagnitude);
     out.constant = plane.constant * invMagnitude;
@@ -128,7 +131,7 @@ export function normalize(out: Plane3, plane: Plane3): Plane3 {
  * @param plane - The input plane
  * @returns The negated plane
  */
-export function negate(out: Plane3, plane: Plane3): Plane3 {
+export function negate(out: Plane3, plane: RPlane3): Plane3 {
     vec3.negate(out.normal, plane.normal);
     out.constant = -plane.constant;
     return out;
@@ -141,7 +144,7 @@ export function negate(out: Plane3, plane: Plane3): Plane3 {
  * @param distance - The distance to offset (positive = in direction of normal)
  * @returns The offset plane
  */
-export function offset(out: Plane3, plane: Plane3, distance: number): Plane3 {
+export function offset(out: Plane3, plane: RPlane3, distance: number): Plane3 {
     vec3.copy(out.normal, plane.normal);
     out.constant = plane.constant - distance;
     return out;
@@ -153,7 +156,7 @@ export function offset(out: Plane3, plane: Plane3, distance: number): Plane3 {
  * @param point - The point
  * @returns The signed distance (positive = in direction of normal)
  */
-export function distanceToPoint(plane: Plane3, point: Vec3): number {
+export function distanceToPoint(plane: RPlane3, point: RVec3): number {
     return vec3.dot(plane.normal, point) + plane.constant;
 }
 
@@ -164,7 +167,7 @@ export function distanceToPoint(plane: Plane3, point: Vec3): number {
  * @param point - The point to project
  * @returns The projected point
  */
-export function projectPoint(out: Vec3, plane: Plane3, point: Vec3): Vec3 {
+export function projectPoint(out: Vec3, plane: RPlane3, point: RVec3): Vec3 {
     const distance = distanceToPoint(plane, point);
     return vec3.scaleAndAdd(out, point, plane.normal, -distance);
 }
@@ -176,7 +179,7 @@ export function projectPoint(out: Vec3, plane: Plane3, point: Vec3): Vec3 {
  * @param matrix - The transformation matrix
  * @returns The transformed plane
  */
-export function transform(out: Plane3, plane: Plane3, matrix: Mat4): Plane3 {
+export function transform(out: Plane3, plane: RPlane3, matrix: RMat4): Plane3 {
     // Transform the normal by the inverse transpose of the matrix
     // For a proper implementation, you'd need mat4.invert and proper normal transformation
     // This is a simplified version (rotation-only normal transform). fully scalar, no allocations.
@@ -224,7 +227,7 @@ export function transform(out: Plane3, plane: Plane3, matrix: Mat4): Plane3 {
  * @param sphere - The sphere
  * @returns True if they intersect
  */
-export function intersectsSphere(plane: Plane3, sphere: Sphere): boolean {
+export function intersectsSphere(plane: RPlane3, sphere: RSphere): boolean {
     const distance = Math.abs(distanceToPoint(plane, sphere.center));
     return distance <= sphere.radius;
 }
@@ -235,7 +238,7 @@ export function intersectsSphere(plane: Plane3, sphere: Sphere): boolean {
  * @param b - Second plane
  * @returns True if planes are exactly equal
  */
-export function exactEquals(a: Plane3, b: Plane3): boolean {
+export function exactEquals(a: RPlane3, b: RPlane3): boolean {
     return vec3.exactEquals(a.normal, b.normal) && a.constant === b.constant;
 }
 
@@ -247,7 +250,7 @@ export function exactEquals(a: Plane3, b: Plane3): boolean {
  * @param p3 - Third plane
  * @returns True if intersection exists, false if planes are degenerate or parallel
  */
-export function intersect(out: Vec3, p1: Plane3, p2: Plane3, p3: Plane3): boolean {
+export function intersect(out: Vec3, p1: RPlane3, p2: RPlane3, p3: RPlane3): boolean {
     // point = -(d1*(N2×N3) + d2*(N3×N1) + d3*(N1×N2)) / (N1·(N2×N3))
     // Cramer's rule: the three cross products are the columns of adj(M) and are reused
     // between the determinant and the numerator. fully scalar, zero allocations.
@@ -302,6 +305,6 @@ export function intersect(out: Vec3, p1: Plane3, p2: Plane3, p3: Plane3): boolea
  * @param b - Second plane
  * @returns True if planes are equal
  */
-export function equals(a: Plane3, b: Plane3): boolean {
+export function equals(a: RPlane3, b: RPlane3): boolean {
     return vec3.equals(a.normal, b.normal) && Math.abs(a.constant - b.constant) < 0.000001;
 }
