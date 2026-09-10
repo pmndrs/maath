@@ -1,4 +1,4 @@
-import type { Vec3 } from '../core/vec3';
+import type { RVec3, Vec3 } from '../core/vec3';
 import type { Box3 } from './box3';
 
 /**
@@ -9,7 +9,7 @@ import type { Box3 } from './box3';
  * @param c the third vertex of the triangle.
  * @returns the output box containing the axis-aligned bounding box of the triangle.
  */
-export function bounds(out: Box3, a: Vec3, b: Vec3, c: Vec3): Box3 {
+export function bounds(out: Box3, a: RVec3, b: RVec3, c: RVec3): Box3 {
     out[0] = Math.min(a[0], b[0], c[0]);
     out[1] = Math.min(a[1], b[1], c[1]);
     out[2] = Math.min(a[2], b[2], c[2]);
@@ -29,7 +29,7 @@ export function bounds(out: Box3, a: Vec3, b: Vec3, c: Vec3): Box3 {
  * @param c the third vertex of the triangle.
  * @returns the output vector containing the normal of the triangle.
  */
-export function normal(out: Vec3, a: Vec3, b: Vec3, c: Vec3): Vec3 {
+export function normal(out: Vec3, a: RVec3, b: RVec3, c: RVec3): Vec3 {
     const abx = b[0] - a[0];
     const aby = b[1] - a[1];
     const abz = b[2] - a[2];
@@ -61,7 +61,7 @@ export function normal(out: Vec3, a: Vec3, b: Vec3, c: Vec3): Vec3 {
  * @param c the third vertex of the triangle.
  * @returns the output vector containing the centroid of the triangle.
  */
-export function centroid(out: Vec3, a: Vec3, b: Vec3, c: Vec3): Vec3 {
+export function centroid(out: Vec3, a: RVec3, b: RVec3, c: RVec3): Vec3 {
     out[0] = (a[0] + b[0] + c[0]) / 3;
     out[1] = (a[1] + b[1] + c[1]) / 3;
     out[2] = (a[2] + b[2] + c[2]) / 3;
