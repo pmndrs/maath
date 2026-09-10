@@ -9,7 +9,7 @@ export * as box3 from './box3';
 export type { Box3, RBox3 } from './box3';
 
 export * as obb3 from './obb3';
-export type { OBB3 } from './obb3';
+export type { OBB3, ROBB3 } from './obb3';
 
 export * as plane3 from './plane3';
 export type { Plane3, RPlane3 } from './plane3';
