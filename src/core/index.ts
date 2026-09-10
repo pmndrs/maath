@@ -21,7 +21,7 @@ export * as quat2 from './quat2';
 export type { Quat2, RQuat2 } from './quat2';
 
 export * as mat2 from './mat2';
-export type { Mat2 } from './mat2';
+export type { Mat2, RMat2 } from './mat2';
 
 export * as mat2d from './mat2d';
 export type { Mat2d } from './mat2d';
