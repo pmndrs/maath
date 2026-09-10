@@ -12,7 +12,7 @@ export * as vec4 from './vec4';
 export type { RVec4, Vec4 } from './vec4';
 
 export * as euler from './euler';
-export type { Euler, EulerOrder } from './euler';
+export type { Euler, EulerOrder, REuler } from './euler';
 
 export * as quat from './quat';
 export type { Quat, RQuat } from './quat';

@@ -1,5 +1,5 @@
 import type { MutableArrayLike } from './arrays';
-import type { Euler, EulerOrder } from './euler';
+import type { Euler, EulerOrder, REuler } from './euler';
 import type { Mat3 } from './mat3';
 import * as mat3 from './mat3';
 import type { Mat4 } from './mat4';
@@ -481,7 +481,7 @@ export function fromMat4(out: Quat, m: Mat4): Quat {
  * @param euler the euler to create the quaternion from
  * @returns out
  */
-export function fromEuler(out: Quat, euler: Euler): Quat {
+export function fromEuler(out: Quat, euler: REuler): Quat {
     const x = euler[0];
     const y = euler[1];
     const z = euler[2];
