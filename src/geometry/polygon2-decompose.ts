@@ -27,7 +27,7 @@ function triArea(ax: number, ay: number, bx: number, by: number, cx: number, cy:
 }
 
 /** True if vertex `i` is reflex; delegates to the shared polygon2 primitive. */
-function isReflex(poly: number[], i: number): boolean {
+function isReflex(poly: readonly number[], i: number): boolean {
     return isReflexVertex(poly, poly.length >> 1, i);
 }
 
@@ -108,14 +108,14 @@ function segmentsIntersect(
 }
 
 /** Appends vertices `from..to-1` of `src` onto `dst` (both flat arrays). */
-function appendRange(dst: number[], src: number[], from: number, to: number): void {
+function appendRange(dst: number[], src: readonly number[], from: number, to: number): void {
     for (let k = from; k < to; k++) {
         dst.push(src[k * 2], src[k * 2 + 1]);
     }
 }
 
 /** Copies vertices `i..j` (cyclic) of `poly` into a new flat polygon. */
-function polygonCopy(poly: number[], i: number, j: number): number[] {
+function polygonCopy(poly: readonly number[], i: number, j: number): number[] {
     const s = poly.length >> 1;
     const out: number[] = [];
     if (i < j) {
@@ -128,7 +128,7 @@ function polygonCopy(poly: number[], i: number, j: number): number[] {
 }
 
 /** Writes a CCW copy of the first `n` vertices of `vertices` into `out`, reversing if needed. */
-function toCCW(out: number[], vertices: number[], n: number): number[] {
+function toCCW(out: number[], vertices: readonly number[], n: number): number[] {
     for (let k = 0; k < n * 2; k++) out[k] = vertices[k];
     if (signedArea(out, n) < 0) reverse(out, out, n);
     return out;
@@ -137,7 +137,7 @@ function toCCW(out: number[], vertices: number[], n: number): number[] {
 const QUICK_DECOMP_MAX_LEVEL = 100;
 
 /** True if vertices `a` and `b` can see each other without any edge blocking (segment test). */
-function canSeeSegment(poly: number[], a: number, b: number): boolean {
+function canSeeSegment(poly: readonly number[], a: number, b: number): boolean {
     const s = poly.length >> 1;
     const ax = poly[a * 2];
     const ay = poly[a * 2 + 1];
@@ -167,7 +167,7 @@ function canSeeSegment(poly: number[], a: number, b: number): boolean {
  * @param n number of vertices to read from `vertices`
  * @returns an array of convex sub-polygons, each a flat `[x0, y0, ...]` array (CCW)
  */
-export function decomposePolygon2Quick(vertices: number[], n: number): number[][] {
+export function decomposePolygon2Quick(vertices: readonly number[], n: number): number[][] {
     if (n < 3) return [];
 
     const out: number[][] = [];
@@ -338,7 +338,7 @@ export function decomposePolygon2Quick(vertices: number[], n: number): number[][
 }
 
 /** True if vertices `a` and `b` can see each other (visibility test, used by the quality decomposition). */
-function canSeeVisibility(poly: number[], a: number, b: number): boolean {
+function canSeeVisibility(poly: readonly number[], a: number, b: number): boolean {
     const s = poly.length >> 1;
     const ax = poly[a * 2];
     const ay = poly[a * 2 + 1];
@@ -377,7 +377,7 @@ function canSeeVisibility(poly: number[], a: number, b: number): boolean {
 }
 
 /** Finds the minimal set of cut edges (as [ax, ay, bx, by]) that convex-partition the polygon. */
-function getCutEdges(poly: number[]): number[][] {
+function getCutEdges(poly: readonly number[]): number[][] {
     const s = poly.length >> 1;
     let min: number[][] = [];
     let nDiags = Number.MAX_VALUE;
@@ -403,7 +403,7 @@ function getCutEdges(poly: number[]): number[][] {
 }
 
 /** Index of the vertex in `poly` with the exact coordinates (x, y), or -1. */
-function indexOfVertex(poly: number[], x: number, y: number): number {
+function indexOfVertex(poly: readonly number[], x: number, y: number): number {
     const s = poly.length >> 1;
     for (let k = 0; k < s; k++) {
         if (poly[k * 2] === x && poly[k * 2 + 1] === y) return k;
@@ -443,7 +443,7 @@ function sliceByEdges(poly: number[], cutEdges: number[][]): number[][] {
  * @param n number of vertices to read from `vertices`
  * @returns an array of convex sub-polygons, each a flat `[x0, y0, ...]` array (CCW)
  */
-export function decomposePolygon2Quality(vertices: number[], n: number): number[][] {
+export function decomposePolygon2Quality(vertices: readonly number[], n: number): number[][] {
     if (n < 3) return [];
     const poly = toCCW([], vertices, n);
     const edges = getCutEdges(poly);

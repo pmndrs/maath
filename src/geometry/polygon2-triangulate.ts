@@ -64,16 +64,24 @@ function intersectSeg(ax: number, ay: number, bx: number, by: number, cx: number
 }
 
 /** X of the original vertex referenced by working slot `s`. */
-const vX = (vertices: number[], indices: number[], s: number): number => vertices[(indices[s] & IDX_MASK) * 2];
+const vX = (vertices: readonly number[], indices: readonly number[], s: number): number => vertices[(indices[s] & IDX_MASK) * 2];
 /** Y of the original vertex referenced by working slot `s`. */
-const vY = (vertices: number[], indices: number[], s: number): number => vertices[(indices[s] & IDX_MASK) * 2 + 1];
+const vY = (vertices: readonly number[], indices: readonly number[], s: number): number =>
+    vertices[(indices[s] & IDX_MASK) * 2 + 1];
 
 /**
  * True if the segment between working slots `i` and `j` does not intersect any
  * polygon edge. `loose` uses proper-intersection only (tolerating collinear
  * contact), used as a fallback when no strict ear can be found.
  */
-function diagonalie(i: number, j: number, n: number, vertices: number[], indices: number[], loose: boolean): boolean {
+function diagonalie(
+    i: number,
+    j: number,
+    n: number,
+    vertices: readonly number[],
+    indices: readonly number[],
+    loose: boolean,
+): boolean {
     const d0x = vX(vertices, indices, i);
     const d0y = vY(vertices, indices, i);
     const d1x = vX(vertices, indices, j);
@@ -107,7 +115,14 @@ function diagonalie(i: number, j: number, n: number, vertices: number[], indices
 }
 
 /** True if the diagonal from slot `i` to slot `j` stays inside the cone at vertex `i`. */
-function inCone(i: number, j: number, n: number, vertices: number[], indices: number[], loose: boolean): boolean {
+function inCone(
+    i: number,
+    j: number,
+    n: number,
+    vertices: readonly number[],
+    indices: readonly number[],
+    loose: boolean,
+): boolean {
     const ax = vX(vertices, indices, i);
     const ay = vY(vertices, indices, i);
     const bx = vX(vertices, indices, j);
@@ -130,7 +145,14 @@ function inCone(i: number, j: number, n: number, vertices: number[], indices: nu
     return !(area2(ax, ay, bx, by, nx, ny) <= 0 && area2(bx, by, ax, ay, px, py) <= 0);
 }
 
-function diagonal(i: number, j: number, n: number, vertices: number[], indices: number[], loose: boolean): boolean {
+function diagonal(
+    i: number,
+    j: number,
+    n: number,
+    vertices: readonly number[],
+    indices: readonly number[],
+    loose: boolean,
+): boolean {
     return inCone(i, j, n, vertices, indices, loose) && diagonalie(i, j, n, vertices, indices, loose);
 }
 
@@ -148,7 +170,7 @@ function diagonal(i: number, j: number, n: number, vertices: number[], indices: 
  * @param n number of vertices to read from `vertices`
  * @returns the number of triangles written
  */
-export function triangulatePolygon2(out: number[], vertices: number[], n: number): number {
+export function triangulatePolygon2(out: number[], vertices: readonly number[], n: number): number {
     if (n < 3) return 0;
 
     // Order the working list so the resolved polygon winds clockwise, which is
