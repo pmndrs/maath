@@ -6,7 +6,7 @@ export * as vec2 from './vec2';
 export type { RVec2, Vec2 } from './vec2';
 
 export * as vec3 from './vec3';
-export type { Vec3 } from './vec3';
+export type { RVec3, Vec3 } from './vec3';
 
 export * as vec4 from './vec4';
 export type { Vec4 } from './vec4';
