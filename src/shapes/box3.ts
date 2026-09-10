@@ -1,11 +1,14 @@
 import { EPSILON } from '../core/scalar';
-import type { Mat4 } from '../core/mat4';
-import type { Vec3 } from '../core/vec3';
+import type { RMat4 } from '../core/mat4';
+import type { RVec3, Vec3 } from '../core/vec3';
 import type { Plane3 } from './plane3';
 import type { Sphere } from './sphere';
 
 /** A box in 3D space */
 export type Box3 = [minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number];
+
+/** A read-only 3D axis-aligned bounding box */
+export type RBox3 = Readonly<Box3>;
 
 /**
  * Create a new empty Box3 with "min" set to positive infinity and "max" set to negative infinity
@@ -27,7 +30,7 @@ export function create(): Box3 {
  * @param box - A Box3 to clone
  * @returns a clone of box
  */
-export function clone(box: Box3): Box3 {
+export function clone(box: RBox3): Box3 {
     return [box[0], box[1], box[2], box[3], box[4], box[5]];
 }
 
@@ -37,7 +40,7 @@ export function clone(box: Box3): Box3 {
  * @param box the input Box3
  * @returns the output Box3
  */
-export function copy(out: Box3, box: Box3): Box3 {
+export function copy(out: Box3, box: RBox3): Box3 {
     out[0] = box[0];
     out[1] = box[1];
     out[2] = box[2];
@@ -75,7 +78,7 @@ export function set(out: Box3, minX: number, minY: number, minZ: number, maxX: n
  * @param max - The maximum corner
  * @returns The updated Box3
  */
-export function setFromVectors(out: Box3, min: Vec3, max: Vec3): Box3 {
+export function setFromVectors(out: Box3, min: RVec3, max: RVec3): Box3 {
     out[0] = min[0];
     out[1] = min[1];
     out[2] = min[2];
@@ -91,7 +94,7 @@ export function setFromVectors(out: Box3, min: Vec3, max: Vec3): Box3 {
  * @param box - The input Box3
  * @returns The minimum corner
  */
-export function min(out: Vec3, box: Box3): Vec3 {
+export function min(out: Vec3, box: RBox3): Vec3 {
     out[0] = box[0];
     out[1] = box[1];
     out[2] = box[2];
@@ -104,7 +107,7 @@ export function min(out: Vec3, box: Box3): Vec3 {
  * @param box - The input Box3
  * @returns The maximum corner
  */
-export function max(out: Vec3, box: Box3): Vec3 {
+export function max(out: Vec3, box: RBox3): Vec3 {
     out[0] = box[3];
     out[1] = box[4];
     out[2] = box[5];
@@ -132,7 +135,7 @@ export function empty(out: Box3): Box3 {
  * @param b - The second box
  * @returns True if the boxes are equal, false otherwise
  */
-export function exactEquals(a: Box3, b: Box3): boolean {
+export function exactEquals(a: RBox3, b: RBox3): boolean {
     return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3] && a[4] === b[4] && a[5] === b[5];
 }
 
@@ -142,7 +145,7 @@ export function exactEquals(a: Box3, b: Box3): boolean {
  * @param b - The second box
  * @returns True if the boxes are equal, false otherwise
  */
-export function equals(a: Box3, b: Box3): boolean {
+export function equals(a: RBox3, b: RBox3): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -172,7 +175,7 @@ export function equals(a: Box3, b: Box3): boolean {
  * @param size - The size of the box
  * @returns The updated Box3
  */
-export function setFromCenterAndSize(out: Box3, center: Vec3, size: Vec3): Box3 {
+export function setFromCenterAndSize(out: Box3, center: RVec3, size: RVec3): Box3 {
     const hx = size[0] * 0.5;
     const hy = size[1] * 0.5;
     const hz = size[2] * 0.5;
@@ -192,7 +195,7 @@ export function setFromCenterAndSize(out: Box3, center: Vec3, size: Vec3): Box3 
  * @param point - The point to include
  * @returns The expanded Box3
  */
-export function expandByPoint(out: Box3, box: Box3, point: Vec3): Box3 {
+export function expandByPoint(out: Box3, box: RBox3, point: RVec3): Box3 {
     out[0] = Math.min(box[0], point[0]);
     out[1] = Math.min(box[1], point[1]);
     out[2] = Math.min(box[2], point[2]);
@@ -210,7 +213,7 @@ export function expandByPoint(out: Box3, box: Box3, point: Vec3): Box3 {
  * @param vector - The vector to expand by
  * @returns The expanded Box3
  */
-export function expandByExtents(out: Box3, box: Box3, vector: Vec3): Box3 {
+export function expandByExtents(out: Box3, box: RBox3, vector: RVec3): Box3 {
     out[0] = box[0] - vector[0];
     out[1] = box[1] - vector[1];
     out[2] = box[2] - vector[2];
@@ -228,7 +231,7 @@ export function expandByExtents(out: Box3, box: Box3, vector: Vec3): Box3 {
  * @param margin - The uniform margin to expand by
  * @returns The expanded Box3
  */
-export function expandByMargin(out: Box3, box: Box3, margin: number): Box3 {
+export function expandByMargin(out: Box3, box: RBox3, margin: number): Box3 {
     out[0] = box[0] - margin;
     out[1] = box[1] - margin;
     out[2] = box[2] - margin;
@@ -246,7 +249,7 @@ export function expandByMargin(out: Box3, box: Box3, margin: number): Box3 {
  * @param boxB - The second Box3
  * @returns The union Box3
  */
-export function union(out: Box3, boxA: Box3, boxB: Box3): Box3 {
+export function union(out: Box3, boxA: RBox3, boxB: RBox3): Box3 {
     out[0] = Math.min(boxA[0], boxB[0]);
     out[1] = Math.min(boxA[1], boxB[1]);
     out[2] = Math.min(boxA[2], boxB[2]);
@@ -262,7 +265,7 @@ export function union(out: Box3, boxA: Box3, boxB: Box3): Box3 {
  * @param box - The input Box3
  * @returns The center point
  */
-export function center(out: Vec3, box: Box3): Vec3 {
+export function center(out: Vec3, box: RBox3): Vec3 {
     out[0] = (box[0] + box[3]) * 0.5;
     out[1] = (box[1] + box[4]) * 0.5;
     out[2] = (box[2] + box[5]) * 0.5;
@@ -275,7 +278,7 @@ export function center(out: Vec3, box: Box3): Vec3 {
  * @param box - The input Box3
  * @returns The extents (distance from center to each face)
  */
-export function extents(out: Vec3, box: Box3): Vec3 {
+export function extents(out: Vec3, box: RBox3): Vec3 {
     out[0] = (box[3] - box[0]) * 0.5;
     out[1] = (box[4] - box[1]) * 0.5;
     out[2] = (box[5] - box[2]) * 0.5;
@@ -288,7 +291,7 @@ export function extents(out: Vec3, box: Box3): Vec3 {
  * @param box - The input Box3
  * @returns The size (width, height, depth)
  */
-export function size(out: Vec3, box: Box3): Vec3 {
+export function size(out: Vec3, box: RBox3): Vec3 {
     out[0] = box[3] - box[0];
     out[1] = box[4] - box[1];
     out[2] = box[5] - box[2];
@@ -300,7 +303,7 @@ export function size(out: Vec3, box: Box3): Vec3 {
  * @param box - The input Box3
  * @returns The surface area
  */
-export function surfaceArea(box: Box3): number {
+export function surfaceArea(box: RBox3): number {
     const width = box[3] - box[0];
     const height = box[4] - box[1];
     const depth = box[5] - box[2];
@@ -314,7 +317,7 @@ export function surfaceArea(box: Box3): number {
  * @param scale - The scale to apply (as a Vec3)
  * @returns The scaled Box3
  */
-export function scale(out: Box3, box: Box3, scale: Vec3): Box3 {
+export function scale(out: Box3, box: RBox3, scale: RVec3): Box3 {
     const minX = box[0] * scale[0];
     const maxX = box[3] * scale[0];
     const minY = box[1] * scale[1];
@@ -349,7 +352,7 @@ export function scale(out: Box3, box: Box3, scale: Vec3): Box3 {
  * @param mat - The 4x4 transformation matrix
  * @returns The transformed Box3
  */
-export function transformMat4(out: Box3, box: Box3, mat: Mat4): Box3 {
+export function transformMat4(out: Box3, box: RBox3, mat: RMat4): Box3 {
     const bMinX = box[0];
     const bMinY = box[1];
     const bMinZ = box[2];
@@ -410,7 +413,7 @@ export function transformMat4(out: Box3, box: Box3, mat: Mat4): Box3 {
  * @param point - The point to test
  * @returns true if the point is inside or on the boundary of the box
  */
-export function containsPoint(box: Box3, point: Vec3): boolean {
+export function containsPoint(box: RBox3, point: RVec3): boolean {
     return (
         point[0] >= box[0] &&
         point[0] <= box[3] &&
@@ -427,7 +430,7 @@ export function containsPoint(box: Box3, point: Vec3): boolean {
  * @param contained - The Box3 that might be contained
  * @returns true if the container Box3 completely contains the contained Box3
  */
-export function containsBox3(container: Box3, contained: Box3): boolean {
+export function containsBox3(container: RBox3, contained: RBox3): boolean {
     return (
         contained[0] >= container[0] &&
         contained[3] <= container[3] &&
@@ -441,7 +444,7 @@ export function containsBox3(container: Box3, contained: Box3): boolean {
 /**
  * Check whether two bounding boxes intersect
  */
-export function intersectsBox3(boxA: Box3, boxB: Box3): boolean {
+export function intersectsBox3(boxA: RBox3, boxB: RBox3): boolean {
     return (
         boxA[0] <= boxB[3] &&
         boxA[3] >= boxB[0] &&
@@ -465,7 +468,7 @@ export function intersectsBox3(boxA: Box3, boxB: Box3): boolean {
  * projections are needed. An all-zero cross axis (edge parallel to a box axis)
  * collapses every projection and the radius to 0, passing automatically.
  */
-export function intersectsTriangle3(box: Box3, a: Vec3, b: Vec3, c: Vec3): boolean {
+export function intersectsTriangle3(box: RBox3, a: RVec3, b: RVec3, c: RVec3): boolean {
     // Empty box quick reject
     if (box[0] > box[3] || box[1] > box[4] || box[2] > box[5]) return false;
 
@@ -574,7 +577,7 @@ export function intersectsTriangle3(box: Box3, a: Vec3, b: Vec3, c: Vec3): boole
 /**
  * Test intersection between axis-aligned bounding box and a sphere.
  */
-export function intersectsSphere(box: Box3, sphere: Sphere): boolean {
+export function intersectsSphere(box: RBox3, sphere: Sphere): boolean {
     const { center, radius } = sphere;
     const cx = center[0];
     const cy = center[1];
@@ -589,7 +592,7 @@ export function intersectsSphere(box: Box3, sphere: Sphere): boolean {
 /**
  * Test intersection between axis-aligned bounding box and plane.
  */
-export function intersectsPlane3(box: Box3, plane: Plane3): boolean {
+export function intersectsPlane3(box: RBox3, plane: Plane3): boolean {
     const { normal, constant } = plane;
     const nx = normal[0];
     const ny = normal[1];
