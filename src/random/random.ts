@@ -50,7 +50,7 @@ export function sign(random: RandomGenerator, plusChance = 0.5): number {
  * @param items the array to choose from
  * @throws if the array is empty
  */
-export function choice<T>(random: RandomGenerator, items: T[]): T {
+export function choice<T>(random: RandomGenerator, items: readonly T[]): T {
     if (items.length === 0) {
         throw new Error('cannot choose from an empty array');
     }
