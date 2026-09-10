@@ -4,6 +4,9 @@ import { linearToSrgb, srgbToLinear } from './colorspace';
 /** A hue-saturation-lightness color: [h, s, l], all in [0, 1] (hue wraps). */
 export type HSL = [hue: number, saturation: number, lightness: number];
 
+/** A read-only HSL color */
+export type RHSL = Readonly<HSL>;
+
 /** Create a new HSL initialized to [0, 0, 0] (black). */
 export function create(): HSL {
     return [0, 0, 0];
@@ -15,12 +18,12 @@ export function fromValues(h: number, s: number, l: number): HSL {
 }
 
 /** Create a new HSL that is a copy of `a`. */
-export function clone(a: HSL): HSL {
+export function clone(a: RHSL): HSL {
     return [a[0], a[1], a[2]];
 }
 
 /** Copy the values from `src` into `out`. Returns `out`. */
-export function copy(out: HSL, src: HSL): HSL {
+export function copy(out: HSL, src: RHSL): HSL {
     out[0] = src[0];
     out[1] = src[1];
     out[2] = src[2];
@@ -64,7 +67,7 @@ export function fromColor(out: HSL, c: RColor): HSL {
 }
 
 /** Write the linear Color of an HSL into `out`. Returns `out`. */
-export function toColor(out: Color, a: HSL): Color {
+export function toColor(out: Color, a: RHSL): Color {
     const h = a[0];
     const s = a[1];
     const l = a[2];
@@ -90,7 +93,7 @@ export function toColor(out: Color, a: HSL): Color {
  * the hue wheel (so e.g. 350°→10° passes through 0°, not all the way back).
  * Returns `out`.
  */
-export function lerp(out: HSL, a: HSL, b: HSL, t: number): HSL {
+export function lerp(out: HSL, a: RHSL, b: RHSL, t: number): HSL {
     let dh = b[0] - a[0];
     if (dh > 0.5) dh -= 1;
     else if (dh < -0.5) dh += 1;
@@ -108,7 +111,7 @@ export function lerp(out: HSL, a: HSL, b: HSL, t: number): HSL {
  * Offset `a` by (dh, ds, dl) into `out`: hue wraps into [0, 1), saturation and
  * lightness are clamped to [0, 1]. Returns `out`.
  */
-export function offset(out: HSL, a: HSL, dh: number, ds: number, dl: number): HSL {
+export function offset(out: HSL, a: RHSL, dh: number, ds: number, dl: number): HSL {
     let h = a[0] + dh;
     h -= Math.floor(h);
     out[0] = h;
