@@ -15,7 +15,7 @@ export * as euler from './euler';
 export type { Euler, EulerOrder } from './euler';
 
 export * as quat from './quat';
-export type { Quat } from './quat';
+export type { Quat, RQuat } from './quat';
 
 export * as quat2 from './quat2';
 export type { Quat2 } from './quat2';
