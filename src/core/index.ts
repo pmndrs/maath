@@ -9,7 +9,7 @@ export * as vec3 from './vec3';
 export type { RVec3, Vec3 } from './vec3';
 
 export * as vec4 from './vec4';
-export type { Vec4 } from './vec4';
+export type { RVec4, Vec4 } from './vec4';
 
 export * as euler from './euler';
 export type { Euler, EulerOrder } from './euler';
