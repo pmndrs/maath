@@ -1,5 +1,5 @@
-import type { Vec3 } from '../core/vec3';
-import type { Box3 } from './box3';
+import type { RVec3 } from '../core/vec3';
+import type { RBox3 } from './box3';
 
 /**
  * Result of a ray-triangle intersection test
@@ -39,12 +39,12 @@ export function createIntersectsTriangleResult(): IntersectsTriangleResult {
  */
 export function intersectsTriangle(
     out: IntersectsTriangleResult,
-    origin: Vec3,
-    direction: Vec3,
+    origin: RVec3,
+    direction: RVec3,
     length: number,
-    a: Vec3,
-    b: Vec3,
-    c: Vec3,
+    a: RVec3,
+    b: RVec3,
+    c: RVec3,
     backfaceCulling: boolean,
 ): void {
     // compute edge1 = b - a
@@ -165,7 +165,7 @@ export function intersectsTriangle(
  * @param aabb AABB to test against
  * @returns true if ray intersects the AABB, false otherwise
  */
-export function intersectsBox3(origin: Vec3, direction: Vec3, length: number, aabb: Box3): boolean {
+export function intersectsBox3(origin: RVec3, direction: RVec3, length: number, aabb: RBox3): boolean {
     let tmin = 0;
     let tmax = length;
 
