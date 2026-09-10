@@ -36,4 +36,4 @@ export * as spherical from './spherical';
 export type { RSpherical, Spherical } from './spherical';
 
 export * as polar from './polar';
-export type { Polar } from './polar';
+export type { Polar, RPolar } from './polar';
