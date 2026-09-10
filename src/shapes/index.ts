@@ -15,7 +15,7 @@ export * as plane3 from './plane3';
 export type { Plane3 } from './plane3';
 
 export * as sphere from './sphere';
-export type { Sphere } from './sphere';
+export type { RSphere, Sphere } from './sphere';
 
 export * as circle from './circle';
 export type { Circle } from './circle';
