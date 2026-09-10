@@ -1,10 +1,13 @@
 import type { Mat4 } from './mat4';
-import type { Quat } from './quat';
+import type { Quat, RQuat } from './quat';
 import { EPSILON } from './scalar';
-import type { Vec3 } from './vec3';
+import type { RVec3, Vec3 } from './vec3';
 
 /** A dual quaternion that represents both rotation and translation */
 export type Quat2 = [x: number, y: number, z: number, w: number, x2: number, y2: number, z2: number, w2: number];
+
+/** A read-only dual quaternion */
+export type RQuat2 = Readonly<Quat2>;
 
 /**
  * Creates a new identity dual quat
@@ -26,7 +29,7 @@ export function create(): Quat2 {
  * @returns new dual quaternion
  * @function
  */
-export function clone(a: Quat2): Quat2 {
+export function clone(a: RQuat2): Quat2 {
     return [a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]];
 }
 
@@ -103,7 +106,7 @@ export function fromRotationTranslationValues(
  * @returns dual quaternion receiving operation result
  * @function
  */
-export function fromRotationTranslation(out: Quat2, q: Quat, t: Vec3): Quat2 {
+export function fromRotationTranslation(out: Quat2, q: RQuat, t: RVec3): Quat2 {
     const ax = t[0] * 0.5;
     const ay = t[1] * 0.5;
     const az = t[2] * 0.5;
@@ -130,7 +133,7 @@ export function fromRotationTranslation(out: Quat2, q: Quat, t: Vec3): Quat2 {
  * @returns dual quaternion receiving operation result
  * @function
  */
-export function fromTranslation(out: Quat2, t: Vec3): Quat2 {
+export function fromTranslation(out: Quat2, t: RVec3): Quat2 {
     out[0] = 0;
     out[1] = 0;
     out[2] = 0;
@@ -150,7 +153,7 @@ export function fromTranslation(out: Quat2, t: Vec3): Quat2 {
  * @returns dual quaternion receiving operation result
  * @function
  */
-export function fromRotation(out: Quat2, q: Quat): Quat2 {
+export function fromRotation(out: Quat2, q: RQuat): Quat2 {
     out[0] = q[0];
     out[1] = q[1];
     out[2] = q[2];
@@ -242,7 +245,7 @@ export function fromMat4(out: Quat2, a: Mat4): Quat2 {
  * @returns out
  * @function
  */
-export function copy(out: Quat2, a: Quat2): Quat2 {
+export function copy(out: Quat2, a: RQuat2): Quat2 {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -316,7 +319,7 @@ export function set(
  * @param  a Dual Quaternion
  * @return real part
  */
-export function getReal(out: Quat, a: Quat2): Quat {
+export function getReal(out: Quat, a: RQuat2): Quat {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -330,7 +333,7 @@ export function getReal(out: Quat, a: Quat2): Quat {
  * @param  a Dual Quaternion
  * @return dual part
  */
-export function getDual(out: Quat, a: Quat2): Quat {
+export function getDual(out: Quat, a: RQuat2): Quat {
     out[0] = a[4];
     out[1] = a[5];
     out[2] = a[6];
@@ -345,7 +348,7 @@ export function getDual(out: Quat, a: Quat2): Quat {
  * @param q a quaternion representing the real part
  * @returns out
  */
-export function setReal(out: Quat2, q: Quat): Quat2 {
+export function setReal(out: Quat2, q: RQuat): Quat2 {
     out[0] = q[0];
     out[1] = q[1];
     out[2] = q[2];
@@ -361,7 +364,7 @@ export function setReal(out: Quat2, q: Quat): Quat2 {
  * @returns out
  * @function
  */
-export function setDual(out: Quat2, q: Quat): Quat2 {
+export function setDual(out: Quat2, q: RQuat): Quat2 {
     out[4] = q[0];
     out[5] = q[1];
     out[6] = q[2];
@@ -375,7 +378,7 @@ export function setDual(out: Quat2, q: Quat): Quat2 {
  * @param  a Dual Quaternion to be decomposed
  * @return translation
  */
-export function getTranslation(out: Vec3, a: Quat2): Vec3 {
+export function getTranslation(out: Vec3, a: RQuat2): Vec3 {
     const ax = a[4];
     const ay = a[5];
     const az = a[6];
@@ -398,7 +401,7 @@ export function getTranslation(out: Vec3, a: Quat2): Vec3 {
  * @param v vector to translate by
  * @returns out
  */
-export function translate(out: Quat2, a: Quat2, v: Vec3): Quat2 {
+export function translate(out: Quat2, a: RQuat2, v: RVec3): Quat2 {
     const ax1 = a[0];
     const ay1 = a[1];
     const az1 = a[2];
@@ -429,7 +432,7 @@ export function translate(out: Quat2, a: Quat2, v: Vec3): Quat2 {
  * @param rad how far should the rotation be
  * @returns out
  */
-export function rotateX(out: Quat2, a: Quat2, rad: number): Quat2 {
+export function rotateX(out: Quat2, a: RQuat2, rad: number): Quat2 {
     let bx = -a[0];
     let by = -a[1];
     let bz = -a[2];
@@ -473,7 +476,7 @@ export function rotateX(out: Quat2, a: Quat2, rad: number): Quat2 {
  * @param rad how far should the rotation be
  * @returns out
  */
-export function rotateY(out: Quat2, a: Quat2, rad: number): Quat2 {
+export function rotateY(out: Quat2, a: RQuat2, rad: number): Quat2 {
     let bx = -a[0];
     let by = -a[1];
     let bz = -a[2];
@@ -517,7 +520,7 @@ export function rotateY(out: Quat2, a: Quat2, rad: number): Quat2 {
  * @param rad how far should the rotation be
  * @returns out
  */
-export function rotateZ(out: Quat2, a: Quat2, rad: number): Quat2 {
+export function rotateZ(out: Quat2, a: RQuat2, rad: number): Quat2 {
     let bx = -a[0];
     let by = -a[1];
     let bz = -a[2];
@@ -561,7 +564,7 @@ export function rotateZ(out: Quat2, a: Quat2, rad: number): Quat2 {
  * @param q quaternion to rotate by
  * @returns out
  */
-export function rotateByQuatAppend(out: Quat2, a: Quat2, q: Quat): Quat2 {
+export function rotateByQuatAppend(out: Quat2, a: RQuat2, q: RQuat): Quat2 {
     const qx = q[0];
     const qy = q[1];
     const qz = q[2];
@@ -594,7 +597,7 @@ export function rotateByQuatAppend(out: Quat2, a: Quat2, q: Quat): Quat2 {
  * @param a the dual quaternion to rotate
  * @returns out
  */
-export function rotateByQuatPrepend(out: Quat2, q: Quat, a: Quat2): Quat2 {
+export function rotateByQuatPrepend(out: Quat2, q: RQuat, a: RQuat2): Quat2 {
     const qx = q[0];
     const qy = q[1];
     const qz = q[2];
@@ -628,7 +631,7 @@ export function rotateByQuatPrepend(out: Quat2, q: Quat, a: Quat2): Quat2 {
  * @param rad how far the rotation should be
  * @returns out
  */
-export function rotateAroundAxis(out: Quat2, a: Quat2, axis: Vec3, rad: number): Quat2 {
+export function rotateAroundAxis(out: Quat2, a: RQuat2, axis: RVec3, rad: number): Quat2 {
     //Special case for rad = 0
     if (Math.abs(rad) < EPSILON) {
         return copy(out, a);
@@ -672,7 +675,7 @@ export function rotateAroundAxis(out: Quat2, a: Quat2, axis: Vec3, rad: number):
  * @returns out
  * @function
  */
-export function add(out: Quat2, a: Quat2, b: Quat2): Quat2 {
+export function add(out: Quat2, a: RQuat2, b: RQuat2): Quat2 {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -692,7 +695,7 @@ export function add(out: Quat2, a: Quat2, b: Quat2): Quat2 {
  * @param b the second operand
  * @returns out
  */
-export function multiply(out: Quat2, a: Quat2, b: Quat2): Quat2 {
+export function multiply(out: Quat2, a: RQuat2, b: RQuat2): Quat2 {
     const ax0 = a[0];
     const ay0 = a[1];
     const az0 = a[2];
@@ -735,7 +738,7 @@ export const mul = multiply;
  * @returns out
  * @function
  */
-export function scale(out: Quat2, a: Quat2, b: number): Quat2 {
+export function scale(out: Quat2, a: RQuat2, b: number): Quat2 {
     out[0] = a[0] * b;
     out[1] = a[1] * b;
     out[2] = a[2] * b;
@@ -754,7 +757,7 @@ export function scale(out: Quat2, a: Quat2, b: number): Quat2 {
  * @param b the second operand
  * @returns dot product of a and b
  */
-export function dot(a: Quat2, b: Quat2): number {
+export function dot(a: RQuat2, b: RQuat2): number {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 }
 
@@ -768,7 +771,7 @@ export function dot(a: Quat2, b: Quat2): number {
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function lerp(out: Quat2, a: Quat2, b: Quat2, t: number): Quat2 {
+export function lerp(out: Quat2, a: RQuat2, b: RQuat2, t: number): Quat2 {
     const mt = 1 - t;
     // dot of the real (rotation) parts, matching quat2.dot
     if (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] < 0) t = -t;
@@ -792,7 +795,7 @@ export function lerp(out: Quat2, a: Quat2, b: Quat2, t: number): Quat2 {
  * @param a dual quat to calculate inverse of
  * @returns out
  */
-export function invert(out: Quat2, a: Quat2): Quat2 {
+export function invert(out: Quat2, a: RQuat2): Quat2 {
     const sqlen = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
     out[0] = -a[0] / sqlen;
     out[1] = -a[1] / sqlen;
@@ -813,7 +816,7 @@ export function invert(out: Quat2, a: Quat2): Quat2 {
  * @param a quat to calculate conjugate of
  * @returns out
  */
-export function conjugate(out: Quat2, a: Quat2): Quat2 {
+export function conjugate(out: Quat2, a: RQuat2): Quat2 {
     out[0] = -a[0];
     out[1] = -a[1];
     out[2] = -a[2];
@@ -831,7 +834,7 @@ export function conjugate(out: Quat2, a: Quat2): Quat2 {
  * @param a dual quat to calculate length of
  * @returns length of a
  */
-export function length(a: Quat2): number {
+export function length(a: RQuat2): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -851,7 +854,7 @@ export const len = length;
  * @param a dual quat to calculate squared length of
  * @returns squared length of a
  */
-export function squaredLength(a: Quat2): number {
+export function squaredLength(a: RQuat2): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -873,7 +876,7 @@ export const sqrLen = squaredLength;
  * @returns out
  * @function
  */
-export function normalize(out: Quat2, a: Quat2): Quat2 {
+export function normalize(out: Quat2, a: RQuat2): Quat2 {
     let magnitude = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
     if (magnitude > 0) {
         magnitude = Math.sqrt(magnitude);
@@ -909,7 +912,7 @@ export function normalize(out: Quat2, a: Quat2): Quat2 {
  * @param a dual quaternion to represent as a string
  * @returns string representation of the dual quat
  */
-export function str(a: Quat2): string {
+export function str(a: RQuat2): string {
     return `quat2(${a[0]}, ${a[1]}, ${a[2]}, ${a[3]}, ${a[4]}, ${a[5]}, ${a[6]}, ${a[7]})`;
 }
 
@@ -920,7 +923,7 @@ export function str(a: Quat2): string {
  * @param b the second dual quaternion.
  * @returns true if the dual quaternions are equal, false otherwise.
  */
-export function exactEquals(a: Quat2, b: Quat2): boolean {
+export function exactEquals(a: RQuat2, b: RQuat2): boolean {
     return (
         a[0] === b[0] &&
         a[1] === b[1] &&
@@ -940,7 +943,7 @@ export function exactEquals(a: Quat2, b: Quat2): boolean {
  * @param b the second dual quat.
  * @returns true if the dual quats are equal, false otherwise.
  */
-export function equals(a: Quat2, b: Quat2): boolean {
+export function equals(a: RQuat2, b: RQuat2): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];

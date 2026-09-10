@@ -18,7 +18,7 @@ export * as quat from './quat';
 export type { Quat, RQuat } from './quat';
 
 export * as quat2 from './quat2';
-export type { Quat2 } from './quat2';
+export type { Quat2, RQuat2 } from './quat2';
 
 export * as mat2 from './mat2';
 export type { Mat2 } from './mat2';
