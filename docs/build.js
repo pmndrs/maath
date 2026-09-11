@@ -229,6 +229,7 @@ const API_GROUP_DESCRIPTIONS = {
   "math/noise": "Perlin, simplex & worley noise, plus fractal helpers",
   "math/color": "Color & colorspace utilities",
   "math/ik": "Inverse kinematics",
+  "math/three": "Zero-copy bridge to three.js: extend a scene so math drives its transforms",
 };
 
 // the generated full reference lives in a separate file so the README stays a

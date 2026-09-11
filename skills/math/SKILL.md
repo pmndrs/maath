@@ -51,6 +51,7 @@ export function getWorldPosition(out: Vec3, world: World, i: number): Vec3 { /* 
 - Compare squared distances; reach for `squaredLength` / `squaredDistance` over their square-rooted pairs.
 - Integers in the range [-2^30, 2^30) are stored in the pointer itself (V8 Smi), with no heap object. Use them for indices, handles, packed IDs, bitmasks, and counts.
 - Where possible avoid plain array element kind transitions (small integers, doubles, array with holes). Especially avoid unnecessary SMI or PACKED_DOUBLE to holey transitions when holey arrays are not desired.
+- **Keep hot-path storage consistent.** Mixing plain arrays and typed arrays in the same math function can make element accesses polymorphic and reduce optimization. The tuple types help enforce this consistency. Casting a `Float32Array` to `Vec3` doesn't change its runtime storage. Marshal at boundaries when needed to keep the hot path monomorphic.
 - Don't assume a typed array is faster. A packed plain array is already unboxed and can still grow. Typed arrays buy footprint, a fixed layout, and zero-copy interop with workers, Wasm, and the GPU; they cost a capacity fixed up front and, for `Float32Array`, a narrowing conversion on every write. Choose one for interop or memory, not on a hunch about speed.
 - In a **library**, annotate module-level factory calls `/* @__PURE__ */` so a consumer's bundler can drop the scratch when the function is tree-shaken out. Application code does not need it.
 
@@ -60,81 +61,57 @@ Deliver the implementation with its assumptions, complexity, edge cases, and foc
 
 Marshal in, compute, marshal out — and allocate on neither crossing. Keep the scratch `math` types at module scope, fill them from the other library's values, run the algorithm as plain `math` calls, then write the results back. The seam is a few lines at each end of a function; everything between them is flat data.
 
-- **A `Float32Array` is not a `Vec3`.** The tuple types don't accept one, and casting past that gets you a value the rest of the codebase can't rely on. Marshal across the boundary instead.
 - **Marshal with whatever writes into memory you already own.** For flat buffers — an instanced attribute, a packed particle array — that's `vec3.fromBuffer(out, buffer, i * 3)` and `vec3.toBuffer(buffer, v, i * 3)` (also on `vec2`, `vec4`, `quat`), or `buffer.set(m, i * 16)` for a whole matrix, since `TypedArray.set` takes any array-like.
 - **State that crosses a worker, Wasm, or GPU boundary lives in a typed array from the start.** A plain-array `Vec3` can't be transferred or shared, so back the long-lived data with `Float32Array` / `SharedArrayBuffer` at creation and marshal at the edges.
 
 ### three.js
 
-`Vector3`, `Quaternion`, `Matrix4`, and `Euler` all marshal through `toArray(target)` and `fromArray(source)`, and the component order matches `math`'s in every case. Always pass your scratch to `toArray` — called bare, it allocates a fresh array.
+Choose the integration based on who drives the hot path:
 
-**Orbit camera.** The camera's state is a `Spherical` and a target the caller owns; three only ever sees the resulting position.
+- **Extend** when math updates many objects each frame. Use `extend(scene)` from `math/three` and cached transform records.
+- **Don't extend** when mostly using Three's transform API, frequently rebuilding the hierarchy, or only needing occasional math. Keep stock objects and marshal through reusable scratch.
+
+The `math/three` helpers for matrices, instancing, attributes, and culling work either way. See `API.md` for their usage. Instance matrix views use float32 storage, so keep simulation state separate.
+
+**What gets faster.** The tuple path can substantially speed up CPU transform updates by eliminating copies between math and Three, deferring quaternion-to-Euler conversion until Euler angles are read, and composing local matrices and propagating world matrices in a flat pass. Gains depend on the workload, so compare representative frames.
+
+**Use the hot path.** For objects already in `scene`, extend and cache records at setup. Mutate their tuples directly in the loop. `rotation` is a quaternion.
 
 ```ts
-import { spherical, vec3 } from 'math';
-import type { Camera } from 'three';
+import { quat, vec3, type Vec3 } from 'math';
+import { extend, transformOf } from 'math/three';
 
-const MIN_RADIUS = 1;
-const MAX_RADIUS = 100;
+extend(scene);
+const transforms = objects.map(transformOf);
 
-export function createOrbit() {
-    return { target: vec3.create(), orbit: spherical.fromValues(10, 0, Math.PI / 3) };
-}
-export type Orbit = ReturnType<typeof createOrbit>;
-
-const _orbit_position = vec3.create();
-
-/** Apply a drag in radians and a zoom factor, then place the camera. */
-export function updateOrbit(camera: Camera, orbit: Orbit, dragX: number, dragY: number, zoom: number): void {
-    const s = orbit.orbit;
-
-    s[0] = Math.min(MAX_RADIUS, Math.max(MIN_RADIUS, s[0] * zoom));
-    s[1] -= dragX;
-    s[2] -= dragY;
-    spherical.makeSafe(s, s); // keeps phi off the poles, where the frame degenerates
-
-    vec3.add(_orbit_position, spherical.toVec3(_orbit_position, s), orbit.target);
-
-    camera.position.fromArray(_orbit_position);
-    camera.lookAt(orbit.target[0], orbit.target[1], orbit.target[2]);
+function step(velocities: Vec3[], delta: number): void {
+    for (let i = 0; i < transforms.length; i++) {
+        const t = transforms[i];
+        vec3.scaleAndAdd(t.position, t.position, velocities[i], delta);
+        quat.rotateY(t.rotation, t.rotation, delta);
+    }
 }
 ```
 
-**Camera-relative character move.** Takes the yaw straight from that orbit state, so stick-forward means away-from-camera.
+Rendering propagates matrices automatically. Call `propagate(scene)` once before queries that need current world matrices. Cache records only while objects stay extended.
+
+**What costs more.** Extending allocates records and replaces transform properties with views. Adding, removing, or reparenting objects requires rebuilding the flat traversal. Three-style property access goes through accessors, and Euler reads check for quaternion changes and derive angles when needed. Heavy use of these paths can offset the tuple gains. Custom `updateMatrixWorld` overrides retain their own traversal.
+
+**Without extension.** This performs the same update on stock Three objects. Allocate scratch once, marshal in, compute, and marshal out. Always pass a target to `toArray` to avoid allocation.
 
 ```ts
 import { quat, vec3, type Vec3 } from 'math';
 import type { Object3D } from 'three';
 
-const UP: Vec3 = [0, 1, 0];
-const TURN_RATE = 15;
-const DEADZONE_SQ = 0.01;
+const _step_position = vec3.create();
+const _step_rotation = quat.create();
 
-const _move_yaw = quat.create();
-const _move_facing = quat.create();
-const _move_rotation = quat.create();
-const _move_position = vec3.create();
-const _move_direction = vec3.create();
-
-/** Move `character` by `inputX` / `inputZ` (a stick, in [-1, 1]) relative to a camera at `yaw`. */
-export function moveCharacter(character: Object3D, inputX: number, inputZ: number, yaw: number, speed: number, delta: number): void {
-    vec3.set(_move_direction, inputX, 0, inputZ);
-    if (vec3.squaredLength(_move_direction) < DEADZONE_SQ) return; // idle: leave the facing alone
-
-    // swing the stick into camera space, then step along it
-    quat.setAxisAngle(_move_yaw, UP, yaw);
-    vec3.transformQuat(_move_direction, _move_direction, _move_yaw);
-    vec3.normalize(_move_direction, _move_direction);
-
-    character.position.toArray(_move_position);
-    vec3.scaleAndAdd(_move_position, _move_position, _move_direction, speed * delta);
-
-    // turn toward travel, rather than snapping
-    character.quaternion.toArray(_move_rotation);
-    quat.setAxisAngle(_move_facing, UP, Math.atan2(_move_direction[0], _move_direction[2]));
-    quat.slerp(_move_rotation, _move_rotation, _move_facing, 1 - TURN_RATE ** -delta);
-
-    character.position.fromArray(_move_position);
-    character.quaternion.fromArray(_move_rotation);
+function step(object: Object3D, velocity: Vec3, delta: number): void {
+    object.position.toArray(_step_position);
+    object.quaternion.toArray(_step_rotation);
+    vec3.scaleAndAdd(_step_position, _step_position, velocity, delta);
+    quat.rotateY(_step_rotation, _step_rotation, delta);
+    object.position.fromArray(_step_position);
+    object.quaternion.fromArray(_step_rotation);
 }
 ```

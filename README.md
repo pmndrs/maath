@@ -23,6 +23,7 @@ math is a collection of math helpers for graphics and simulations.
 | [`math/noise`](API.md#api-math-noise) | Perlin, simplex & worley noise, plus fractal helpers | [`perlin2d`](API.md#api-math-noise-perlin2d) [`perlin3d`](API.md#api-math-noise-perlin3d) [`simplex2d`](API.md#api-math-noise-simplex2d) [`simplex3d`](API.md#api-math-noise-simplex3d) [`simplex4d`](API.md#api-math-noise-simplex4d) [`worley2d`](API.md#api-math-noise-worley2d) [`worley3d`](API.md#api-math-noise-worley3d) [`fbm`](API.md#fbm) [`ridged`](API.md#ridged) [`billow`](API.md#billow) [`domainWarp2`](API.md#domainwarp2) [`domainWarp3`](API.md#domainwarp3) [`curl2`](API.md#curl2) [`curl3`](API.md#curl3) |
 | [`math/color`](API.md#api-math-color) | Color & colorspace utilities | [`color`](API.md#api-math-color-color) [`colorspace`](API.md#api-math-color-colorspace) [`hsl`](API.md#api-math-color-hsl) |
 | [`math/ik`](API.md#api-math-ik) | Inverse kinematics | [`fabrik2`](API.md#api-math-ik-fabrik2) [`fabrik3`](API.md#api-math-ik-fabrik3) |
+| [`math/three`](API.md#api-math-three) | Zero-copy bridge to three.js: extend a scene so math drives its transforms | [`extend`](API.md#extend) [`extendObject`](API.md#extendobject) [`propagate`](API.md#propagate) [`release`](API.md#release) [`transformOf`](API.md#transformof) [`unextend`](API.md#unextend) [`claimTransform`](API.md#claimtransform) [`frustumFromCamera`](API.md#frustumfromcamera) [`instanceMat4Views`](API.md#instancemat4views) [`mat4Of`](API.md#mat4of) [`quatFromQuaternion`](API.md#quatfromquaternion) [`quatToQuaternion`](API.md#quattoquaternion) [`sphereToWorld`](API.md#spheretoworld) [`vec3FromAttribute`](API.md#vec3fromattribute) [`vec3FromVector3`](API.md#vec3fromvector3) [`vec3ToAttribute`](API.md#vec3toattribute) [`vec3ToVector3`](API.md#vec3tovector3) |
 
 
 ## Quick Start
@@ -48,7 +49,7 @@ import { simplex3d } from 'math/noise'; // perlin / simplex noise
 import { mulberry32 } from 'math/random'; // seeded rng
 import { easing, spring } from 'math/time'; // easings & springs
 import { fabrik2, fabrik3 } from 'math/ik'; // inverse kinematics
-// also: math/color, math/geometry, math/shapes — import only what you use
+// Other modules: math/color, math/geometry, math/shapes and math/three.
 ```
 
 ## Examples
