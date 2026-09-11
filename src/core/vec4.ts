@@ -1,10 +1,13 @@
 import type { MutableArrayLike } from './arrays';
-import type { Mat4 } from './mat4';
-import type { Quat } from './quat';
+import type { RMat4 } from './mat4';
+import type { RQuat } from './quat';
 import * as scalar from './scalar';
 
 /** A 4D vector */
 export type Vec4 = [x: number, y: number, z: number, w: number];
+
+/** A read-only 4D vector */
+export type RVec4 = Readonly<Vec4>;
 
 /**
  * Creates a new, empty vec4
@@ -21,7 +24,7 @@ export function create(): Vec4 {
  * @param a vector to clone
  * @returns a new 4D vector
  */
-export function clone(a: Vec4): Vec4 {
+export function clone(a: RVec4): Vec4 {
     return [a[0], a[1], a[2], a[3]];
 }
 
@@ -45,7 +48,7 @@ export function fromValues(x: number, y: number, z: number, w: number): Vec4 {
  * @param a the source vector
  * @returns out
  */
-export function copy(out: Vec4, a: Vec4): Vec4 {
+export function copy(out: Vec4, a: RVec4): Vec4 {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -93,7 +96,7 @@ export function fromBuffer(out: Vec4, buffer: ArrayLike<number>, startIndex: num
  * @param startIndex The starting index in the buffer
  * @returns The output buffer
  */
-export function toBuffer(outBuffer: MutableArrayLike<number>, vec: Vec4, startIndex: number): MutableArrayLike<number> {
+export function toBuffer(outBuffer: MutableArrayLike<number>, vec: RVec4, startIndex: number): MutableArrayLike<number> {
     outBuffer[startIndex] = vec[0];
     outBuffer[startIndex + 1] = vec[1];
     outBuffer[startIndex + 2] = vec[2];
@@ -109,7 +112,7 @@ export function toBuffer(outBuffer: MutableArrayLike<number>, vec: Vec4, startIn
  * @param b the second operand
  * @returns out
  */
-export function add(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function add(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -125,7 +128,7 @@ export function add(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param b the second operand
  * @returns out
  */
-export function subtract(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function subtract(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -141,7 +144,7 @@ export function subtract(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param b the second operand
  * @returns out
  */
-export function multiply(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function multiply(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = a[0] * b[0];
     out[1] = a[1] * b[1];
     out[2] = a[2] * b[2];
@@ -157,7 +160,7 @@ export function multiply(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param b the second operand
  * @returns out
  */
-export function divide(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function divide(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = a[0] / b[0];
     out[1] = a[1] / b[1];
     out[2] = a[2] / b[2];
@@ -172,7 +175,7 @@ export function divide(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param a vector to ceil
  * @returns out
  */
-export function ceil(out: Vec4, a: Vec4): Vec4 {
+export function ceil(out: Vec4, a: RVec4): Vec4 {
     out[0] = Math.ceil(a[0]);
     out[1] = Math.ceil(a[1]);
     out[2] = Math.ceil(a[2]);
@@ -187,7 +190,7 @@ export function ceil(out: Vec4, a: Vec4): Vec4 {
  * @param a vector to floor
  * @returns out
  */
-export function floor(out: Vec4, a: Vec4): Vec4 {
+export function floor(out: Vec4, a: RVec4): Vec4 {
     out[0] = Math.floor(a[0]);
     out[1] = Math.floor(a[1]);
     out[2] = Math.floor(a[2]);
@@ -203,7 +206,7 @@ export function floor(out: Vec4, a: Vec4): Vec4 {
  * @param b the second operand
  * @returns out
  */
-export function min(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function min(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = Math.min(a[0], b[0]);
     out[1] = Math.min(a[1], b[1]);
     out[2] = Math.min(a[2], b[2]);
@@ -219,7 +222,7 @@ export function min(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param b the second operand
  * @returns out
  */
-export function max(out: Vec4, a: Vec4, b: Vec4): Vec4 {
+export function max(out: Vec4, a: RVec4, b: RVec4): Vec4 {
     out[0] = Math.max(a[0], b[0]);
     out[1] = Math.max(a[1], b[1]);
     out[2] = Math.max(a[2], b[2]);
@@ -234,7 +237,7 @@ export function max(out: Vec4, a: Vec4, b: Vec4): Vec4 {
  * @param a vector to round
  * @returns out
  */
-export function round(out: Vec4, a: Vec4): Vec4 {
+export function round(out: Vec4, a: RVec4): Vec4 {
     out[0] = scalar.round(a[0]);
     out[1] = scalar.round(a[1]);
     out[2] = scalar.round(a[2]);
@@ -250,7 +253,7 @@ export function round(out: Vec4, a: Vec4): Vec4 {
  * @param b amount to scale the vector by
  * @returns out
  */
-export function scale(out: Vec4, a: Vec4, b: number): Vec4 {
+export function scale(out: Vec4, a: RVec4, b: number): Vec4 {
     out[0] = a[0] * b;
     out[1] = a[1] * b;
     out[2] = a[2] * b;
@@ -267,7 +270,7 @@ export function scale(out: Vec4, a: Vec4, b: number): Vec4 {
  * @param scale the amount to scale b by before adding
  * @returns out
  */
-export function scaleAndAdd(out: Vec4, a: Vec4, b: Vec4, scale: number): Vec4 {
+export function scaleAndAdd(out: Vec4, a: RVec4, b: RVec4, scale: number): Vec4 {
     out[0] = a[0] + b[0] * scale;
     out[1] = a[1] + b[1] * scale;
     out[2] = a[2] + b[2] * scale;
@@ -282,7 +285,7 @@ export function scaleAndAdd(out: Vec4, a: Vec4, b: Vec4, scale: number): Vec4 {
  * @param b the second operand
  * @returns distance between a and b
  */
-export function distance(a: Vec4, b: Vec4): number {
+export function distance(a: RVec4, b: RVec4): number {
     const x = b[0] - a[0];
     const y = b[1] - a[1];
     const z = b[2] - a[2];
@@ -297,7 +300,7 @@ export function distance(a: Vec4, b: Vec4): number {
  * @param b the second operand
  * @returns squared distance between a and b
  */
-export function squaredDistance(a: Vec4, b: Vec4): number {
+export function squaredDistance(a: RVec4, b: RVec4): number {
     const x = b[0] - a[0];
     const y = b[1] - a[1];
     const z = b[2] - a[2];
@@ -311,7 +314,7 @@ export function squaredDistance(a: Vec4, b: Vec4): number {
  * @param a vector to calculate length of
  * @returns length of a
  */
-export function length(a: Vec4): number {
+export function length(a: RVec4): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -325,7 +328,7 @@ export function length(a: Vec4): number {
  * @param a vector to calculate squared length of
  * @returns squared length of a
  */
-export function squaredLength(a: Vec4): number {
+export function squaredLength(a: RVec4): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -340,7 +343,7 @@ export function squaredLength(a: Vec4): number {
  * @param a vector to negate
  * @returns out
  */
-export function negate(out: Vec4, a: Vec4): Vec4 {
+export function negate(out: Vec4, a: RVec4): Vec4 {
     out[0] = -a[0];
     out[1] = -a[1];
     out[2] = -a[2];
@@ -355,7 +358,7 @@ export function negate(out: Vec4, a: Vec4): Vec4 {
  * @param a vector to invert
  * @returns out
  */
-export function inverse(out: Vec4, a: Vec4): Vec4 {
+export function inverse(out: Vec4, a: RVec4): Vec4 {
     out[0] = 1.0 / a[0];
     out[1] = 1.0 / a[1];
     out[2] = 1.0 / a[2];
@@ -370,7 +373,7 @@ export function inverse(out: Vec4, a: Vec4): Vec4 {
  * @param a vector to normalize
  * @returns out
  */
-export function normalize(out: Vec4, a: Vec4): Vec4 {
+export function normalize(out: Vec4, a: RVec4): Vec4 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -393,7 +396,7 @@ export function normalize(out: Vec4, a: Vec4): Vec4 {
  * @param b the second operand
  * @returns dot product of a and b
  */
-export function dot(a: Vec4, b: Vec4): number {
+export function dot(a: RVec4, b: RVec4): number {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 }
 
@@ -406,7 +409,7 @@ export function dot(a: Vec4, b: Vec4): number {
  * @param w the third vector
  * @returns result
  */
-export function cross(out: Vec4, u: Vec4, v: Vec4, w: Vec4): Vec4 {
+export function cross(out: Vec4, u: RVec4, v: RVec4, w: RVec4): Vec4 {
     const A = v[0] * w[1] - v[1] * w[0];
     const B = v[0] * w[2] - v[2] * w[0];
     const C = v[0] * w[3] - v[3] * w[0];
@@ -435,7 +438,7 @@ export function cross(out: Vec4, u: Vec4, v: Vec4, w: Vec4): Vec4 {
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function lerp(out: Vec4, a: Vec4, b: Vec4, t: number): Vec4 {
+export function lerp(out: Vec4, a: RVec4, b: RVec4, t: number): Vec4 {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -458,7 +461,7 @@ export function lerp(out: Vec4, a: Vec4, b: Vec4, t: number): Vec4 {
  * @param t interpolation amount
  * @returns out
  */
-export function lagrange(out: Vec4, a: Vec4, b: Vec4, c: Vec4, t: number): Vec4 {
+export function lagrange(out: Vec4, a: RVec4, b: RVec4, c: RVec4, t: number): Vec4 {
     const c0 = 2 * (t - 1) * (t - 0.5);
     const c1 = -4 * (t - 1) * t;
     const c2 = 2 * (t - 0.5) * t;
@@ -477,7 +480,7 @@ export function lagrange(out: Vec4, a: Vec4, b: Vec4, c: Vec4, t: number): Vec4 
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat4(out: Vec4, a: Vec4, m: Mat4): Vec4 {
+export function transformMat4(out: Vec4, a: RVec4, m: RMat4): Vec4 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -497,7 +500,7 @@ export function transformMat4(out: Vec4, a: Vec4, m: Mat4): Vec4 {
  * @param q quaternion to transform with
  * @returns out
  */
-export function transformQuat(out: Vec4, a: Vec4, q: Quat): Vec4 {
+export function transformQuat(out: Vec4, a: RVec4, q: RQuat): Vec4 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -540,7 +543,7 @@ export function zero(out: Vec4): Vec4 {
  * @param a vector to represent as a string
  * @returns string representation of the vector
  */
-export function str(a: Vec4): string {
+export function str(a: RVec4): string {
     return `vec4(${a[0]}, ${a[1]}, ${a[2]}, ${a[3]})`;
 }
 
@@ -551,7 +554,7 @@ export function str(a: Vec4): string {
  * @param b The second vector.
  * @returns True if the vectors are equal, false otherwise.
  */
-export function exactEquals(a: Vec4, b: Vec4): boolean {
+export function exactEquals(a: RVec4, b: RVec4): boolean {
     return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
 }
 
@@ -562,7 +565,7 @@ export function exactEquals(a: Vec4, b: Vec4): boolean {
  * @param b The second vector.
  * @returns True if the vectors are equal, false otherwise.
  */
-export function equals(a: Vec4, b: Vec4): boolean {
+export function equals(a: RVec4, b: RVec4): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -584,7 +587,7 @@ export function equals(a: Vec4, b: Vec4): boolean {
  * @param a vector to test
  * @returns whether or not the vector is finite
  */
-export function finite(a: Vec4): boolean {
+export function finite(a: RVec4): boolean {
     return Number.isFinite(a[0]) && Number.isFinite(a[1]) && Number.isFinite(a[2]) && Number.isFinite(a[3]);
 }
 

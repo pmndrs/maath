@@ -5,6 +5,9 @@ export * from './parse';
 /** A linear-sRGB color: [r, g, b] floats in [0, 1]. */
 export type Color = [r: number, g: number, b: number];
 
+/** A read-only linear sRGB color */
+export type RColor = Readonly<Color>;
+
 /** Accepted input types for creating or parsing a Color. */
 export type ColorInput =
     | string // '#f00', '#ff0000', 'red', 'rgb(255,0,0)', 'hsl(0,100%,50%)'
@@ -22,12 +25,12 @@ export function fromValues(r: number, g: number, b: number): Color {
 }
 
 /** Create a new Color that is a copy of `c`. */
-export function clone(c: Color): Color {
+export function clone(c: RColor): Color {
     return [c[0], c[1], c[2]];
 }
 
 /** Copy the values from `src` into `out`. Returns `out`. */
-export function copy(out: Color, src: Color): Color {
+export function copy(out: Color, src: RColor): Color {
     out[0] = src[0];
     out[1] = src[1];
     out[2] = src[2];
@@ -54,7 +57,7 @@ export function setScalar(out: Color, s: number): Color {
  * Set `out` from an sRGB gamma-encoded [r, g, b] array with values in [0, 1].
  * Converts from sRGB gamma space to linear. Returns `out`.
  */
-export function setFromSRGB(out: Color, srgb: [number, number, number]): Color {
+export function setFromSRGB(out: Color, srgb: readonly [number, number, number]): Color {
     out[0] = srgbToLinear(srgb[0]);
     out[1] = srgbToLinear(srgb[1]);
     out[2] = srgbToLinear(srgb[2]);
@@ -62,12 +65,12 @@ export function setFromSRGB(out: Color, srgb: [number, number, number]): Color {
 }
 
 /** Create a new Color from an sRGB gamma-encoded [r, g, b] array with values in [0, 1]. */
-export function fromSRGB(srgb: [number, number, number]): Color {
+export function fromSRGB(srgb: readonly [number, number, number]): Color {
     return setFromSRGB(create(), srgb);
 }
 
 /** Write the sRGB gamma-encoded [r, g, b] of a linear Color into `out` (values [0, 1]). */
-export function toSRGB(out: [number, number, number], c: Color): [number, number, number] {
+export function toSRGB(out: [number, number, number], c: RColor): [number, number, number] {
     out[0] = linearToSrgb(c[0]);
     out[1] = linearToSrgb(c[1]);
     out[2] = linearToSrgb(c[2]);
@@ -75,22 +78,22 @@ export function toSRGB(out: [number, number, number], c: Color): [number, number
 }
 
 /** Create a CSS `rgb(...)` string in sRGB gamma space (for HTML/canvas use). */
-export function toCSS(c: Color): string {
+export function toCSS(c: RColor): string {
     return `rgb(${to255(c[0])}, ${to255(c[1])}, ${to255(c[2])})`;
 }
 
 /** Convert to a 0xRRGGBB integer in sRGB gamma space. */
-export function toHex(c: Color): number {
+export function toHex(c: RColor): number {
     return (to255(c[0]) << 16) | (to255(c[1]) << 8) | to255(c[2]);
 }
 
 /** Convert to a 6-digit sRGB hex string without a leading '#', e.g. 'ff8800'. */
-export function toHexString(c: Color): string {
+export function toHexString(c: RColor): string {
     return toHex(c).toString(16).padStart(6, '0');
 }
 
 /** Add `a + b` component-wise into `out`. Returns `out`. */
-export function add(out: Color, a: Color, b: Color): Color {
+export function add(out: Color, a: RColor, b: RColor): Color {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -98,7 +101,7 @@ export function add(out: Color, a: Color, b: Color): Color {
 }
 
 /** Add scalar `s` to each channel of `a` into `out`. Returns `out`. */
-export function addScalar(out: Color, a: Color, s: number): Color {
+export function addScalar(out: Color, a: RColor, s: number): Color {
     out[0] = a[0] + s;
     out[1] = a[1] + s;
     out[2] = a[2] + s;
@@ -106,7 +109,7 @@ export function addScalar(out: Color, a: Color, s: number): Color {
 }
 
 /** Subtract `a - b` component-wise into `out`. Returns `out`. */
-export function sub(out: Color, a: Color, b: Color): Color {
+export function sub(out: Color, a: RColor, b: RColor): Color {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -114,7 +117,7 @@ export function sub(out: Color, a: Color, b: Color): Color {
 }
 
 /** Multiply `a * b` component-wise into `out` (tinting). Returns `out`. */
-export function multiply(out: Color, a: Color, b: Color): Color {
+export function multiply(out: Color, a: RColor, b: RColor): Color {
     out[0] = a[0] * b[0];
     out[1] = a[1] * b[1];
     out[2] = a[2] * b[2];
@@ -122,7 +125,7 @@ export function multiply(out: Color, a: Color, b: Color): Color {
 }
 
 /** Scale each channel of `a` by `s` into `out` (brightness). Returns `out`. */
-export function multiplyScalar(out: Color, a: Color, s: number): Color {
+export function multiplyScalar(out: Color, a: RColor, s: number): Color {
     out[0] = a[0] * s;
     out[1] = a[1] * s;
     out[2] = a[2] * s;
@@ -130,7 +133,7 @@ export function multiplyScalar(out: Color, a: Color, s: number): Color {
 }
 
 /** Linearly interpolate from `a` to `b` by `t` into `out` (physically-correct blend). Returns `out`. */
-export function lerp(out: Color, a: Color, b: Color, t: number): Color {
+export function lerp(out: Color, a: RColor, b: RColor, t: number): Color {
     out[0] = a[0] + (b[0] - a[0]) * t;
     out[1] = a[1] + (b[1] - a[1]) * t;
     out[2] = a[2] + (b[2] - a[2]) * t;
@@ -138,7 +141,7 @@ export function lerp(out: Color, a: Color, b: Color, t: number): Color {
 }
 
 /** Clamp each channel of `c` to [0, 1] into `out`. Returns `out`. */
-export function clamp(out: Color, c: Color): Color {
+export function clamp(out: Color, c: RColor): Color {
     out[0] = clamp01(c[0]);
     out[1] = clamp01(c[1]);
     out[2] = clamp01(c[2]);
@@ -146,12 +149,12 @@ export function clamp(out: Color, c: Color): Color {
 }
 
 /** Whether `a` and `b` are equal, within an optional per-channel `epsilon` (default exact). */
-export function equals(a: Color, b: Color, epsilon = 0): boolean {
+export function equals(a: RColor, b: RColor, epsilon = 0): boolean {
     return Math.abs(a[0] - b[0]) <= epsilon && Math.abs(a[1] - b[1]) <= epsilon && Math.abs(a[2] - b[2]) <= epsilon;
 }
 
 /** Relative luminance in [0, 1] (Rec. 709 weights, on linear light). */
-export function luminance(c: Color): number {
+export function luminance(c: RColor): number {
     return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
 }
 

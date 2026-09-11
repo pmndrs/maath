@@ -1,9 +1,12 @@
 import { EPSILON } from '../core/scalar';
-import type { Vec2 } from '../core/vec2';
-import type { Circle } from './circle';
+import type { RVec2, Vec2 } from '../core/vec2';
+import type { RCircle } from './circle';
 
 /** An axis-aligned box in 2D space, as [minX, minY, maxX, maxY] */
 export type Box2 = [minX: number, minY: number, maxX: number, maxY: number];
+
+/** A read-only 2D axis-aligned bounding box */
+export type RBox2 = Readonly<Box2>;
 
 /**
  * Create a new empty Box2 with "min" set to positive infinity and "max" set to negative infinity
@@ -18,7 +21,7 @@ export function create(): Box2 {
  * @param box - A Box2 to clone
  * @returns a clone of box
  */
-export function clone(box: Box2): Box2 {
+export function clone(box: RBox2): Box2 {
     return [box[0], box[1], box[2], box[3]];
 }
 
@@ -28,7 +31,7 @@ export function clone(box: Box2): Box2 {
  * @param box the input Box2
  * @returns the output Box2
  */
-export function copy(out: Box2, box: Box2): Box2 {
+export function copy(out: Box2, box: RBox2): Box2 {
     out[0] = box[0];
     out[1] = box[1];
     out[2] = box[2];
@@ -60,7 +63,7 @@ export function set(out: Box2, minX: number, minY: number, maxX: number, maxY: n
  * @param max - The maximum corner
  * @returns The updated Box2
  */
-export function setFromVectors(out: Box2, min: Vec2, max: Vec2): Box2 {
+export function setFromVectors(out: Box2, min: RVec2, max: RVec2): Box2 {
     out[0] = min[0];
     out[1] = min[1];
     out[2] = max[0];
@@ -74,7 +77,7 @@ export function setFromVectors(out: Box2, min: Vec2, max: Vec2): Box2 {
  * @param box - The input Box2
  * @returns The minimum corner
  */
-export function min(out: Vec2, box: Box2): Vec2 {
+export function min(out: Vec2, box: RBox2): Vec2 {
     out[0] = box[0];
     out[1] = box[1];
     return out;
@@ -86,7 +89,7 @@ export function min(out: Vec2, box: Box2): Vec2 {
  * @param box - The input Box2
  * @returns The maximum corner
  */
-export function max(out: Vec2, box: Box2): Vec2 {
+export function max(out: Vec2, box: RBox2): Vec2 {
     out[0] = box[2];
     out[1] = box[3];
     return out;
@@ -111,7 +114,7 @@ export function empty(out: Box2): Box2 {
  * @param b - The second box
  * @returns True if the boxes are equal, false otherwise
  */
-export function exactEquals(a: Box2, b: Box2): boolean {
+export function exactEquals(a: RBox2, b: RBox2): boolean {
     return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
 }
 
@@ -121,7 +124,7 @@ export function exactEquals(a: Box2, b: Box2): boolean {
  * @param b - The second box
  * @returns True if the boxes are equal, false otherwise
  */
-export function equals(a: Box2, b: Box2): boolean {
+export function equals(a: RBox2, b: RBox2): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -145,7 +148,7 @@ export function equals(a: Box2, b: Box2): boolean {
  * @param size - The size of the box
  * @returns The updated Box2
  */
-export function setFromCenterAndSize(out: Box2, center: Vec2, size: Vec2): Box2 {
+export function setFromCenterAndSize(out: Box2, center: RVec2, size: RVec2): Box2 {
     const hx = size[0] * 0.5;
     const hy = size[1] * 0.5;
     out[0] = center[0] - hx;
@@ -162,7 +165,7 @@ export function setFromCenterAndSize(out: Box2, center: Vec2, size: Vec2): Box2 
  * @param point - The point to include
  * @returns The expanded Box2
  */
-export function expandByPoint(out: Box2, box: Box2, point: Vec2): Box2 {
+export function expandByPoint(out: Box2, box: RBox2, point: RVec2): Box2 {
     out[0] = Math.min(box[0], point[0]);
     out[1] = Math.min(box[1], point[1]);
     out[2] = Math.max(box[2], point[0]);
@@ -178,7 +181,7 @@ export function expandByPoint(out: Box2, box: Box2, point: Vec2): Box2 {
  * @param vector - The vector to expand by
  * @returns The expanded Box2
  */
-export function expandByExtents(out: Box2, box: Box2, vector: Vec2): Box2 {
+export function expandByExtents(out: Box2, box: RBox2, vector: RVec2): Box2 {
     out[0] = box[0] - vector[0];
     out[1] = box[1] - vector[1];
     out[2] = box[2] + vector[0];
@@ -194,7 +197,7 @@ export function expandByExtents(out: Box2, box: Box2, vector: Vec2): Box2 {
  * @param margin - The uniform margin to expand by
  * @returns The expanded Box2
  */
-export function expandByMargin(out: Box2, box: Box2, margin: number): Box2 {
+export function expandByMargin(out: Box2, box: RBox2, margin: number): Box2 {
     out[0] = box[0] - margin;
     out[1] = box[1] - margin;
     out[2] = box[2] + margin;
@@ -210,7 +213,7 @@ export function expandByMargin(out: Box2, box: Box2, margin: number): Box2 {
  * @param boxB - The second Box2
  * @returns The union Box2
  */
-export function union(out: Box2, boxA: Box2, boxB: Box2): Box2 {
+export function union(out: Box2, boxA: RBox2, boxB: RBox2): Box2 {
     out[0] = Math.min(boxA[0], boxB[0]);
     out[1] = Math.min(boxA[1], boxB[1]);
     out[2] = Math.max(boxA[2], boxB[2]);
@@ -224,7 +227,7 @@ export function union(out: Box2, boxA: Box2, boxB: Box2): Box2 {
  * @param box - The input Box2
  * @returns The center point
  */
-export function center(out: Vec2, box: Box2): Vec2 {
+export function center(out: Vec2, box: RBox2): Vec2 {
     out[0] = (box[0] + box[2]) * 0.5;
     out[1] = (box[1] + box[3]) * 0.5;
     return out;
@@ -236,7 +239,7 @@ export function center(out: Vec2, box: Box2): Vec2 {
  * @param box - The input Box2
  * @returns The extents (distance from center to each edge)
  */
-export function extents(out: Vec2, box: Box2): Vec2 {
+export function extents(out: Vec2, box: RBox2): Vec2 {
     out[0] = (box[2] - box[0]) * 0.5;
     out[1] = (box[3] - box[1]) * 0.5;
     return out;
@@ -248,7 +251,7 @@ export function extents(out: Vec2, box: Box2): Vec2 {
  * @param box - The input Box2
  * @returns The size (width, height)
  */
-export function size(out: Vec2, box: Box2): Vec2 {
+export function size(out: Vec2, box: RBox2): Vec2 {
     out[0] = box[2] - box[0];
     out[1] = box[3] - box[1];
     return out;
@@ -259,7 +262,7 @@ export function size(out: Vec2, box: Box2): Vec2 {
  * @param box - The input Box2
  * @returns The area (width * height)
  */
-export function area(box: Box2): number {
+export function area(box: RBox2): number {
     return (box[2] - box[0]) * (box[3] - box[1]);
 }
 
@@ -270,7 +273,7 @@ export function area(box: Box2): number {
  * @param scale - The scale to apply (as a Vec2)
  * @returns The scaled Box2
  */
-export function scale(out: Box2, box: Box2, scale: Vec2): Box2 {
+export function scale(out: Box2, box: RBox2, scale: RVec2): Box2 {
     const minX = box[0] * scale[0];
     const maxX = box[2] * scale[0];
     const minY = box[1] * scale[1];
@@ -291,7 +294,7 @@ export function scale(out: Box2, box: Box2, scale: Vec2): Box2 {
  * @param point - The point to test
  * @returns true if the point is inside or on the boundary of the box
  */
-export function containsPoint(box: Box2, point: Vec2): boolean {
+export function containsPoint(box: RBox2, point: RVec2): boolean {
     return point[0] >= box[0] && point[0] <= box[2] && point[1] >= box[1] && point[1] <= box[3];
 }
 
@@ -301,7 +304,7 @@ export function containsPoint(box: Box2, point: Vec2): boolean {
  * @param contained - The Box2 that might be contained
  * @returns true if the container Box2 completely contains the contained Box2
  */
-export function containsBox2(container: Box2, contained: Box2): boolean {
+export function containsBox2(container: RBox2, contained: RBox2): boolean {
     return (
         contained[0] >= container[0] &&
         contained[2] <= container[2] &&
@@ -313,14 +316,14 @@ export function containsBox2(container: Box2, contained: Box2): boolean {
 /**
  * Check whether two bounding boxes intersect
  */
-export function intersectsBox2(boxA: Box2, boxB: Box2): boolean {
+export function intersectsBox2(boxA: RBox2, boxB: RBox2): boolean {
     return boxA[0] <= boxB[2] && boxA[2] >= boxB[0] && boxA[1] <= boxB[3] && boxA[3] >= boxB[1];
 }
 
 /**
  * Test intersection between an axis-aligned bounding box and a circle.
  */
-export function intersectsCircle(box: Box2, circle: Circle): boolean {
+export function intersectsCircle(box: RBox2, circle: RCircle): boolean {
     const { center, radius } = circle;
     const cx = center[0];
     const cy = center[1];

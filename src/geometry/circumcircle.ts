@@ -1,5 +1,5 @@
 import { EPSILON } from '../core/scalar';
-import type { Vec2 } from '../core/vec2';
+import type { RVec2 } from '../core/vec2';
 import type { Circle } from '../shapes/circle';
 
 /**
@@ -8,7 +8,7 @@ import type { Circle } from '../shapes/circle';
  * @param triangle The triangle defined by three points
  * @returns
  */
-export function circumcircle(out: Circle, a: Vec2, b: Vec2, c: Vec2): Circle {
+export function circumcircle(out: Circle, a: RVec2, b: RVec2, c: RVec2): Circle {
     // work relative to `a` at the origin, which collapses the circumcenter formula
     const ax = a[0];
     const ay = a[1];

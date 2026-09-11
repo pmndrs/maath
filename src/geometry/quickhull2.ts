@@ -9,7 +9,7 @@ const EPSILON = 1e-10;
  * @param points flat array of 2D points: [x0, y0, x1, y1, ...]
  * @returns indices of hull vertices in ccw order
  */
-export function quickhull2(points: number[]): number[] {
+export function quickhull2(points: readonly number[]): number[] {
     const n = Math.floor(points.length / 2);
     if (n < 3) return Array.from({ length: n }, (_, i) => i);
 
@@ -69,7 +69,7 @@ export function quickhull2(points: number[]): number[] {
  * Finds points on convex hull from set Sk that are on the right side of oriented line from P to Q.
  * Points are inserted into hull array at the end (before the final endpoint).
  */
-function findHull(points: number[], sk: number[], p: number, q: number, hull: number[]): void {
+function findHull(points: readonly number[], sk: readonly number[], p: number, q: number, hull: number[]): void {
     if (sk.length === 0) return;
 
     // find farthest point C from segment PQ
@@ -123,7 +123,7 @@ function findHull(points: number[], sk: number[], p: number, q: number, hull: nu
  * < 0: p3 is on the right of line p1→p2 (clockwise)
  * = 0: collinear
  */
-function crossProduct(points: number[], p1: number, p2: number, p3: number): number {
+function crossProduct(points: readonly number[], p1: number, p2: number, p3: number): number {
     const x1 = points[p1 * 2];
     const y1 = points[p1 * 2 + 1];
     const x2 = points[p2 * 2];

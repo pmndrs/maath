@@ -1,4 +1,4 @@
-import type { Vec2 } from '../core/vec2';
+import type { RVec2, Vec2 } from '../core/vec2';
 import type { Box2 } from './box2';
 
 /**
@@ -20,7 +20,7 @@ import type { Box2 } from './box2';
  * @param n number of vertices to read from `vertices`
  * @returns the signed area
  */
-export function signedArea(vertices: number[], n: number): number {
+export function signedArea(vertices: readonly number[], n: number): number {
     let area = 0;
     for (let i = 0, j = n - 1; i < n; j = i++) {
         const xi = vertices[i * 2];
@@ -39,7 +39,7 @@ export function signedArea(vertices: number[], n: number): number {
  * @param n number of vertices to read from `vertices`
  * @returns the absolute area
  */
-export function area(vertices: number[], n: number): number {
+export function area(vertices: readonly number[], n: number): number {
     return Math.abs(signedArea(vertices, n));
 }
 
@@ -52,7 +52,7 @@ export function area(vertices: number[], n: number): number {
  * @param point the point to test
  * @returns true if the point is inside (or on the boundary of) the polygon
  */
-export function containsPoint(vertices: number[], n: number, point: Vec2): boolean {
+export function containsPoint(vertices: readonly number[], n: number, point: RVec2): boolean {
     let inside = false;
     const x = point[0];
     const y = point[1];
@@ -112,7 +112,7 @@ export function containsPoint(vertices: number[], n: number, point: Vec2): boole
  * @param n number of vertices to read from `vertices`
  * @returns out
  */
-export function centroid(out: Vec2, vertices: number[], n: number): Vec2 {
+export function centroid(out: Vec2, vertices: readonly number[], n: number): Vec2 {
     let cx = 0;
     let cy = 0;
     let a2 = 0; // twice the signed area
@@ -154,7 +154,7 @@ export function centroid(out: Vec2, vertices: number[], n: number): Vec2 {
  * @param n number of vertices to read from `vertices`
  * @returns the perimeter
  */
-export function perimeter(vertices: number[], n: number): number {
+export function perimeter(vertices: readonly number[], n: number): number {
     let total = 0;
     for (let i = 0, j = n - 1; i < n; j = i++) {
         const dx = vertices[i * 2] - vertices[j * 2];
@@ -173,7 +173,7 @@ export function perimeter(vertices: number[], n: number): number {
  * @param n number of vertices to read from `vertices`
  * @returns 1 (CCW), -1 (CW), or 0 (degenerate)
  */
-export function winding(vertices: number[], n: number): number {
+export function winding(vertices: readonly number[], n: number): number {
     const a = signedArea(vertices, n);
     if (a > 0) return 1;
     if (a < 0) return -1;
@@ -188,7 +188,7 @@ export function winding(vertices: number[], n: number): number {
  * @param n number of vertices to read from `vertices`
  * @returns true if the polygon is convex
  */
-export function isConvex(vertices: number[], n: number): boolean {
+export function isConvex(vertices: readonly number[], n: number): boolean {
     if (n < 3) return false;
 
     let sign = 0;
@@ -224,7 +224,7 @@ export function isConvex(vertices: number[], n: number): boolean {
  * @param i index of the vertex to test
  * @returns true if vertex `i` is reflex
  */
-export function isReflexVertex(vertices: number[], n: number, i: number): boolean {
+export function isReflexVertex(vertices: readonly number[], n: number, i: number): boolean {
     const p = ((i - 1 + n) % n) * 2;
     const c = i * 2;
     const q = ((i + 1) % n) * 2;
@@ -246,7 +246,7 @@ export function isReflexVertex(vertices: number[], n: number, i: number): boolea
  * @param n number of vertices to read from `vertices`
  * @returns out
  */
-export function reverse(out: number[], vertices: number[], n: number): number[] {
+export function reverse(out: number[], vertices: readonly number[], n: number): number[] {
     for (let lo = 0, hi = n - 1; lo < hi; lo++, hi--) {
         const x = vertices[lo * 2];
         const y = vertices[lo * 2 + 1];
@@ -273,7 +273,7 @@ export function reverse(out: number[], vertices: number[], n: number): number[] 
  * @param n number of vertices to read from `vertices`
  * @returns out
  */
-export function bounds(out: Box2, vertices: number[], n: number): Box2 {
+export function bounds(out: Box2, vertices: readonly number[], n: number): Box2 {
     let minX = Number.POSITIVE_INFINITY;
     let minY = Number.POSITIVE_INFINITY;
     let maxX = Number.NEGATIVE_INFINITY;
@@ -306,7 +306,7 @@ export function bounds(out: Box2, vertices: number[], n: number): Box2 {
  * @param point the query point
  * @returns out
  */
-export function closestPoint(out: Vec2, vertices: number[], n: number, point: Vec2): Vec2 {
+export function closestPoint(out: Vec2, vertices: readonly number[], n: number, point: RVec2): Vec2 {
     const px = point[0];
     const py = point[1];
     let bestDistSq = Number.POSITIVE_INFINITY;
@@ -352,7 +352,7 @@ export function closestPoint(out: Vec2, vertices: number[], n: number, point: Ve
  * @param point the query point
  * @returns the signed distance (negative inside, positive outside)
  */
-export function signedDistance(vertices: number[], n: number, point: Vec2): number {
+export function signedDistance(vertices: readonly number[], n: number, point: RVec2): number {
     const px = point[0];
     const py = point[1];
     let bestDistSq = Number.POSITIVE_INFINITY;
@@ -382,7 +382,7 @@ const _projA: [number, number] = [0, 0];
 const _projB: [number, number] = [0, 0];
 
 /** Projects a polygon onto the axis (nx, ny), storing [min, max] in `out`. */
-function projectOntoAxis(out: [number, number], nx: number, ny: number, vertices: number[], n: number): void {
+function projectOntoAxis(out: [number, number], nx: number, ny: number, vertices: readonly number[], n: number): void {
     let min = nx * vertices[0] + ny * vertices[1];
     let max = min;
     for (let i = 1; i < n; i++) {
@@ -395,7 +395,7 @@ function projectOntoAxis(out: [number, number], nx: number, ny: number, vertices
 }
 
 /** Returns true if the two polygons are separated along any edge normal of A. */
-function separatedByEdgesOf(verticesA: number[], numA: number, verticesB: number[], numB: number): boolean {
+function separatedByEdgesOf(verticesA: readonly number[], numA: number, verticesB: readonly number[], numB: number): boolean {
     for (let i = 0, j = numA - 1; i < numA; j = i++) {
         // Normal of edge (a -> b); orientation does not matter for separation.
         const nx = verticesA[i * 2 + 1] - verticesA[j * 2 + 1];
@@ -420,7 +420,7 @@ function separatedByEdgesOf(verticesA: number[], numA: number, verticesB: number
  * @param numB number of vertices in the second polygon
  * @returns true if the polygons overlap
  */
-export function overlapConvex(verticesA: number[], numA: number, verticesB: number[], numB: number): boolean {
+export function overlapConvex(verticesA: readonly number[], numA: number, verticesB: readonly number[], numB: number): boolean {
     if (separatedByEdgesOf(verticesA, numA, verticesB, numB)) return false;
     if (separatedByEdgesOf(verticesB, numB, verticesA, numA)) return false;
     return true;
@@ -437,7 +437,7 @@ export function overlapConvex(verticesA: number[], numA: number, verticesB: numb
  * @param b end of the segment
  * @returns true if the segment intersects the polygon
  */
-export function intersectsSegment(vertices: number[], n: number, a: Vec2, b: Vec2): boolean {
+export function intersectsSegment(vertices: readonly number[], n: number, a: RVec2, b: RVec2): boolean {
     if (containsPoint(vertices, n, a) || containsPoint(vertices, n, b)) return true;
 
     const ax = a[0];

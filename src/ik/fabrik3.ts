@@ -1,4 +1,4 @@
-import { type Mat3, mat3, type Quat, quat, type Vec3, vec3 } from '../core';
+import { type Mat3, mat3, type Quat, quat, type RVec3, type Vec3, vec3 } from '../core';
 
 // FABRIK (Forward And Backward Reaching Inverse Kinematics) for 3D chains.
 //
@@ -210,7 +210,7 @@ const DEGENERATE_SQUARED_LENGTH = 1e-24;
  * A zero axis cannot be normalized, and storing one turns every constraint that reads it into NaN.
  * `out` always starts as a valid unit vector, so keeping it is the safe fallback.
  */
-function setUnitAxis(out: Vec3, axis: Vec3): Vec3 {
+function setUnitAxis(out: Vec3, axis: RVec3): Vec3 {
     if (!hasDirection(vec3.squaredLength(axis))) return out;
     return vec3.normalize(out, axis);
 }
@@ -275,7 +275,7 @@ export function createChain3(): Chain3 {
  * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
-export function addBone(chain: Chain3, start: Vec3, end: Vec3, joint: Joint3 = createJoint3()): Bone3 {
+export function addBone(chain: Chain3, start: RVec3, end: RVec3, joint: Joint3 = createJoint3()): Bone3 {
     const bone: Bone3 = {
         start: [start[0], start[1], start[2]],
         end: [end[0], end[1], end[2]],
@@ -307,7 +307,7 @@ export function addBone(chain: Chain3, start: Vec3, end: Vec3, joint: Joint3 = c
  * @param joint the bone's joint, or a fresh unconstrained one if omitted
  * @returns the appended bone
  */
-export function addConsecutiveBone(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
+export function addConsecutiveBone(chain: Chain3, direction: RVec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
     const previous = chain.bones[chain.bones.length - 1];
 
     _addConsecutive_end[0] = previous.end[0] + direction[0] * length;
@@ -333,7 +333,7 @@ const _addConsecutive_end: Vec3 = [0, 0, 0];
  * @param joint the joint for the junction this creates, or a fresh unconstrained one if omitted
  * @returns the prepended bone
  */
-export function addBoneAtBase(chain: Chain3, direction: Vec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
+export function addBoneAtBase(chain: Chain3, direction: RVec3, length: number, joint: Joint3 = createJoint3()): Bone3 {
     const first = chain.bones[0];
 
     // the bone that was first now sits at index 1, so it is the one whose joint governs the new
@@ -395,10 +395,10 @@ export function setBallJoint(joint: Joint3, rotor: number): Joint3 {
 export function setHingeJoint(
     joint: Joint3,
     type: JointType.GLOBAL_HINGE | JointType.LOCAL_HINGE,
-    rotationAxis: Vec3,
+    rotationAxis: RVec3,
     clockwise: number,
     anticlockwise: number,
-    referenceAxis: Vec3,
+    referenceAxis: RVec3,
 ): Joint3 {
     joint.type = type;
     joint.clockwise = clampAngle(clockwise);
@@ -422,7 +422,7 @@ export function setHingeJoint(
 export function setBaseboneRotorConstraint(
     chain: Chain3,
     type: BaseboneConstraintType.GLOBAL_ROTOR | BaseboneConstraintType.LOCAL_ROTOR,
-    axis: Vec3,
+    axis: RVec3,
     rotor: number,
 ): Chain3 {
     chain.baseboneConstraintType = type;
@@ -449,10 +449,10 @@ export function setBaseboneRotorConstraint(
 export function setBaseboneHingeConstraint(
     chain: Chain3,
     type: BaseboneConstraintType.GLOBAL_HINGE | BaseboneConstraintType.LOCAL_HINGE,
-    rotationAxis: Vec3,
+    rotationAxis: RVec3,
     clockwise: number,
     anticlockwise: number,
-    referenceAxis: Vec3,
+    referenceAxis: RVec3,
 ): Chain3 {
     chain.baseboneConstraintType = type;
     chain.baseboneClockwise = clampAngle(clockwise);
@@ -472,7 +472,7 @@ export function setBaseboneHingeConstraint(
  *
  * The next {@link backward} or {@link solve} pulls the chain to it.
  */
-export function setBaseLocation(chain: Chain3, base: Vec3): Chain3 {
+export function setBaseLocation(chain: Chain3, base: RVec3): Chain3 {
     chain.base[0] = base[0];
     chain.base[1] = base[1];
     chain.base[2] = base[2];
@@ -485,7 +485,7 @@ export function setBaseLocation(chain: Chain3, base: Vec3): Chain3 {
  * A dead-straight chain is the worst starting pose for {@link solve} - see the note there. Bend
  * `direction` slightly between bones instead if the chain will be solved cold.
  */
-export function straighten(chain: Chain3, direction: Vec3): Chain3 {
+export function straighten(chain: Chain3, direction: RVec3): Chain3 {
     const bones = chain.bones;
 
     let x = chain.base[0];
@@ -535,7 +535,7 @@ export function getBoneDirection(out: Vec3, chain: Chain3, index: number): Vec3 
  * Use it to orient a mesh along a bone, passing whichever axis the mesh is modelled along - `up`
  * is `[0, 1, 0]` for a cylinder or capsule built along Y. The roll about the bone is arbitrary.
  */
-export function getBoneRotation(out: Quat, chain: Chain3, index: number, up: Vec3): Quat {
+export function getBoneRotation(out: Quat, chain: Chain3, index: number, up: RVec3): Quat {
     getBoneDirection(_boneRotation_direction, chain, index);
     return quat.rotationTo(out, up, _boneRotation_direction);
 }
@@ -543,7 +543,7 @@ export function getBoneRotation(out: Quat, chain: Chain3, index: number, up: Vec
 const _boneRotation_direction: Vec3 = [0, 0, 0];
 
 /** Whether `target` is within reach of the chain's base, so a solve can place the effector exactly on it. */
-export function isReachable(chain: Chain3, target: Vec3): boolean {
+export function isReachable(chain: Chain3, target: RVec3): boolean {
     return vec3.squaredDistance(chain.base, target) <= chain.length * chain.length;
 }
 
@@ -560,7 +560,7 @@ export function isReachable(chain: Chain3, target: Vec3): boolean {
  * @param target where the end effector should go
  * @returns the chain
  */
-export function forward(chain: Chain3, target: Vec3): Chain3 {
+export function forward(chain: Chain3, target: RVec3): Chain3 {
     const bones = chain.bones;
     const count = bones.length;
 
@@ -644,7 +644,7 @@ export function forward(chain: Chain3, target: Vec3): Chain3 {
  * @param base where the base should go, used only when `chain.fixedBase` is set
  * @returns the chain
  */
-export function backward(chain: Chain3, base: Vec3): Chain3 {
+export function backward(chain: Chain3, base: RVec3): Chain3 {
     const bones = chain.bones;
     const count = bones.length;
 
@@ -727,7 +727,7 @@ export function backward(chain: Chain3, base: Vec3): Chain3 {
  * @param target where the end effector should go
  * @returns the distance from the effector to `target` afterwards
  */
-export function iterate(chain: Chain3, target: Vec3): number {
+export function iterate(chain: Chain3, target: RVec3): number {
     if (chain.bones.length === 0) return Number.POSITIVE_INFINITY;
 
     forward(chain, target);
@@ -749,7 +749,7 @@ export function iterate(chain: Chain3, target: Vec3): number {
  * @param target where the end effector should go
  * @returns the distance from the effector to `target`, also stored as `chain.solveDistance`
  */
-export function solve(chain: Chain3, target: Vec3): number {
+export function solve(chain: Chain3, target: RVec3): number {
     const count = chain.bones.length;
 
     if (count === 0) {
@@ -843,7 +843,7 @@ export function connectChain(
  * @param structure the structure to solve, mutated in place
  * @param target the target for every chain that does not use an embedded target
  */
-export function solveStructure(structure: Structure3, target: Vec3): void {
+export function solveStructure(structure: Structure3, target: RVec3): void {
     const chains = structure.chains;
 
     for (let i = 0; i < chains.length; i++) {
@@ -902,7 +902,7 @@ function clampAngle(radians: number): number {
 }
 
 /** Writes the component of `a` perpendicular to the unit vector `axis`, normalized. */
-function orthonormalize(out: Vec3, a: Vec3, axis: Vec3): Vec3 {
+function orthonormalize(out: Vec3, a: RVec3, axis: RVec3): Vec3 {
     // the component of `a` perpendicular to `axis`
     vec3.scaleAndAdd(out, a, axis, -vec3.dot(a, axis));
 
@@ -915,7 +915,7 @@ function orthonormalize(out: Vec3, a: Vec3, axis: Vec3): Vec3 {
 }
 
 /** Normalizes `out` in place, falling back to `fallback` when it has no length. */
-function normalizeOr(out: Vec3, fallback: Vec3): Vec3 {
+function normalizeOr(out: Vec3, fallback: RVec3): Vec3 {
     if (!hasDirection(vec3.squaredLength(out))) {
         return vec3.copy(out, fallback);
     }
@@ -928,7 +928,7 @@ function normalizeOr(out: Vec3, fallback: Vec3): Vec3 {
  * A direction parallel to the hinge axis projects to nothing, leaving no in-plane direction to
  * normalize. Fall back to the hinge's reference axis, which lies in the plane by construction.
  */
-function projectOntoHinge(out: Vec3, x: number, y: number, z: number, axis: Vec3, referenceAxis: Vec3): Vec3 {
+function projectOntoHinge(out: Vec3, x: number, y: number, z: number, axis: RVec3, referenceAxis: RVec3): Vec3 {
     const d = x * axis[0] + y * axis[1] + z * axis[2];
 
     out[0] = x - axis[0] * d;
@@ -943,7 +943,7 @@ function projectOntoHinge(out: Vec3, x: number, y: number, z: number, axis: Vec3
 }
 
 /** Rotates the unit vector `a` about the unit vector `axis` by `radians` (Rodrigues). */
-function rotateAboutAxis(out: Vec3, a: Vec3, axis: Vec3, radians: number): Vec3 {
+function rotateAboutAxis(out: Vec3, a: RVec3, axis: RVec3, radians: number): Vec3 {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -967,8 +967,8 @@ function constrainHinge(
     x: number,
     y: number,
     z: number,
-    axis: Vec3,
-    referenceAxis: Vec3,
+    axis: RVec3,
+    referenceAxis: RVec3,
     clockwise: number,
     anticlockwise: number,
 ): void {
@@ -998,7 +998,7 @@ function constrainHinge(
  * except at `direction` = (0, 0, -1), where the basis flips, so a local hinge whose parent swings
  * through there will pop.
  */
-function basisFromDirection(out: Mat3, direction: Vec3): Mat3 {
+function basisFromDirection(out: Mat3, direction: RVec3): Mat3 {
     const x = direction[0];
     const y = direction[1];
     const z = direction[2];

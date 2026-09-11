@@ -1,11 +1,14 @@
 import type { MutableArrayLike } from './arrays';
-import type { Mat3 } from './mat3';
-import type { Mat4 } from './mat4';
-import type { Quat } from './quat';
+import type { RMat3 } from './mat3';
+import type { RMat4 } from './mat4';
+import type { RQuat } from './quat';
 import * as scalar from './scalar';
 
 /** A 3D vector */
 export type Vec3 = [x: number, y: number, z: number];
+
+/** A read-only 3D vector */
+export type RVec3 = Readonly<Vec3>;
 
 /**
  * Creates a new, empty vec3
@@ -22,7 +25,7 @@ export function create(): Vec3 {
  * @param a vector to clone
  * @returns a new 3D vector
  */
-export function clone(a: Vec3): Vec3 {
+export function clone(a: RVec3): Vec3 {
     return [a[0], a[1], a[2]];
 }
 
@@ -44,7 +47,7 @@ export function fromValues(x: number, y: number, z: number): Vec3 {
  * @param a vector to calculate length of
  * @returns length of a
  */
-export function length(a: Vec3): number {
+export function length(a: RVec3): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -58,7 +61,7 @@ export function length(a: Vec3): number {
  * @param a the source vector
  * @returns out
  */
-export function copy(out: Vec3, a: Vec3): Vec3 {
+export function copy(out: Vec3, a: RVec3): Vec3 {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -116,7 +119,7 @@ export function fromBuffer(out: Vec3, buffer: ArrayLike<number>, startIndex: num
  * @param startIndex The starting index in the buffer
  * @returns The output buffer
  */
-export function toBuffer(outBuffer: MutableArrayLike<number>, vec: Vec3, startIndex: number): MutableArrayLike<number> {
+export function toBuffer(outBuffer: MutableArrayLike<number>, vec: RVec3, startIndex: number): MutableArrayLike<number> {
     outBuffer[startIndex] = vec[0];
     outBuffer[startIndex + 1] = vec[1];
     outBuffer[startIndex + 2] = vec[2];
@@ -131,7 +134,7 @@ export function toBuffer(outBuffer: MutableArrayLike<number>, vec: Vec3, startIn
  * @param b the second operand
  * @returns out
  */
-export function add(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function add(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -146,7 +149,7 @@ export function add(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param b the scalar value to add
  * @returns out
  */
-export function addScalar(out: Vec3, a: Vec3, b: number): Vec3 {
+export function addScalar(out: Vec3, a: RVec3, b: number): Vec3 {
     out[0] = a[0] + b;
     out[1] = a[1] + b;
     out[2] = a[2] + b;
@@ -161,7 +164,7 @@ export function addScalar(out: Vec3, a: Vec3, b: number): Vec3 {
  * @param b the second operand
  * @returns out
  */
-export function subtract(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function subtract(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -176,7 +179,7 @@ export function subtract(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param b the scalar value to subtract
  * @returns out
  */
-export function subtractScalar(out: Vec3, a: Vec3, b: number): Vec3 {
+export function subtractScalar(out: Vec3, a: RVec3, b: number): Vec3 {
     out[0] = a[0] - b;
     out[1] = a[1] - b;
     out[2] = a[2] - b;
@@ -190,7 +193,7 @@ export function subtractScalar(out: Vec3, a: Vec3, b: number): Vec3 {
  * @param b the second operand
  * @returns out
  */
-export function multiply(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function multiply(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = a[0] * b[0];
     out[1] = a[1] * b[1];
     out[2] = a[2] * b[2];
@@ -205,7 +208,7 @@ export function multiply(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param b the second operand
  * @returns out
  */
-export function divide(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function divide(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = a[0] / b[0];
     out[1] = a[1] / b[1];
     out[2] = a[2] / b[2];
@@ -219,7 +222,7 @@ export function divide(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param a vector to ceil
  * @returns out
  */
-export function ceil(out: Vec3, a: Vec3): Vec3 {
+export function ceil(out: Vec3, a: RVec3): Vec3 {
     out[0] = Math.ceil(a[0]);
     out[1] = Math.ceil(a[1]);
     out[2] = Math.ceil(a[2]);
@@ -233,7 +236,7 @@ export function ceil(out: Vec3, a: Vec3): Vec3 {
  * @param a vector to floor
  * @returns out
  */
-export function floor(out: Vec3, a: Vec3): Vec3 {
+export function floor(out: Vec3, a: RVec3): Vec3 {
     out[0] = Math.floor(a[0]);
     out[1] = Math.floor(a[1]);
     out[2] = Math.floor(a[2]);
@@ -248,7 +251,7 @@ export function floor(out: Vec3, a: Vec3): Vec3 {
  * @param b the second operand
  * @returns out
  */
-export function min(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function min(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = Math.min(a[0], b[0]);
     out[1] = Math.min(a[1], b[1]);
     out[2] = Math.min(a[2], b[2]);
@@ -263,7 +266,7 @@ export function min(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param b the second operand
  * @returns out
  */
-export function max(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function max(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     out[0] = Math.max(a[0], b[0]);
     out[1] = Math.max(a[1], b[1]);
     out[2] = Math.max(a[2], b[2]);
@@ -277,7 +280,7 @@ export function max(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param a vector to round
  * @returns out
  */
-export function round(out: Vec3, a: Vec3): Vec3 {
+export function round(out: Vec3, a: RVec3): Vec3 {
     out[0] = scalar.round(a[0]);
     out[1] = scalar.round(a[1]);
     out[2] = scalar.round(a[2]);
@@ -292,7 +295,7 @@ export function round(out: Vec3, a: Vec3): Vec3 {
  * @param b amount to scale the vector by
  * @returns out
  */
-export function scale(out: Vec3, a: Vec3, b: number): Vec3 {
+export function scale(out: Vec3, a: RVec3, b: number): Vec3 {
     out[0] = a[0] * b;
     out[1] = a[1] * b;
     out[2] = a[2] * b;
@@ -308,7 +311,7 @@ export function scale(out: Vec3, a: Vec3, b: number): Vec3 {
  * @param scale the amount to scale b by before adding
  * @returns out
  */
-export function scaleAndAdd(out: Vec3, a: Vec3, b: Vec3, scale: number): Vec3 {
+export function scaleAndAdd(out: Vec3, a: RVec3, b: RVec3, scale: number): Vec3 {
     out[0] = a[0] + b[0] * scale;
     out[1] = a[1] + b[1] * scale;
     out[2] = a[2] + b[2] * scale;
@@ -322,7 +325,7 @@ export function scaleAndAdd(out: Vec3, a: Vec3, b: Vec3, scale: number): Vec3 {
  * @param b the second operand
  * @returns distance between a and b
  */
-export function distance(a: Vec3, b: Vec3): number {
+export function distance(a: RVec3, b: RVec3): number {
     const x = b[0] - a[0];
     const y = b[1] - a[1];
     const z = b[2] - a[2];
@@ -336,7 +339,7 @@ export function distance(a: Vec3, b: Vec3): number {
  * @param b the second operand
  * @returns squared distance between a and b
  */
-export function squaredDistance(a: Vec3, b: Vec3): number {
+export function squaredDistance(a: RVec3, b: RVec3): number {
     const x = b[0] - a[0];
     const y = b[1] - a[1];
     const z = b[2] - a[2];
@@ -349,7 +352,7 @@ export function squaredDistance(a: Vec3, b: Vec3): number {
  * @param a vector to calculate squared length of
  * @returns squared length of a
  */
-export function squaredLength(a: Vec3): number {
+export function squaredLength(a: RVec3): number {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -363,7 +366,7 @@ export function squaredLength(a: Vec3): number {
  * @param a vector to negate
  * @returns out
  */
-export function negate(out: Vec3, a: Vec3): Vec3 {
+export function negate(out: Vec3, a: RVec3): Vec3 {
     out[0] = -a[0];
     out[1] = -a[1];
     out[2] = -a[2];
@@ -377,7 +380,7 @@ export function negate(out: Vec3, a: Vec3): Vec3 {
  * @param a vector to invert
  * @returns out
  */
-export function inverse(out: Vec3, a: Vec3): Vec3 {
+export function inverse(out: Vec3, a: RVec3): Vec3 {
     out[0] = 1.0 / a[0];
     out[1] = 1.0 / a[1];
     out[2] = 1.0 / a[2];
@@ -391,7 +394,7 @@ export function inverse(out: Vec3, a: Vec3): Vec3 {
  * @param a vector to normalize
  * @returns out
  */
-export function normalize(out: Vec3, a: Vec3): Vec3 {
+export function normalize(out: Vec3, a: RVec3): Vec3 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -412,7 +415,7 @@ export function normalize(out: Vec3, a: Vec3): Vec3 {
  * @param b the second operand
  * @returns dot product of a and b
  */
-export function dot(a: Vec3, b: Vec3): number {
+export function dot(a: RVec3, b: RVec3): number {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
@@ -424,7 +427,7 @@ export function dot(a: Vec3, b: Vec3): number {
  * @param b the second operand
  * @returns out
  */
-export function cross(out: Vec3, a: Vec3, b: Vec3): Vec3 {
+export function cross(out: Vec3, a: RVec3, b: RVec3): Vec3 {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -449,7 +452,7 @@ export function cross(out: Vec3, a: Vec3, b: Vec3): Vec3 {
  * @param a the source vector
  * @returns the out vector
  */
-export function perpendicular(out: Vec3, a: Vec3): Vec3 {
+export function perpendicular(out: Vec3, a: RVec3): Vec3 {
     if (Math.abs(a[0]) > Math.abs(a[1])) {
         const len = Math.sqrt(a[0] * a[0] + a[2] * a[2]);
         const invLen = 1.0 / len;
@@ -485,7 +488,7 @@ export function perpendicular(out: Vec3, a: Vec3): Vec3 {
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function lerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3 {
+export function lerp(out: Vec3, a: RVec3, b: RVec3, t: number): Vec3 {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -506,7 +509,7 @@ export function lerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3 {
  * @param t interpolation amount
  * @returns out
  */
-export function lagrange(out: Vec3, a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 {
+export function lagrange(out: Vec3, a: RVec3, b: RVec3, c: RVec3, t: number): Vec3 {
     const c0 = 2 * (t - 1) * (t - 0.5);
     const c1 = -4 * (t - 1) * t;
     const c2 = 2 * (t - 0.5) * t;
@@ -525,7 +528,7 @@ export function lagrange(out: Vec3, a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function slerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3 {
+export function slerp(out: Vec3, a: RVec3, b: RVec3, t: number): Vec3 {
     const angle = Math.acos(Math.min(Math.max(dot(a, b), -1), 1));
     const sinTotal = Math.sin(angle);
 
@@ -549,7 +552,7 @@ export function slerp(out: Vec3, a: Vec3, b: Vec3, t: number): Vec3 {
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function hermite(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3 {
+export function hermite(out: Vec3, a: RVec3, b: RVec3, c: RVec3, d: RVec3, t: number): Vec3 {
     const factorTimes2 = t * t;
     const factor1 = factorTimes2 * (2 * t - 3) + 1;
     const factor2 = factorTimes2 * (t - 2) + t;
@@ -574,7 +577,7 @@ export function hermite(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number
  * @param t interpolation amount, in the range [0-1], between the two inputs
  * @returns out
  */
-export function bezier(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number): Vec3 {
+export function bezier(out: Vec3, a: RVec3, b: RVec3, c: RVec3, d: RVec3, t: number): Vec3 {
     const inverseFactor = 1 - t;
     const inverseFactorTimesTwo = inverseFactor * inverseFactor;
     const factorTimes2 = t * t;
@@ -599,7 +602,7 @@ export function bezier(out: Vec3, a: Vec3, b: Vec3, c: Vec3, d: Vec3, t: number)
  * @param m matrix to transform with
  * @returns out
  */
-export function transformMat4(out: Vec3, a: Vec3, m: Mat4): Vec3 {
+export function transformMat4(out: Vec3, a: RVec3, m: RMat4): Vec3 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -619,7 +622,7 @@ export function transformMat4(out: Vec3, a: Vec3, m: Mat4): Vec3 {
  * @param m the 3x3 matrix to transform with
  * @returns out
  */
-export function transformMat3(out: Vec3, a: Vec3, m: Mat3): Vec3 {
+export function transformMat3(out: Vec3, a: RVec3, m: RMat3): Vec3 {
     const x = a[0];
     const y = a[1];
     const z = a[2];
@@ -638,7 +641,7 @@ export function transformMat3(out: Vec3, a: Vec3, m: Mat3): Vec3 {
  * @param q quaternion to transform with
  * @returns out
  */
-export function transformQuat(out: Vec3, a: Vec3, q: Quat): Vec3 {
+export function transformQuat(out: Vec3, a: RVec3, q: RQuat): Vec3 {
     // benchmarks: https://jsperf.com/quaternion-transform-vec3-implementations-fixed
     const qx = q[0];
     const qy = q[1];
@@ -680,7 +683,7 @@ export function transformQuat(out: Vec3, a: Vec3, q: Quat): Vec3 {
  * @param rad The angle of rotation in radians
  * @returns out
  */
-export function rotateX(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
+export function rotateX(out: Vec3, a: RVec3, b: RVec3, rad: number): Vec3 {
     const p: number[] = [];
     const r: number[] = [];
     //Translate point to the origin
@@ -709,7 +712,7 @@ export function rotateX(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
  * @param rad The angle of rotation in radians
  * @returns out
  */
-export function rotateY(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
+export function rotateY(out: Vec3, a: RVec3, b: RVec3, rad: number): Vec3 {
     const p: number[] = [];
     const r: number[] = [];
 
@@ -739,7 +742,7 @@ export function rotateY(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
  * @param rad The angle of rotation in radians
  * @returns out
  */
-export function rotateZ(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
+export function rotateZ(out: Vec3, a: RVec3, b: RVec3, rad: number): Vec3 {
     const p: number[] = [];
     const r: number[] = [];
     // translate point to the origin
@@ -766,7 +769,7 @@ export function rotateZ(out: Vec3, a: Vec3, b: Vec3, rad: number): Vec3 {
  * @param b The second operand
  * @returns The angle in radians
  */
-export function angle(a: Vec3, b: Vec3): number {
+export function angle(a: RVec3, b: RVec3): number {
     const ax = a[0];
     const ay = a[1];
     const az = a[2];
@@ -793,7 +796,7 @@ export function angle(a: Vec3, b: Vec3): number {
  * @param axis the axis to measure the rotation about, assumed to be unit length
  * @returns the signed angle in radians
  */
-export function signedAngle(a: Vec3, b: Vec3, axis: Vec3): number {
+export function signedAngle(a: RVec3, b: RVec3, axis: RVec3): number {
     const nx = axis[0];
     const ny = axis[1];
     const nz = axis[2];
@@ -836,7 +839,7 @@ const _rotateTowards_axis: Vec3 = [0, 0, 0];
  * @param maxAngle the maximum rotation, in radians
  * @returns out
  */
-export function rotateTowards(out: Vec3, from: Vec3, to: Vec3, maxAngle: number): Vec3 {
+export function rotateTowards(out: Vec3, from: RVec3, to: RVec3, maxAngle: number): Vec3 {
     const fx = from[0];
     const fy = from[1];
     const fz = from[2];
@@ -905,7 +908,7 @@ export function zero(out: Vec3): Vec3 {
  * @param a vector to represent as a string
  * @returns string representation of the vector
  */
-export function str(a: Vec3): string {
+export function str(a: RVec3): string {
     return `vec3(${a[0]}, ${a[1]}, ${a[2]})`;
 }
 
@@ -916,7 +919,7 @@ export function str(a: Vec3): string {
  * @param b The second vector.
  * @returns True if the vectors are equal, false otherwise.
  */
-export function exactEquals(a: Vec3, b: Vec3): boolean {
+export function exactEquals(a: RVec3, b: RVec3): boolean {
     return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
 }
 
@@ -927,7 +930,7 @@ export function exactEquals(a: Vec3, b: Vec3): boolean {
  * @param b The second vector.
  * @returns True if the vectors are equal, false otherwise.
  */
-export function equals(a: Vec3, b: Vec3): boolean {
+export function equals(a: RVec3, b: RVec3): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -946,7 +949,7 @@ export function equals(a: Vec3, b: Vec3): boolean {
  * @param a vector to test
  * @returns whether or not the vector is finite
  */
-export function finite(a: Vec3): boolean {
+export function finite(a: RVec3): boolean {
     return Number.isFinite(a[0]) && Number.isFinite(a[1]) && Number.isFinite(a[2]);
 }
 
@@ -957,7 +960,7 @@ export function finite(a: Vec3): boolean {
  * @param scale The scale vector to test
  * @returns true if the scale represents a reflection (odd number of negative components)
  */
-export function isScaleInsideOut(scale: Vec3): boolean {
+export function isScaleInsideOut(scale: RVec3): boolean {
     // create a bitmask of which components are negative
     // each component that is < 0 contributes a bit (1, 2, or 4)
     const mask = (scale[0] < 0 ? 1 : 0) | (scale[1] < 0 ? 2 : 0) | (scale[2] < 0 ? 4 : 0);

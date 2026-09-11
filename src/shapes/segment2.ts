@@ -1,4 +1,4 @@
-import type { Vec2 } from '../core/vec2';
+import type { RVec2, Vec2 } from '../core/vec2';
 
 /**
  * Calculates the closest point on a line segment to a given point
@@ -7,7 +7,7 @@ import type { Vec2 } from '../core/vec2';
  * @param a First endpoint of the segment
  * @param b Second endpoint of the segment
  */
-export function closestPoint(out: Vec2, point: Vec2, a: Vec2, b: Vec2): Vec2 {
+export function closestPoint(out: Vec2, point: RVec2, a: RVec2, b: RVec2): Vec2 {
     const pqx = b[0] - a[0];
     const pqz = b[1] - a[1];
     const dx = point[0] - a[0];
@@ -36,7 +36,7 @@ export function closestPoint(out: Vec2, point: Vec2, a: Vec2, b: Vec2): Vec2 {
  * @param d second endpoint of the second segment
  * @returns true if the segments intersect
  */
-export function intersects(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
+export function intersects(a: RVec2, b: RVec2, c: RVec2, d: RVec2): boolean {
     const rx = b[0] - a[0];
     const ry = b[1] - a[1];
     const ex = d[0] - c[0];
@@ -65,7 +65,7 @@ export function intersects(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
  * @param d second endpoint of the second segment
  * @returns out if the segments intersect, otherwise null
  */
-export function intersection(out: Vec2, a: Vec2, b: Vec2, c: Vec2, d: Vec2): Vec2 | null {
+export function intersection(out: Vec2, a: RVec2, b: RVec2, c: RVec2, d: RVec2): Vec2 | null {
     const rx = b[0] - a[0];
     const ry = b[1] - a[1];
     const ex = d[0] - c[0];

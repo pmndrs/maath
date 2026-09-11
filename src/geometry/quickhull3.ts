@@ -54,7 +54,7 @@ type VertexList = {
 };
 
 type HullState = {
-    points: number[];
+    points: readonly number[];
     tolerance: number;
     faces: Face[];
     newFaces: Face[];
@@ -69,7 +69,7 @@ type HullState = {
  * @param points An array of numbers representing the 3D points (x1, y1, z1, x2, y2, z2, ...)
  * @returns An array of indices representing the triangles of the convex hull (i1, j1, k1, i2, j2, k2, ...).
  */
-export function quickhull3(points: number[]): number[] {
+export function quickhull3(points: readonly number[]): number[] {
     const n = points.length / 3;
     if (n < 4) return [];
 
@@ -91,7 +91,7 @@ export function quickhull3(points: number[]): number[] {
 
 // Hull state management
 
-function createHullState(points: number[], n: number): HullState {
+function createHullState(points: readonly number[], n: number): HullState {
     const vertices: VertexNode[] = [];
     for (let i = 0; i < n; i++) {
         vertices.push(createVertexNode(i));
@@ -294,7 +294,7 @@ function faceGetEdge(face: Face, i: number): HalfEdge | null {
     return edge;
 }
 
-function faceCompute(face: Face, points: number[]): void {
+function faceCompute(face: Face, points: readonly number[]): void {
     const a = halfEdgeTail(face.edge!)!;
     const b = halfEdgeHead(face.edge!);
     const c = halfEdgeHead(face.edge!.next!);
@@ -346,7 +346,7 @@ function faceCompute(face: Face, points: number[]): void {
     face.constant = face.normal[0] * face.midpoint[0] + face.normal[1] * face.midpoint[1] + face.normal[2] * face.midpoint[2];
 }
 
-function faceDistanceToPoint(face: Face, points: number[], vertexIndex: number): number {
+function faceDistanceToPoint(face: Face, points: readonly number[], vertexIndex: number): number {
     const idx = vertexIndex * 3;
     return face.normal[0] * points[idx] + face.normal[1] * points[idx + 1] + face.normal[2] * points[idx + 2] - face.constant;
 }
@@ -720,7 +720,13 @@ function reindexFaces(state: HullState): void {
 
 // Helper functions
 
-function computePlane(points: number[], v0: number, v1: number, v2: number, outNormal: [number, number, number]): number {
+function computePlane(
+    points: readonly number[],
+    v0: number,
+    v1: number,
+    v2: number,
+    outNormal: [number, number, number],
+): number {
     const p0x = points[v0 * 3];
     const p0y = points[v0 * 3 + 1];
     const p0z = points[v0 * 3 + 2];
@@ -758,14 +764,19 @@ function computePlane(points: number[], v0: number, v1: number, v2: number, outN
     return -(outNormal[0] * p0x + outNormal[1] * p0y + outNormal[2] * p0z);
 }
 
-function distanceToPlane(points: number[], idx: number, normal: [number, number, number], offset: number): number {
+function distanceToPlane(
+    points: readonly number[],
+    idx: number,
+    normal: readonly [number, number, number],
+    offset: number,
+): number {
     const x = points[idx * 3];
     const y = points[idx * 3 + 1];
     const z = points[idx * 3 + 2];
     return normal[0] * x + normal[1] * y + normal[2] * z + offset;
 }
 
-function distanceToLineSquared(points: number[], idx: number, v0: number, v1: number): number {
+function distanceToLineSquared(points: readonly number[], idx: number, v0: number, v1: number): number {
     const px = points[idx * 3];
     const py = points[idx * 3 + 1];
     const pz = points[idx * 3 + 2];

@@ -1,8 +1,11 @@
 import { EPSILON } from './scalar';
-import type { Vec2 } from './vec2';
+import type { RVec2 } from './vec2';
 
 /** A 2x2 matrix */
 export type Mat2 = [e1: number, e2: number, e3: number, e4: number];
+
+/** A read-only 2x2 matrix */
+export type RMat2 = Readonly<Mat2>;
 
 /**
  * Creates a new identity mat2
@@ -19,7 +22,7 @@ export function create(): Mat2 {
  * @param a matrix to clone
  * @returns a new 2x2 matrix
  */
-export function clone(a: Mat2): Mat2 {
+export function clone(a: RMat2): Mat2 {
     return [a[0], a[1], a[2], a[3]];
 }
 
@@ -30,7 +33,7 @@ export function clone(a: Mat2): Mat2 {
  * @param a the source matrix
  * @returns out
  */
-export function copy(out: Mat2, a: Mat2): Mat2 {
+export function copy(out: Mat2, a: RMat2): Mat2 {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -90,7 +93,7 @@ export function set(out: Mat2, m00: number, m01: number, m10: number, m11: numbe
  * @param a the source matrix
  * @returns out
  */
-export function transpose(out: Mat2, a: Mat2): Mat2 {
+export function transpose(out: Mat2, a: RMat2): Mat2 {
     // If we are transposing ourselves we can skip a few steps but have to cache
     // some values
     if (out === a) {
@@ -114,7 +117,7 @@ export function transpose(out: Mat2, a: Mat2): Mat2 {
  * @param a the source matrix
  * @returns out, or null if source matrix is not invertible
  */
-export function invert(out: Mat2, a: Mat2): Mat2 | null {
+export function invert(out: Mat2, a: RMat2): Mat2 | null {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -143,7 +146,7 @@ export function invert(out: Mat2, a: Mat2): Mat2 | null {
  * @param a the source matrix
  * @returns out
  */
-export function adjoint(out: Mat2, a: Mat2): Mat2 {
+export function adjoint(out: Mat2, a: RMat2): Mat2 {
     // Caching this value is necessary if out == a
     const a0 = a[0];
     out[0] = a[3];
@@ -160,7 +163,7 @@ export function adjoint(out: Mat2, a: Mat2): Mat2 {
  * @param a the source matrix
  * @returns determinant of a
  */
-export function determinant(a: Mat2): number {
+export function determinant(a: RMat2): number {
     return a[0] * a[3] - a[2] * a[1];
 }
 
@@ -172,7 +175,7 @@ export function determinant(a: Mat2): number {
  * @param b the second operand
  * @returns out
  */
-export function multiply(out: Mat2, a: Mat2, b: Mat2): Mat2 {
+export function multiply(out: Mat2, a: RMat2, b: RMat2): Mat2 {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -196,7 +199,7 @@ export function multiply(out: Mat2, a: Mat2, b: Mat2): Mat2 {
  * @param rad the angle to rotate the matrix by
  * @returns out
  */
-export function rotate(out: Mat2, a: Mat2, rad: number): Mat2 {
+export function rotate(out: Mat2, a: RMat2, rad: number): Mat2 {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -218,7 +221,7 @@ export function rotate(out: Mat2, a: Mat2, rad: number): Mat2 {
  * @param v the vec2 to scale the matrix by
  * @returns out
  **/
-export function scale(out: Mat2, a: Mat2, v: Vec2): Mat2 {
+export function scale(out: Mat2, a: RMat2, v: RVec2): Mat2 {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -264,7 +267,7 @@ export function fromRotation(out: Mat2, rad: number): Mat2 {
  * @param v Scaling vector
  * @returns out
  */
-export function fromScaling(out: Mat2, v: Vec2): Mat2 {
+export function fromScaling(out: Mat2, v: RVec2): Mat2 {
     out[0] = v[0];
     out[1] = 0;
     out[2] = 0;
@@ -278,7 +281,7 @@ export function fromScaling(out: Mat2, v: Vec2): Mat2 {
  * @param a matrix to represent as a string
  * @returns string representation of the matrix
  */
-export function str(a: Mat2): string {
+export function str(a: RMat2): string {
     return `mat2(${a[0]}, ${a[1]}, ${a[2]}, ${a[3]})`;
 }
 
@@ -288,7 +291,7 @@ export function str(a: Mat2): string {
  * @param a the matrix to calculate Frobenius norm of
  * @returns Frobenius norm
  */
-export function frob(a: Mat2): number {
+export function frob(a: RMat2): number {
     return Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3]);
 }
 
@@ -300,7 +303,7 @@ export function frob(a: Mat2): number {
  * @param a the input matrix to factorize
  */
 
-export function LDU(L: Mat2, D: Mat2, U: Mat2, a: Mat2): [Mat2, Mat2, Mat2] {
+export function LDU(L: Mat2, D: Mat2, U: Mat2, a: RMat2): [Mat2, Mat2, Mat2] {
     L[2] = a[2] / a[0];
     U[0] = a[0];
     U[1] = a[1];
@@ -316,7 +319,7 @@ export function LDU(L: Mat2, D: Mat2, U: Mat2, a: Mat2): [Mat2, Mat2, Mat2] {
  * @param b the second operand
  * @returns out
  */
-export function add(out: Mat2, a: Mat2, b: Mat2): Mat2 {
+export function add(out: Mat2, a: RMat2, b: RMat2): Mat2 {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
@@ -332,7 +335,7 @@ export function add(out: Mat2, a: Mat2, b: Mat2): Mat2 {
  * @param b the second operand
  * @returns out
  */
-export function subtract(out: Mat2, a: Mat2, b: Mat2): Mat2 {
+export function subtract(out: Mat2, a: RMat2, b: RMat2): Mat2 {
     out[0] = a[0] - b[0];
     out[1] = a[1] - b[1];
     out[2] = a[2] - b[2];
@@ -347,7 +350,7 @@ export function subtract(out: Mat2, a: Mat2, b: Mat2): Mat2 {
  * @param b The second matrix.
  * @returns True if the matrices are equal, false otherwise.
  */
-export function exactEquals(a: Mat2, b: Mat2): boolean {
+export function exactEquals(a: RMat2, b: RMat2): boolean {
     return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
 }
 
@@ -358,7 +361,7 @@ export function exactEquals(a: Mat2, b: Mat2): boolean {
  * @param b The second matrix.
  * @returns True if the matrices are equal, false otherwise.
  */
-export function equals(a: Mat2, b: Mat2): boolean {
+export function equals(a: RMat2, b: RMat2): boolean {
     const a0 = a[0];
     const a1 = a[1];
     const a2 = a[2];
@@ -383,7 +386,7 @@ export function equals(a: Mat2, b: Mat2): boolean {
  * @param b amount to scale the matrix's elements by
  * @returns out
  */
-export function multiplyScalar(out: Mat2, a: Mat2, b: number): Mat2 {
+export function multiplyScalar(out: Mat2, a: RMat2, b: number): Mat2 {
     out[0] = a[0] * b;
     out[1] = a[1] * b;
     out[2] = a[2] * b;
@@ -400,7 +403,7 @@ export function multiplyScalar(out: Mat2, a: Mat2, b: number): Mat2 {
  * @param scale the amount to scale b's elements by before adding
  * @returns out
  */
-export function multiplyScalarAndAdd(out: Mat2, a: Mat2, b: Mat2, scale: number): Mat2 {
+export function multiplyScalarAndAdd(out: Mat2, a: RMat2, b: RMat2, scale: number): Mat2 {
     out[0] = a[0] + b[0] * scale;
     out[1] = a[1] + b[1] * scale;
     out[2] = a[2] + b[2] * scale;
