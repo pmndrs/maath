@@ -67,13 +67,9 @@ jobs:
         if: steps.mode.outputs.mode == 'canary'
         shell: bash
         run: |
-          # canaries must sort above the last release, so base them on the next patch
-          base_version="$(node -p "
-            const [major, minor, patch] = require('./package.json').version.split('-')[0].split('.').map(Number);
-            \`\${major}.\${minor}.\${patch + 1}\`
-          ")"
-          release_date="$(date -u +%Y%m%d)"
-          canary_version="${base_version}-canary-${GITHUB_SHA::8}-${release_date}"
+          # canaries publish from 0.0.0 so they satisfy no range and the canary tag is the only way to install one
+          # the date leads the sha so canaries sort chronologically
+          canary_version="0.0.0-canary-$(date -u +%Y%m%d)-${GITHUB_SHA::8}"
           npm version "${canary_version}" --no-git-tag-version
           echo "version=${canary_version}" >> "${GITHUB_OUTPUT}"
 
